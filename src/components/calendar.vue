@@ -27,8 +27,9 @@
         <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}">
           <td v-for="(child,k2) in day" :key="k2" :class="{'selected':child.selected,'disabled':child.disabled}" @click="select(k1,k2,$event)" class="day">
             <span :class="{'red':k2==0||k2==6||((child.isLunarFestival||child.isGregorianFestival) && lunar)}">{{child.day}}</span>
-            <div class="text" v-if="child.eventName!=undefined">{{child.eventName}}</div>
-            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival}" v-if="lunar">{{child.lunar}}</div>
+            <div class="text" v-if="child.eventName!=undefined && !clean">{{child.eventName}}</div>
+            <div class="dot" v-if="child.eventName!=undefined && clean"></div>
+            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival}" v-if="lunar && !clean">{{child.lunar}}</div>
           </td>
         </tr>
       </div>
@@ -46,6 +47,11 @@
     props: {
       // 多选模式
       multi: {
+        type: Boolean,
+        default: false
+      },
+      clean: {
+        //纯净模式
         type: Boolean,
         default: false
       },
@@ -656,7 +662,7 @@
     margin:2px !important;
     padding:0px 0;
     width: 14.28571429%;
-    height:80rpx;
+    height:88rpx;
     text-align: center;
     vertical-align: middle;
     font-size:14px;
@@ -680,10 +686,10 @@
   }
   .calendar td span{
     display:block;
-    height:56rpx;
-    width:56rpx;
+    height:76rpx;
+    width:76rpx;
     font-size: 28rpx;
-    line-height:56rpx;
+    line-height:76rpx;
     margin:0px auto;
     border-radius:50%;
   }
@@ -789,6 +795,9 @@
     background-color: #5e7a88;
     color:#fff;
   }
+  .c-head {
+    margin-bottom: 20rpx;
+  }
   .c-head div {
     overflow: hidden;
   }
@@ -810,5 +819,13 @@
     flex-direction: row;
     justify-content: center;
     align-content: space-between
+  }
+  .dot {
+    width: 10rpx;
+    height: 10rpx;
+    background-color: #ea6151;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top: 5rpx;
   }
 </style>
