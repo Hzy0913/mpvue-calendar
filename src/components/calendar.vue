@@ -29,7 +29,7 @@
             <span :class="{'red':k2==0||k2==6||((child.isLunarFestival||child.isGregorianFestival) && lunar)}">{{child.day}}</span>
             <div class="text" v-if="child.eventName!=undefined && !clean">{{child.eventName}}</div>
             <div class="dot" v-if="child.eventName!=undefined && clean"></div>
-            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival}" v-if="lunar && !clean">{{child.lunar}}</div>
+            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival}" v-if="lunar">{{child.lunar}}</div>
           </td>
         </tr>
       </div>
@@ -603,6 +603,7 @@
     color:#5e7a88;
     box-shadow: 0rpx 4rpx 8rpx rgba(25, 47, 89, 0.1);
     margin-bottom: 30rpx;
+    border-top: 1px solid rgba(200, 200, 200, .1);
   }
   .calendar-tools span{
     cursor: pointer;
@@ -799,8 +800,9 @@
     color:#999;
   }
   .calendar-years>span.active{
-    border:1px solid #5e7a88;
-    background-color: #5e7a88;
+    border:1px solid #587dff;
+    background-color: #587dff;
+    box-shadow: 4rpx 4rpx 2rpx rgba(88, 125, 255, 0.4);
     color:#fff;
   }
   .c-head {

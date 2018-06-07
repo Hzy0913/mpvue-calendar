@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "flyio": "^0.5.9",
     "mpvue": "^1.0.11",
     "v-calendar": "^0.9.7",
     "vuex": "^3.0.1"
