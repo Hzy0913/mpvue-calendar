@@ -2,10 +2,10 @@
   <div class="calendar">
     <div class="calendar-tools">
           <span class="calendar-prev" @click="prev">
-              上
+            <img src="../assets/arrow-left.png" >
           </span>
           <span class="calendar-next"  @click="next">
-              下
+              <img src="../assets/arrow-right.png" alt="">
           </span>
       <div class="calendar-info" @click.stop="changeYear">
         <!-- {{monthString}} -->
@@ -601,6 +601,8 @@
     font-size: 20px;
     line-height: 40px;
     color:#5e7a88;
+    box-shadow: 0rpx 4rpx 8rpx rgba(25, 47, 89, 0.1);
+    margin-bottom: 30rpx;
   }
   .calendar-tools span{
     cursor: pointer;
@@ -610,11 +612,17 @@
     float:left;
     text-align: center;
   }
+  .calendar-prev img, .calendar-next img{
+    width: 34rpx;
+    height: 34rpx;
+  }
   .calendar-info{
     padding-top: 3px;
     font-size:16px;
     line-height: 1.3;
     text-align: center;
+    width: 220rpx;
+    margin: 0 auto;
   }
   .calendar-info>div.month{
     margin:auto;
@@ -704,7 +712,7 @@
     color:#ea6151;
   }
   .calendar td.selected span{
-    background-color: #5e7a88;
+    background-color: #3b75fb;
     color: #fff;
   }
   .calendar td .text{
@@ -724,11 +732,11 @@
     color:#ea6151;
   }
   .calendar td.selected span.red{
-    background-color: #ea6151;
+    background-color: #3b75fb;
     color: #fff;
   }
   .calendar td.selected span.red:hover{
-    background-color: #ea6151;
+    background-color: #3b75fb;
     color: #fff;
   }
   .calendar thead td {
