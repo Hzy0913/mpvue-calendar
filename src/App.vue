@@ -19,6 +19,8 @@ export default {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 /* this rule will be remove */
 * {

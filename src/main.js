@@ -15,14 +15,8 @@ export default {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: '比邻binlive',
       navigationBarTextStyle: 'black'
-    },
-    plugins: {
-      "calendar": {
-        "version": "1.1.2",
-        "provider": "wx92c68dae5a8bb046"
-      }
     }
   }
 }

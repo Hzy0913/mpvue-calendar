@@ -11,7 +11,7 @@
         <!-- {{monthString}} -->
         <div class="month">
           <div class="month-inner" :style="{'top': monthPosition +'px'}">
-            <span v-for="m in months">{{m}}</span>
+            <span v-for="m in months" :key="m">{{m}}</span>
           </div>
         </div>
         <div class="year">{{year}}</div>
@@ -27,7 +27,7 @@
         <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}">
           <td v-for="(child,k2) in day" :key="k2" :class="{'selected':child.selected,'disabled':child.disabled}" @click="select(k1,k2,$event)" class="day">
             <span :class="{'red':k2==0||k2==6||((child.isLunarFestival||child.isGregorianFestival) && lunar)}">{{child.day}}</span>
-            <div class="text" v-if="child.eventName!=undefined && !clean">{{child.eventName}}</div>
+            <div class="text remark-text" v-if="child.eventName!=undefined && !clean && !lunar">{{child.eventName}}</div>
             <div class="dot" v-if="child.eventName!=undefined && clean"></div>
             <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival}" v-if="lunar">{{child.lunar}}</div>
           </td>
@@ -36,7 +36,7 @@
     </table>
 
     <div class="calendar-years" :class="{'show':yearsShow}">
-      <span v-for="y in years" @click.stop="selectYear(y)" :class="{'active':y==year}">{{y}}</span>
+      <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active':y==year}">{{y}}</span>
     </div>
   </div>
 </template>
@@ -837,5 +837,14 @@
     border-radius: 50%;
     margin: 0 auto;
     margin-top: 5rpx;
+  }
+  .remark-text {
+    padding-left: 8rpx;
+    padding-right: 8rpx;
+    box-sizing: border-box;
+    height: 34rpx;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
 </style>
