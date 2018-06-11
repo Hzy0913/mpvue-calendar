@@ -60,14 +60,14 @@
         <div @click="toggleclean" class="toggle togglemode">{{calendarmode}}模式</div>
 
         <div class="add" >
-          <!--<button class="login" open-type="getUserInfo" @getuserinfo="onGotUserInfo" v-if="!constellationName"></button>-->
+          <button class="login" open-type="getUserInfo" @getuserinfo="onGotUserInfo" v-if="!constellationName"></button>
           <img src="../../assets/add.png" @click="handelEdit">
         </div>
       </div>
     </div>
 
     <div class="popup" v-if="visibletextarea">
-      <div class="textarea fadeInDown" :class="{fadeOutUp: isfadeOutUp}">
+      <div class="textarea zoomIn" :class="{zoomOut: isfadeOutUp}">
         <div class="edit-head">
           <div class="edit-head-title">
             <img src="../../assets/edit2.png" class="edit-icon">
@@ -88,8 +88,8 @@
 
     <!--card-->
     <div class="dialog-bg" v-if="visible">
-      <div class="dialog" :class="{fadeOutUp: selectisfadeOutUp}">
-        <h1>弹窗</h1>
+      <div class="dialog fadeInDown" :class="{fadeOutUp: isfadeOutUp}">
+        <h1>星座选择</h1>
         <div class="dialog-content">
           <p class="dialog-content-tip">请选择您的出生年月日,为您展示每日星座运势</p>
           <picker mode="date" :value="selectdate" start="1900-01-01" end="2100-01-01" @change="DateChange">
@@ -107,7 +107,7 @@
     </div>
 
     <div class="fortune-con" v-if="fortuneVisible">
-      <div class="dialog" :class="{fadeOutUp: selectisfadeOutUp}">
+      <div class="dialog fadeInDown" :class="{fadeOutUp: isfadeOutUp}">
         <h1>今日运势</h1>
         <div class="userinfo-box">
           <img :src="avatarurl" class="avatar">
@@ -175,9 +175,7 @@ export default {
         lunar:false, //显示农历
         weeks: ['日', '一', '二', '三', '四', '五', '六'],
         months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-        events: {
-          '2018-6-14': '大撒上大阿斯顿撒打算', '2018-2-15': '$460', '2018-2-16': '$500',
-        }
+        events: {}
       },
     }
   },
@@ -209,8 +207,12 @@ export default {
       this.userName = nickName;
     },
     closefortune() {
-      this.fortuneVisible = false;
-      this.isblur = false;
+      this.isfadeOutUp = true;
+      setTimeout(() => {
+        this.isfadeOutUp = false;
+        this.fortuneVisible = false;
+        this.isblur = false;
+      }, 400)
     },
     handlecancel() {
       this.isfadeOutUp = true;
@@ -262,6 +264,7 @@ export default {
       setTimeout(() => {
         this.isfadeOutUp = false;
         this.visible = false;
+        this.isblur = false;
       }, 400)
     },
     DateChange({target}) {
@@ -280,40 +283,40 @@ export default {
     selectconstellation(name) {
         switch(name) {
           case '白羊座':
-            return 10;
+            return 'constel10';
             break;
           case '金牛座':
-            return 11;
+            return 'constel11';
             break;
           case '双子座':
-            return 1;
+            return 'constel1';
             break;
           case '巨蟹座':
-            return 12;
+            return 'constel12';
             break;
           case '狮子座':
-            return 2;
+            return 'constel2';
             break;
           case '处女座':
-            return 3;
+            return 'constel3';
             break;
           case '天秤座':
-            return 4;
+            return 'constel4';
             break;
           case '天蝎座':
-            return 5;
+            return 'constel5';
             break;
           case '射手座':
-            return 6;
+            return 'constel6';
             break;
           case '摩羯座':
-            return 5;
+            return 'constel10';
             break;
           case '水瓶座':
-            return 8;
+            return 'constel8';
             break;
           default:
-            return 9;
+            return 'constel9';
             break;
         }
     },
@@ -322,16 +325,21 @@ export default {
       const {date} = wx.getStorageSync('fortune');
       const today = new Date();
       const year = today.getFullYear();
-      const month = today.getMonth() + 1;
+      let month = today.getMonth() + 1;
       const day = today.getDate();
-      const todayStr = year + month + day;
-      const isdate = date !== todayStr;
-      if (constellation || isdate) {
+      month = month < 10 ? '0' + month : month;
+      const todayStr = year + '' + month + day;
+      const isdate = date != todayStr;
+      console.log(constellation)
+      console.log(isdate)
+      console.log(date)
+      console.log(todayStr)
+      if (constellation && isdate) {
         const {data} = await fly.post('api/fortune', {constellation});
         wx.setStorageSync('fortune', data);
       }
       const {all, work, love, name} = wx.getStorageSync('fortune');
-      this.constellationName =  name ? `/copy-asset/assets/${this.selectconstellation(name)}.png` : '';
+      this.constellationName =  name ? `http://img.binlive.cn/${this.selectconstellation(name)}.png` : '';
       const allArr = [];
       const workArr = [];
       const loveArr = [];
@@ -734,6 +742,42 @@ export default {
     right: 20rpx;
     top: 14rpx;
   }
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(.8, .8, .8);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.zoomIn {
+  animation-duration: 0.6s;
+  animation-fill-mode: both;
+  animation-name: zoomIn;
+}
+@keyframes zoomOut {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+    transform: scale3d(.8, .8, .8);
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.zoomOut {
+  animation-duration: 0.6s;
+  animation-fill-mode: both;
+  animation-name: zoomOut;
+}
   @keyframes fadeInDown {
     from {
       opacity: 0;
@@ -943,6 +987,7 @@ export default {
   .userinfo-con {
     box-sizing: border-box;
     padding-left: 120rpx;
+    padding-right: 120rpx;
   }
   .userinfo-box p {
     float: left;
@@ -959,7 +1004,7 @@ export default {
   display: inline-block;
 }
   .fortune-con .dialog {
-    top: 34%;
+    top: 30%;
     padding-bottom: 30rpx;
   }
 </style>
