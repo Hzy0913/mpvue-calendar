@@ -330,10 +330,6 @@ export default {
       month = month < 10 ? '0' + month : month;
       const todayStr = year + '' + month + day;
       const isdate = date != todayStr;
-      console.log(constellation)
-      console.log(isdate)
-      console.log(date)
-      console.log(todayStr)
       if (constellation && isdate) {
         const {data} = await fly.post('api/fortune', {constellation});
         wx.setStorageSync('fortune', data);
@@ -422,9 +418,6 @@ export default {
         } else {
           remark.forEach((item, index) => {
             if (item.date === this.editDate) {
-              console.log(remark)
-              console.log(item)
-              console.log(this.editDate)
               remark[index].remark = this.textarea;
             }
           });
