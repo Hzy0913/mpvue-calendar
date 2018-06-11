@@ -183,7 +183,6 @@
         let now = new Date();
         this.year = now.getFullYear()
         this.month = now.getMonth()
-        console.log( now.getMonth(), 1231231111)
         this.day = now.getDate()
         if (this.value.length>0) {
           if (this.range) { //范围

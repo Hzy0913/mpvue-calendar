@@ -60,7 +60,7 @@
         <div @click="toggleclean" class="toggle togglemode">{{calendarmode}}模式</div>
 
         <div class="add" >
-          <button class="login" open-type="getUserInfo" @getuserinfo="onGotUserInfo" v-if="!constellationName"></button>
+          <!--<button class="login" open-type="getUserInfo" @getuserinfo="onGotUserInfo" v-if="!constellationName"></button>-->
           <img src="../../assets/add.png" @click="handelEdit">
         </div>
       </div>
@@ -134,11 +134,8 @@
 </template>
 
 <script>
-import card from '@/components/card'
 import calendar from '@/components/calendar'
-import dialog from '@/components/dialog'
 import fly from '@/utils/fly'
-import store from './store'
 
 
 export default {
@@ -184,15 +181,8 @@ export default {
       },
     }
   },
-  computed: {
-    getUserIcons() {
-      // return this.$store.state.topo.userIcons;
-    }
-  },
   components: {
-    card,
-    calendar,
-    dialog
+    calendar
   },
   computed: {
     lunarText() {
@@ -246,8 +236,6 @@ export default {
       const d = [20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22];
       const i = mon * 2 - (day < d[mon - 1] ? 2 : 0);
       const constellation = s.substring(i, i + 2) + "座";
-
-      console.log(constellation)
       wx.showLoading({title: 'Loading...'})
       fly.post('api/setConstellation', {id, date: this.selectdate, constellation}).then(res => {
         const userInfo = wx.getStorageSync('userInfo')
@@ -286,7 +274,6 @@ export default {
       this.switchValueTip = value ? '' : '不';
     },
     handleChange() {
-      console.log(12312)
       this.visible = true;
       this.isblur = true;
     },
@@ -376,6 +363,7 @@ export default {
           this.visibletextarea = false;
           this.switchValueTip = '不';
           this.switchValue = false;
+          this.isblur = false;
         }, 400);
         const events = this.calendar1.events;
         const newevents = {};
@@ -383,8 +371,11 @@ export default {
           newevents[item] = events[item]
         })
         newevents[this.editDate] = this.textarea;
-        this.tedyremark = this.textarea ? this.textarea : '暂无日程...';
-        this.permonthmark = this.textarea;
+        if (this.switchValue) {
+          this.permonthmark = this.textarea;
+        } else {
+          this.tedyremark = this.textarea ? this.textarea : '暂无日程...';
+        }
         if (this.switchValue && this.textarea) {
           const today = new Date();
           let year = today.getFullYear();
@@ -423,6 +414,9 @@ export default {
         } else {
           remark.forEach((item, index) => {
             if (item.date === this.editDate) {
+              console.log(remark)
+              console.log(item)
+              console.log(this.editDate)
               remark[index].remark = this.textarea;
             }
           });
@@ -472,17 +466,12 @@ export default {
       this.tedyremark = todyremark.remark ? todyremark.remark : '暂无日程...';
       this.permonthmark = (permonth.find(item => item.date == value[2]) || {}).remark;
     },
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
-    },
     getUserInfo () {
       // 调用登录接口
       const self = this;
       wx.login({
         success(respone) {
-          const {code} = respone; // 复制给变量就可以打印了，醉了
-          console.log(code, 1211111)
+          const {code} = respone;
           if (code) {
             wx.getUserInfo({
               success(res) {
@@ -676,7 +665,7 @@ export default {
     border-radius: 14rpx;
     position: absolute;
     left: 10%;
-    top: 100rpx;
+    top: 70rpx;
     overflow: hidden;
   }
   .edit-icon {
@@ -836,6 +825,7 @@ export default {
     width: 100%;
     padding-right: 100rpx;
     box-sizing: border-box;
+    margin-bottom: 20rpx;
   }
   .toggle {
     float: left;
