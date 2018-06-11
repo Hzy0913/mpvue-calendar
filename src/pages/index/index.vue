@@ -191,14 +191,14 @@ export default {
     handleMore() {
       const userInfo = wx.getStorageSync('userInfo');
       const fortune = wx.getStorageSync('fortune');
-      if (!userInfo) {
+      const {constellation, avatarUrl, nickName} = userInfo;
+      if (!constellation) {
         return wx.showToast({
           title: '请先点击左侧问号选择您的出生年月日',
           icon: 'none',
           duration: 2000
         })
       }
-      const {constellation, avatarUrl, nickName} = userInfo;
       this.constellationObj = fortune;
       this.isblur = true;
       this.fortuneVisible = true;
