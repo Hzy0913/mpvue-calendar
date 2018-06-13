@@ -847,6 +847,6 @@
     white-space: nowrap;
   }
   .test2 {
-    color: #0b737b;
+    color: red;
   }
 </style>
