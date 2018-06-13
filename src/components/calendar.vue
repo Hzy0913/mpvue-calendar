@@ -846,7 +846,4 @@
     text-overflow:ellipsis;
     white-space: nowrap;
   }
-  .test2 {
-    color: red;
-  }
 </style>
