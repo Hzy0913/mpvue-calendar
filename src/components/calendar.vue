@@ -846,7 +846,7 @@
     text-overflow:ellipsis;
     white-space: nowrap;
   }
-  .test2 {
-    color: #0b737b;
+  .checkout {
+    color: #0bb20c;
   }
 </style>
