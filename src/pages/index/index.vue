@@ -537,7 +537,7 @@ export default {
       wx.setStorageSync('mode', false);
     } else if(typeof mode === 'boolean') {
       this.calendar1.clean = mode;
-      this.calendarmode = mode ? '缩略' : '简洁';
+      this.calendarmode = mode ? '简洁' : '缩略';
     }
   }
 }

@@ -469,6 +469,7 @@
           this.month = parseInt(this.month) + 1
         }
         this.monthPosition = this.month * -20
+        console.log(this.monthPosition)
         this.render(this.year, this.month)
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('next',this.month+1,this.year)
