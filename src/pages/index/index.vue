@@ -234,7 +234,7 @@ export default {
       const dateArr = this.selectdate.split('-');
       const mon = dateArr[1];
       const day = dateArr[2];
-      const s = "魔羯水瓶双鱼白羊金牛双子巨蟹狮子处女天秤天蝎射手魔羯";
+      const s = "摩羯水瓶双鱼白羊金牛双子巨蟹狮子处女天秤天蝎射手摩羯";
       const d = [20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22];
       const i = mon * 2 - (day < d[mon - 1] ? 2 : 0);
       const constellation = s.substring(i, i + 2) + "座";
@@ -380,17 +380,34 @@ export default {
         } else {
           this.tedyremark = this.textarea ? this.textarea : '暂无日程...';
         }
-        if (this.switchValue && this.textarea) {
-          const today = new Date();
-          let year = today.getFullYear();
-          let month = today.getMonth() + 1;
-          for (let i = 0; i < 6; i ++) {
-            const key = `${year}-${month}-${this.editDate.split('-')[2]}`
+        const today = new Date();
+        let year = today.getFullYear();
+        let month = today.getMonth() + 1;
+        if (this.switchValue) {
+          [0,1,2,3,4,5].forEach(item => {
+            const key = `${year}-${month}-${this.editDate.split('-')[2]}`;
+            if (!this.textarea.trim()) {
+              const markVal = (remark.find(item => item.date === key) || {}).remark;
+              if (markVal) {
+                newevents[key] = markVal;
+              } else {
+                delete newevents[key]
+              }
+            } else {
+              newevents[key] = this.textarea
+            }
             if (year === 12) {
               year ++;
             }
             month ++;
-            newevents[key] = this.textarea
+          });
+        } else if (!this.textarea.trim()){
+          const key = `${year}-${month}-${this.editDate.split('-')[2]}`;
+          const permonthVal = (permonth.find(item => item.date === this.editDate.split('-')[2]) || {}).remark;
+          if (permonthVal) {
+            newevents[key] = permonthVal;
+          } else {
+            delete newevents[key]
           }
         }
         this.calendar1.events = newevents;
@@ -981,6 +998,8 @@ export default {
     box-sizing: border-box;
     padding-left: 120rpx;
     padding-right: 120rpx;
+    max-height: 700rpx;
+    overflow: scroll;
   }
   .userinfo-box p {
     float: left;
