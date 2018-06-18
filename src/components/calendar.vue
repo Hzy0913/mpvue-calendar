@@ -10,7 +10,7 @@
       <div class="calendar-info" @click.stop="changeYear">
         <!-- {{monthString}} -->
         <div class="month">
-          <div class="month-inner" :style="{'top': monthPosition +'px'}">
+          <div class="month-inner" :style="{'top': monthPosition +'rpx'}">
             <span v-for="m in months" :key="m">{{m}}</span>
           </div>
         </div>
@@ -205,7 +205,7 @@
             this.day = parseInt(this.value[2])
           }
         }
-        this.monthPosition = this.month * -20
+        this.monthPosition = this.month * -40
         this.render(this.year, this.month)
       },
       // 渲染日期
@@ -454,7 +454,7 @@
         } else {
           this.month = parseInt(this.month) - 1
         }
-        this.monthPosition = this.month * -20
+        this.monthPosition = this.month * -40
         this.render(this.year, this.month)
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('prev',this.month+1,this.year)
@@ -468,8 +468,7 @@
         } else {
           this.month = parseInt(this.month) + 1
         }
-        this.monthPosition = this.month * -20
-        console.log(this.monthPosition)
+        this.monthPosition = this.month * -40
         this.render(this.year, this.month)
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('next',this.month+1,this.year)
@@ -626,7 +625,7 @@
   }
   .calendar-info>div.month{
     margin:auto;
-    height:20px;
+    height:40rpx;
     width:100px;
     text-align: center;
     color:#5e7a88;
@@ -637,7 +636,7 @@
     position: absolute;
     left:0;
     top:0;
-    height:240px;
+    height:480rpx;
     transition:top .5s cubic-bezier(0.075, 0.82, 0.165, 1);
   }
   .calendar-info>div.month .month-inner>span{
