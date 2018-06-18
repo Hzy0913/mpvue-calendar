@@ -504,7 +504,6 @@ export default {
                     if (!item.remark) return;
                     event[item.date] = item.remark
                   });
-
                   const today = new Date();
                   let year = today.getFullYear();
                   let month = today.getMonth() + 1;
@@ -522,6 +521,8 @@ export default {
                       month ++;
                       event[key] = item.remark;
                     }
+                    year = today.getFullYear();
+                    month = today.getMonth() + 1;
                   });
                   self.calendar1.events = event;
                   self.tedyremark = (remark.find(item => item.date === self.editDate) || {}).remark;
