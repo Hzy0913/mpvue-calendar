@@ -1,5 +1,5 @@
 ## mpvue-calendar
-基于mpvue的小程序日历组件
+基于[vue-calendar](https://github.com/jinzhe/vue-calendar "vue-calendar")的适配**mpvue**平台的的微信小程序日历组件
 ## 预览
 ![](https://github.com/Hzy0913/hanlibrary/blob/master/xcx.jpg)
 ## 安装
