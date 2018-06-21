@@ -2,13 +2,12 @@
   <div class="calendar">
     <div class="calendar-tools">
           <span class="calendar-prev" @click="prev">
-            <img src="../assets/arrow-left.png" >
+            <img src="./arrow-left.png" >
           </span>
           <span class="calendar-next"  @click="next">
-              <img src="../assets/arrow-right.png" alt="">
+              <img src="./arrow-right.png" alt="">
           </span>
       <div class="calendar-info" @click.stop="changeYear">
-        <!-- {{monthString}} -->
         <div class="month">
           <div class="month-inner" :style="{'top': monthPosition +'rpx'}">
             <span v-for="m in months" :key="m">{{m}}</span>
@@ -45,74 +44,62 @@
   import calendar from './calendarinit.js'
   export default {
     props: {
-      // 多选模式
       multi: {
         type: Boolean,
         default: false
       },
       clean: {
-        //纯净模式
         type: Boolean,
         default: false
       },
-      // 范围模式
       range:{
         type: Boolean,
         default: false
       },
-      // 默认日期
       value: {
         type: Array,
         default: function(){
           return []
         }
       },
-      // 开始选择日期
       begin:  {
         type: Array,
         default: function(){
           return []
         }
       },
-      // 结束选择日期
       end:  {
         type: Array,
         default: function(){
           return []
         }
       },
-      // 是否小于10补零
       zero:{
         type: Boolean,
         default: false
       },
-      // 屏蔽的日期
       disabled:{
         type: Array,
         default: function(){
           return []
         }
       },
-      // 是否显示农历
       lunar: {
         type: Boolean,
         default: false
       },
-      // 自定义星期名称
       weeks: {
         type: Array,
         default:function(){
-          return window.navigator.language.toLowerCase() == "zh-cn"?['日', '一', '二', '三', '四', '五', '六']:['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+          return ['日', '一', '二', '三', '四', '五', '六']
         }
       },
-      // 自定义月份
       months:{
         type: Array,
         default:function(){
-          return window.navigator.language.toLowerCase() == "zh-cn"?['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']:['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+          return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
         }
       },
-      // 自定义事件
       events:  {
         type: Object,
         default: function(){
@@ -185,7 +172,7 @@
         this.month = now.getMonth()
         this.day = now.getDate()
         if (this.value.length>0) {
-          if (this.range) { //范围
+          if (this.range) {
             this.year = parseInt(this.value[0][0])
             this.month = parseInt(this.value[0][1]) - 1
             this.day = parseInt(this.value[0][2])
@@ -194,12 +181,12 @@
             let day2 = parseInt(this.value[1][2])
             this.rangeBegin = [this.year, this.month,this.day]
             this.rangeEnd = [year2, month2 , day2]
-          }else if(this.multi){//多选
+          }else if(this.multi){
             this.multiDays=this.value;
             this.year = parseInt(this.value[0][0])
             this.month = parseInt(this.value[0][1]) - 1
             this.day = parseInt(this.value[0][2])
-          }else{ //单选
+          }else{
             this.year = parseInt(this.value[0])
             this.month = parseInt(this.value[1]) - 1
             this.day = parseInt(this.value[2])
@@ -210,23 +197,27 @@
       },
       // 渲染日期
       render(y, m) {
-        let firstDayOfMonth = new Date(y, m, 1).getDay()         //当月第一天
-        let lastDateOfMonth = new Date(y, m + 1, 0).getDate()    //当月最后一天
-        let lastDayOfLastMonth = new Date(y, m, 0).getDate()     //最后一月的最后一天
+        let firstDayOfMonth = new Date(y, m, 1).getDay()
+        let lastDateOfMonth = new Date(y, m + 1, 0).getDate()
+        let lastDayOfLastMonth = new Date(y, m, 0).getDate()
+        const disabledFilter = (disabled) => {
+          return disabled.filter(v => {
+            const arr = v.split('-');
+            return this.year == arr[0] && this.month == arr[1]-1 && i == arr[2]
+          });
+        }
         this.year = y
         let seletSplit = this.value
         let i, line = 0,temp = [],nextMonthPushDays = 1
         for (i = 1; i <= lastDateOfMonth; i++) {
-          let day = new Date(y, m, i).getDay() //返回星期几（0～6）
+          let day = new Date(y, m, i).getDay()
           let k
-          // 第一行
           if (day == 0) {
             temp[line] = []
           } else if (i == 1) {
             temp[line] = []
             k = lastDayOfLastMonth - firstDayOfMonth + 1
             for (let j = 0; j < firstDayOfMonth; j++) {
-              // console.log("第一行",lunarYear,lunarMonth,lunarValue,lunarInfo)
               temp[line].push(Object.assign(
                 {day: k,disabled: true},
                 this.getLunarInfo(this.computedPrevYear(),this.computedPrevMonth(true),k),
@@ -235,10 +226,7 @@
               k++;
             }
           }
-
-
-          if (this.range) { // 范围
-            // console.log("日期范围",this.getLunarInfo(this.year,this.month+1,i))
+          if (this.range) {
             let options = Object.assign(
               {day: i},
               this.getLunarInfo(this.year,this.month+1,i),
@@ -261,14 +249,13 @@
               if (endTime <  Number(new Date(this.year, this.month, i))) options.disabled = true
             }
             if (this.disabled.length>0){
-              if (this.disabled.filter(v => {return this.year === v[0] && this.month === v[1]-1 && i === v[2] }).length>0) {
+              if ((disabledFilter(this.disabled)).length) {
                 options.disabled = true
               }
             }
             temp[line].push(options)
-          }else if(this.multi){//多选
+          }else if(this.multi){
             let options
-            // 判断是否选中
             if(this.value.filter(v => {return this.year === v[0] && this.month === v[1]-1 && i === v[2] }).length>0 ){
               options = Object.assign({day: i,selected:true},this.getLunarInfo(this.year,this.month+1,i),this.getEvents(this.year,this.month+1,i))
             }else{
@@ -282,22 +269,17 @@
                 if (endTime <  Number(new Date(this.year, this.month, i))) options.disabled = true
               }
               if (this.disabled.length>0){
-                if (this.disabled.filter(v => {return this.year === v[0] && this.month === v[1]-1 && i === v[2] }).length>0) {
+                if ((disabledFilter(this.disabled)).length) {
                   options.disabled = true
                 }
               }
             }
-
             temp[line].push(options)
           } else { // 单选
-            // console.log(this.lunar(this.year,this.month,i));
-
             let chk = new Date()
             let chkY = chk.getFullYear()
             let chkM = chk.getMonth()
-            // 匹配上次选中的日期
             if (parseInt(seletSplit[0]) == this.year && parseInt(seletSplit[1]) - 1 == this.month && parseInt(seletSplit[2]) == i) {
-              // console.log("匹配上次选中的日期",lunarYear,lunarMonth,lunarValue,lunarInfo)
               temp[line].push(Object.assign(
                 {day: i,selected: true},
                 this.getLunarInfo(this.year,this.month+1,i),
@@ -305,9 +287,7 @@
               ))
               this.today = [line, temp[line].length - 1]
             }
-            // 没有默认值的时候显示选中今天日期
             else if (chkY == this.year && chkM == this.month && i == this.day && this.value == "") {
-              // console.log("今天",lunarYear,lunarMonth,lunarValue,lunarInfo)
               temp[line].push(Object.assign(
                 {day: i,selected: true},
                 this.getLunarInfo(this.year,this.month+1,i),
@@ -315,8 +295,6 @@
               ))
               this.today = [line, temp[line].length - 1]
             }else{
-              // 普通日期
-              // console.log("设置可选范围",i,lunarYear,lunarMonth,lunarValue,lunarInfo)
               let options = Object.assign(
                 {day: i,selected:false},
                 this.getLunarInfo(this.year,this.month+1,i),
@@ -331,21 +309,18 @@
                 if (endTime <  Number(new Date(this.year, this.month, i))) options.disabled = true
               }
               if (this.disabled.length>0){
-                if (this.disabled.filter(v => {return this.year === v[0] && this.month === v[1]-1 && i === v[2] }).length>0) {
+                if ((disabledFilter(this.disabled)).length) {
                   options.disabled = true
                 }
               }
               temp[line].push(options)
             }
           }
-          // 到周六换行
           if (day == 6 && i < lastDateOfMonth) {
             line++
           }else if (i == lastDateOfMonth) {
-            // line++
             let k = 1
             for (let d=day; d < 6; d++) {
-              // console.log(this.computedNextYear()+"-"+this.computedNextMonth(true)+"-"+k)
               temp[line].push(Object.assign(
                 {day: k,disabled: true},
                 this.getLunarInfo(this.computedNextYear(),this.computedNextMonth(true),k),
@@ -353,14 +328,10 @@
               ))
               k++
             }
-            // 下个月除了补充的前几天开始的日期
             nextMonthPushDays=k
           }
-        } //end for
-        // console.log(this.year+"/"+this.month+"/"+this.day+":"+line)
-        // 补充第六行让视觉稳定
+        }
         if(line<=5 && nextMonthPushDays>0){
-          // console.log({nextMonthPushDays:nextMonthPushDays,line:line})
           for (let i = line+1; i<=5; i++) {
             temp[i] = []
             let start=nextMonthPushDays+(i-line-1)*7
@@ -389,7 +360,6 @@
         }else{
           value--
         }
-        // 用于显示目的（一般月份是从0开始的）
         if(isString){
           return value+1
         }
@@ -409,17 +379,14 @@
         }else{
           value++
         }
-        // 用于显示目的（一般月份是从0开始的）
         if(isString){
           return value+1
         }
         return value
       },
-      // 获取农历信息
       getLunarInfo(y,m,d){
         let lunarInfo=calendar.solar2lunar(y,m,d)
         let lunarValue=lunarInfo.IDayCn
-        // console.log(lunarInfo)
         let isLunarFestival=false
         let isGregorianFestival=false
         if(this.festival.lunar[lunarInfo.lMonth+"-"+lunarInfo.lDay]!=undefined){
@@ -435,7 +402,6 @@
           isGregorianFestival:isGregorianFestival,
         }
       },
-      // 获取自定义事件
       getEvents(y,m,d){
         if(Object.keys(this.events).length==0)return false;
         let eventName=this.events[y+"-"+m+"-"+d]
@@ -445,7 +411,6 @@
         }
         return data
       },
-      // 上月
       prev(e) {
         e.stopPropagation()
         if (this.month == 0) {
@@ -459,7 +424,6 @@
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('prev',this.month+1,this.year)
       },
-      //  下月
       next(e) {
         e.stopPropagation()
         if (this.month == 11) {
@@ -473,10 +437,8 @@
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('next',this.month+1,this.year)
       },
-      // 选中日期
       select(k1, k2, e) {
         if (e != undefined) e.stopPropagation()
-        // 日期范围
         if (this.range) {
           if (this.rangeBegin.length == 0 || this.rangeEndTemp != 0) {
             this.rangeBegin = [this.year, this.month,this.days[k1][k2].day]
@@ -487,12 +449,10 @@
           } else {
             this.rangeEnd = [this.year, this.month,this.days[k1][k2].day]
             this.rangeEndTemp = 1
-            // 判断结束日期小于开始日期则自动颠倒过来
             if (+new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]) < +new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2])) {
               this.rangeBegin = this.rangeEnd
               this.rangeEnd = this.rangeBeginTemp
             }
-            // 小于10左边打补丁
             let begin=[]
             let end=[]
             if(this.zero){
@@ -508,12 +468,10 @@
               begin=this.rangeBegin
               end=this.rangeEnd
             }
-            // console.log("选中日期",begin,end)
             this.$emit('select',begin,end)
           }
           this.render(this.year, this.month)
         }else if (this.multi) {
-          // 如果已经选过则过滤掉
           let filterDay=this.multiDays.filter(v => {
             return this.year === v[0] && this.month === v[1]-1 && this.days[k1][k2].day === v[2]
           })
@@ -527,7 +485,6 @@
           this.days[k1][k2].selected = !this.days[k1][k2].selected
           this.$emit('select',this.multiDays)
         } else {
-          // 取消上次选中
           if (this.today.length > 0) {
             this.days.forEach(v=>{
               v.forEach(vv=>{
@@ -535,7 +492,6 @@
               })
             })
           }
-          // 设置当前选中天
           this.days[k1][k2].selected = true
           this.day = this.days[k1][k2].day
           this.today = [k1, k2]
@@ -559,14 +515,12 @@
         this.render(this.year,this.month)
         this.$emit('selectYear',value)
       },
-      // 返回今天
       setToday(){
         let now = new Date();
         this.year = now.getFullYear()
         this.month = now.getMonth()
         this.day = now.getDate()
         this.render(this.year,this.month)
-        // 遍历当前日找到选中
         this.days.forEach(v => {
           let day=v.find(vv => {
             return vv.day==this.day && !vv.disabled
@@ -574,10 +528,8 @@
           if(day!=undefined ){
             day.selected=true
           }
-
         })
       },
-      // 日期补零
       zeroPad(n){
         return String(n < 10 ? '0' + n : n)
       },
