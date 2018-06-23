@@ -7,7 +7,7 @@
 npm i mpvue-calendar
 ```
 ## 使用
-- `import calendar from 'mpvue-calendar'` 引入组件
+- `import Calendar from 'mpvue-calendar'` 引入组件
 - `components`中注册组件`Calendar `
 - `template`中使用组件`<Calendar />`
 
