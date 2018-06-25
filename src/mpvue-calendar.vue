@@ -2,10 +2,10 @@
   <div class="calendar">
     <div class="calendar-tools">
           <span class="calendar-prev" @click="prev">
-            <img src="./arrow-left.png" >
+            <img src="./arrow-left.png">
           </span>
           <span class="calendar-next"  @click="next">
-              <img src="./arrow-right.png" alt="">
+            <img src="./arrow-right.png">
           </span>
       <div class="calendar-info" @click.stop="changeYear">
         <div class="month">
@@ -33,7 +33,6 @@
         </tr>
       </div>
     </table>
-
     <div class="calendar-years" :class="{'show':yearsShow}">
       <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active':y==year}">{{y}}</span>
     </div>
@@ -195,7 +194,6 @@
         this.monthPosition = this.month * -40
         this.render(this.year, this.month)
       },
-      // 渲染日期
       render(y, m) {
         let firstDayOfMonth = new Date(y, m, 1).getDay()
         let lastDateOfMonth = new Date(y, m + 1, 0).getDate()
@@ -275,7 +273,7 @@
               }
             }
             temp[line].push(options)
-          } else { // 单选
+          } else {
             let chk = new Date()
             let chkY = chk.getFullYear()
             let chkM = chk.getMonth()
