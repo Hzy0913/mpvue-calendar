@@ -43,7 +43,6 @@
 <script>
   import calendar from './calendarinit.js'
   import {arrowLeft, arrowRight} from './images'
-  console.log(arrowLeft)
   export default {
     props: {
       multi: {
