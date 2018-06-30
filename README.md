@@ -58,7 +58,7 @@ disabled为禁用日期，如禁用2018-6-21日为`['2018-6-21']`
       ref="calendar"
       @selectMonth="selectMonth"
       @selectYear="selectYear"
-	  :arrowLeft="arrowLeft"
+      :arrowLeft="arrowLeft"
     />
     <button @click="setToday">返回今日</button>
   </div>
