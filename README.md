@@ -1,7 +1,7 @@
 ## mpvue-calendar
 基于[vue-calendar](https://github.com/jinzhe/vue-calendar "vue-calendar")的适配**mpvue**平台的的微信小程序日历组件
 ## 预览
-![比邻binlive](https://github.com/Hzy0913/hanlibrary/raw/master/xcx.jpg)
+![比邻binlive](http://img.binlive.cn/xcx.jpg)
 ## 安装
 ```
 npm i mpvue-calendar
@@ -31,6 +31,8 @@ npm i mpvue-calendar
 | selectYear(val)  | function  | 选择年份事件，val为选中的年份   |
 | prev(val)  | function  | 选择上一月事件，val为月份   |
 | next(val)  | function  | 选择下一月事件，val为月份   |
+| arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认图片   |
+| arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认图片   |
 
 - `value` 参数
 在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`
@@ -56,6 +58,7 @@ disabled为禁用日期，如禁用2018-6-21日为`['2018-6-21']`
       ref="calendar"
       @selectMonth="selectMonth"
       @selectYear="selectYear"
+	  :arrowLeft="arrowLeft"
     />
     <button @click="setToday">返回今日</button>
   </div>
@@ -63,6 +66,7 @@ disabled为禁用日期，如禁用2018-6-21日为`['2018-6-21']`
 
 <script>
 import Calendar from 'mpvue-calendar'
+import arrowLeft from '../assets/arrowLeft.png'
 
 export default {
   data () {
@@ -73,6 +77,7 @@ export default {
       begin:[2016,1,1],
       end:[2020,1,1],
       events: {'2018-6-7':'今日备注', '2018-6-8':'一条很长的明日备注'},
+	  arrowLeft: arrowLeft
     }
   },
   components: {
