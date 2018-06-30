@@ -77,7 +77,7 @@ export default {
       begin:[2016,1,1],
       end:[2020,1,1],
       events: {'2018-6-7':'今日备注', '2018-6-8':'一条很长的明日备注'},
-	  arrowLeft: arrowLeft
+      arrowLeft: arrowLeft
     }
   },
   components: {
