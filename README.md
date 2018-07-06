@@ -96,7 +96,7 @@ export default {
     selectYear(year){
       console.log(year)
     },
-    setToday(val,val1,val2) {
+    setToday() {
       this.$refs.calendar.setToday();
     },
     select(val, val2) {
