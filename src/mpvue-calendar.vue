@@ -9,9 +9,10 @@
       </div>
       <div class="calendar-info" @click.stop="changeYear">
         <div class="month">
-          <div class="month-inner" :style="{'top': monthPosition +'rpx'}">
-            <span v-for="m in months" :key="m">{{m}}</span>
+          <div class="month-inner" :style="{'top': monthPosition +'rpx'}" v-if="isIos">
+            <span v-for="m in months" :key="m" >{{m}}</span>
           </div>
+          <div class="month-text" v-else>{{monthText}}</div>
         </div>
         <div class="year">{{year}}</div>
       </div>
@@ -127,6 +128,9 @@
         days: [],
         multiDays:[],
         today: [],
+        firstRender: true,
+        isIos: false,
+        monthText: '',
         festival:{
           lunar:{
             "1-1":"春节",
@@ -172,6 +176,12 @@
       }
     },
     mounted() {
+      var self = this;
+      wx.getSystemInfo({
+        success: function(res) {
+          self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
+        }
+      });
       this.init()
     },
     methods: {
@@ -192,8 +202,14 @@
             this.rangeEnd = [year2, month2 , day2]
           }else if(this.multi){
             this.multiDays=this.value;
-            this.year = parseInt(this.value[0][0])
-            this.month = parseInt(this.value[0][1]) - 1
+            if (this.multiDays.length > 1 && !this.firstRender) {
+              this.month = parseInt(this.value[this.value.length - 1][1]) - 1;
+              this.year = parseInt(this.value[this.value.length - 1][0]);
+            } else {
+              this.firstRender = false;
+              this.month = parseInt(this.value[0][1]) - 1;
+              this.year = parseInt(this.value[0][0]);
+            }
             this.day = parseInt(this.value[0][2])
           }else{
             this.year = parseInt(this.value[0])
@@ -202,6 +218,7 @@
           }
         }
         this.monthPosition = this.month * -40
+        this.monthText = this.months[this.month];
         this.render(this.year, this.month)
       },
       // 渲染日期
@@ -429,6 +446,7 @@
           this.month = parseInt(this.month) - 1
         }
         this.monthPosition = this.month * -40
+        this.monthText = this.months[this.month];
         this.render(this.year, this.month)
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('prev',this.month+1,this.year)
@@ -442,6 +460,7 @@
           this.month = parseInt(this.month) + 1
         }
         this.monthPosition = this.month * -40
+        this.monthText = this.months[this.month]
         this.render(this.year, this.month)
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('next',this.month+1,this.year)
@@ -599,6 +618,14 @@
     top:0;
     height:480rpx;
     transition:top .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
+  .calendar-info .month-text{
+    display:block;
+    font-size:28rpx;
+    height:40rpx;
+    width:200rpx;
+    overflow:hidden;
+    text-align:center;
   }
   .calendar-info>div.month .month-inner>span{
     display: block;
