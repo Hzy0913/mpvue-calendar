@@ -549,6 +549,8 @@
         this.month = now.getMonth()
         this.day = now.getDate()
         this.render(this.year,this.month)
+        this.monthPosition = this.month * -40;
+        this.monthText = this.months[this.month];
         this.days.forEach(v => {
           let day=v.find(vv => {
             return vv.day==this.day && !vv.disabled
