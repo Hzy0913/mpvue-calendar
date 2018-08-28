@@ -24,17 +24,17 @@
         </div>
       </div>
       <div class="c-body">
-        <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}">
-          <td v-for="(child,k2) in day" :key="k2" :class="{'selected':child.selected,'disabled':child.disabled}" @click="select(k1,k2,$event)" class="day">
-            <span :class="{'red':k2==0||k2==6||((child.isLunarFestival||child.isGregorianFestival) && lunar)}">{{child.day}}</span>
-            <div class="text remark-text" v-if="child.eventName!=undefined && !clean && !lunar">{{child.eventName}}</div>
-            <div class="dot" v-if="child.eventName!=undefined && clean"></div>
-            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival}" v-if="lunar">{{child.lunar}}</div>
+        <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}" :class="{'gregorianStyle': !lunar}">
+          <td v-for="(child,k2) in day" :key="k2" :class="{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}" @click="select(k1,k2,$event)" class="day">
+            <span v-if="showToday.show && showToday.today === child.day" class="c-today">{{showToday.text}}</span>
+            <span :class="{'red':k2==0||k2==6}" v-else>{{child.day}}</span>
+            <div class="text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
+            <div class="dot" v-if="child.eventName && clean"></div>
+            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival,'isTerm':child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.lunar}}</div>
           </td>
         </tr>
       </div>
     </table>
-
     <div class="calendar-years" :class="{'show':yearsShow}">
       <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active':y==year}">{{y}}</span>
     </div>
@@ -61,6 +61,10 @@
       clean: {
         type: Boolean,
         default: false
+      },
+      now: {
+        type: [String, Number],
+        default: true
       },
       range:{
         type: Boolean,
@@ -128,8 +132,10 @@
         days: [],
         multiDays:[],
         today: [],
+        handleMultiDay: [],
         firstRender: true,
         isIos: false,
+        showToday: {},
         monthText: '',
         festival:{
           lunar:{
@@ -190,7 +196,7 @@
         this.year = now.getFullYear()
         this.month = now.getMonth()
         this.day = now.getDate()
-        if (this.value.length>0) {
+        if (this.value.length || this.multi) {
           if (this.range) {
             this.year = parseInt(this.value[0][0])
             this.month = parseInt(this.value[0][1]) - 1
@@ -201,16 +207,21 @@
             this.rangeBegin = [this.year, this.month,this.day]
             this.rangeEnd = [year2, month2 , day2]
           }else if(this.multi){
-            this.multiDays=this.value;
-            if (this.multiDays.length > 1 && !this.firstRender) {
-              this.month = parseInt(this.value[this.value.length - 1][1]) - 1;
-              this.year = parseInt(this.value[this.value.length - 1][0]);
-            } else {
+            this.multiDays = this.value;
+            const handleMultiDay = this.handleMultiDay;
+            if (this.firstRender) {
               this.firstRender = false;
               this.month = parseInt(this.value[0][1]) - 1;
               this.year = parseInt(this.value[0][0]);
+            } else if (this.handleMultiDay.length) {
+              this.month = parseInt(handleMultiDay[handleMultiDay.length - 1][1]) - 1;
+              this.year = parseInt(handleMultiDay[handleMultiDay.length - 1][0]);
+              this.handleMultiDay = [];
+            } else {
+              this.month = parseInt(this.value[this.value.length - 1][1]) - 1;
+              this.year = parseInt(this.value[this.value.length - 1][0]);
             }
-            this.day = parseInt(this.value[0][2])
+            this.day = parseInt((this.value[0] || [])[2])
           }else{
             this.year = parseInt(this.value[0])
             this.month = parseInt(this.value[1]) - 1
@@ -370,7 +381,28 @@
             }
           }
         }
-        this.days = temp
+        this.days = temp;
+        if (typeof this.now === 'boolean' && !this.now) {
+          this.showToday = {show: false};
+        } else {
+          const now = new Date();
+          const nowYear = now.getFullYear();
+          const nowMonth = now.getMonth();
+          const nowDay = now.getDate();
+          if (this.now && this.year === nowYear && this.month === nowMonth) {
+            const now = new Date();
+            const nowYear = now.getFullYear();
+            const nowMonth = now.getMonth();
+            const nowDay = now.getDate();
+            this.showToday = {
+              show: true,
+              today: nowDay,
+              text: typeof this.now === 'string' ? this.now : '今'
+            };
+          } else {
+            this.showToday = {show: false};
+          }
+        }
       },
       computedPrevYear(){
         let value=this.year
@@ -413,6 +445,7 @@
       getLunarInfo(y,m,d){
         let lunarInfo=calendar.solar2lunar(y,m,d)
         let lunarValue=lunarInfo.IDayCn
+        let Term=lunarInfo.Term
         let isLunarFestival=false
         let isGregorianFestival=false
         if(this.festival.lunar[lunarInfo.lMonth+"-"+lunarInfo.lDay]!=undefined){
@@ -423,9 +456,10 @@
           isGregorianFestival=true
         }
         return {
-          lunar:lunarValue,
+          lunar:Term || lunarValue,
           isLunarFestival:isLunarFestival,
           isGregorianFestival:isGregorianFestival,
+          isTerm: lunarInfo.isTerm,
         }
       },
       getEvents(y,m,d){
@@ -500,15 +534,11 @@
           }
           this.render(this.year, this.month)
         }else if (this.multi) {
-          let filterDay=this.multiDays.filter(v => {
-            return this.year === v[0] && this.month === v[1]-1 && this.days[k1][k2].day === v[2]
-          })
-          if( filterDay.length>0 ){
-            this.multiDays=this.multiDays.filter(v=> {
-              return this.year !== v[0] || this.month !== v[1]-1 || this.days[k1][k2].day !== v[2]
-            })
-          }else{
-            this.multiDays.push([this.year,this.month+1,this.days[k1][k2].day]);
+          const filterDayIndex = this.multiDays.findIndex(v => this.year === v[0] && this.month === v[1]-1 && this.days[k1][k2].day === v[2]);
+          if(~filterDayIndex) {
+            this.handleMultiDay = this.multiDays.splice(filterDayIndex, 1);
+          } else {
+            this.multiDays.push([this.year, this.month+1, this.days[k1][k2].day]);
           }
           this.days[k1][k2].selected = !this.days[k1][k2].selected
           this.$emit('select',this.multiDays)
@@ -559,6 +589,9 @@
             day.selected=true
           }
         })
+      },
+      dateInfo(y, m, d) {
+        return calendar.solar2lunar(y, m, d);
       },
       zeroPad(n){
         return String(n < 10 ? '0' + n : n)
@@ -690,15 +723,11 @@
     margin:0px auto;
     border-radius:50%;
   }
-  .calendar td:not(.selected) span:not(.red):hover{
-    background:#f3f8fa;
-    color:#444;
-  }
-  .calendar td:not(.selected) span.red:hover{
-    background:#f9efef;
-  }
   .calendar td:not(.disabled) span.red{
     color:#ea6151;
+  }
+  .c-today{
+    color: #3b75fb;
   }
   .calendar td.selected span{
     background-color: #3b75fb;
@@ -710,13 +739,13 @@
     left:0;
     right:0;
     text-align: center;
-
     padding:2px;
     font-size:20rpx;
     line-height: 1.2;
     color:#444;
   }
   .calendar td .isGregorianFestival,
+  .calendar td .isTerm,
   .calendar td .isLunarFestival{
     color:#ea6151;
   }
@@ -724,9 +753,16 @@
     background-color: #3b75fb;
     color: #fff;
   }
-  .calendar td.selected span.red:hover{
-    background-color: #3b75fb;
-    color: #fff;
+  .selected .text {
+    color: #fff !important;
+  }
+  .calendar .lunarStyle span{
+    width: 80rpx;
+    height: 80rpx;
+    line-height:54rpx;
+  }
+  .calendar .lunarStyle .text{
+    top: 44rpx;
   }
   .calendar thead td {
     text-transform: uppercase;
