@@ -36,13 +36,13 @@ npm i mpvue-calendar
 | arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认图片   |
 | arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认图片   |
 
-- `value` 参数
+- `value` 参数<br>
 在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如range模式选中2018年6月21到6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`
-- `events` 参数
+- `events` 参数<br>
 events为自定义备注，例如备注2018年6月21日为`{'2018-6-21': '今日备注', '2018-6-22':'明日备注'}`，在**clean**模式下备注为圆点，**lunar**农历模式下备注会替代农历优先展示
-- `disabled` 参数
+- `disabled` 参数<br>
 disabled为禁用日期，如禁用2018-6-21日为`['2018-6-21']`
-- `now` 参数
+- `now` 参数<br>
 now参数可以选择是否将今天日期展示为`今`字，传入false则不展示，传入字符串则展示你定义等字符串内容，默认为true展示今字样
 
 ## 示例
@@ -64,7 +64,7 @@ now参数可以选择是否将今天日期展示为`今`字，传入false则不�
       :arrowLeft="arrowLeft"
     />
     <button @click="setToday">返回今日</button>
-	<button @click="dateInfo">今日信息</button>
+    <button @click="dateInfo">今日信息</button>
   </div>
 </template>
 
