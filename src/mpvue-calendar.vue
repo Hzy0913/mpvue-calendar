@@ -211,8 +211,12 @@
             const handleMultiDay = this.handleMultiDay;
             if (this.firstRender) {
               this.firstRender = false;
-              this.month = parseInt(this.value[0][1]) - 1;
-              this.year = parseInt(this.value[0][0]);
+              const thatYear = (this.value[0] || [])[0];
+              const thatMonth = (this.value[0] || [])[1];
+              if (isFinite(thatYear) && isFinite(thatMonth)) {
+                this.month = parseInt(thatMonth) - 1;
+                this.year = parseInt(thatYear);
+              }
             } else if (this.handleMultiDay.length) {
               this.month = parseInt(handleMultiDay[handleMultiDay.length - 1][1]) - 1;
               this.year = parseInt(handleMultiDay[handleMultiDay.length - 1][0]);
