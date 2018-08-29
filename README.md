@@ -103,9 +103,9 @@ export default {
     setToday() {
       this.$refs.calendar.setToday();
     },
-	dateInfo() {
+    dateInfo() {
       const info = this.$refs.calendar.dateInfo(2018, 8, 23);
-	  console.log(info);
+      console.log(info);
     },
     select(val, val2) {
       console.log(val)
