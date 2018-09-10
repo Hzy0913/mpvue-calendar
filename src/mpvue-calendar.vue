@@ -177,6 +177,9 @@
       events(){
         this.render(this.year,this.month)
       },
+      disabled(){
+        this.render(this.year,this.month)
+      },
       value(){
         this.init();
       }
@@ -237,7 +240,13 @@
         this.render(this.year, this.month)
       },
       // 渲染日期
-      render(y, m) {
+      render(y, m, renderer) {
+        if (renderer) {
+          this.year = y;
+          this.month = m;
+          this.monthPosition = m * -40
+          this.monthText = this.months[this.month];
+        }
         let firstDayOfMonth = new Date(y, m, 1).getDay()
         let lastDateOfMonth = new Date(y, m + 1, 0).getDate()
         let lastDayOfLastMonth = new Date(y, m, 0).getDate()
@@ -407,6 +416,11 @@
             this.showToday = {show: false};
           }
         }
+      },
+      renderer(y, m) {
+        y = y || this.year;
+        m = typeof parseInt(m) === number ? (m-1) : this.month;
+        this.render(y, m, true);
       },
       computedPrevYear(){
         let value=this.year
