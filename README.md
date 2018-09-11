@@ -28,8 +28,9 @@ npm i mpvue-calendar
 | range  | Boolean  | 是否为范围模式，默认为false   |
 | multi  | Boolean  | 是否为多选模式，默认为false   |
 | select(val, val2)  | function  | 日期选中事件,在range模式下val为开始日期、val2为结束日期，其他val为选中日期   |
-| setToday()  | function  | 返回今日   |
-| dateInfo(y, m, d)  | function  | 传入年,月,日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
+| setToday()  | function  | 组件实例中的方法，可以返回今日   |
+| renderer(year, month)  | function  | 组件实例中的方法，可以重新渲染日期(参数中传入渲染的年份和月份，需要为数字类型) |
+| dateInfo(y, m, d)  | function  | 组件实例中的方法，传入年,月,日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
 | selectYear(val)  | function  | 选择年份事件，val为选中的年份   |
 | prev(val)  | function  | 选择上一月事件，val为月份   |
 | next(val)  | function  | 选择下一月事件，val为月份   |
@@ -65,6 +66,7 @@ now参数可以选择是否将今天日期展示为`今`字，传入false则不�
     />
     <button @click="setToday">返回今日</button>
     <button @click="dateInfo">日期信息</button>
+    <button @click="renderer">重新渲染年月日期</button>
   </div>
 </template>
 
@@ -106,6 +108,9 @@ export default {
     dateInfo() {
       const info = this.$refs.calendar.dateInfo(2018, 8, 23);
       console.log(info);
+    },
+    renderer() {
+      this.$refs.calendar.renderer(2018, 8); //渲染2018年8月份
     },
     select(val, val2) {
       console.log(val)
