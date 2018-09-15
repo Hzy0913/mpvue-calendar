@@ -23,8 +23,12 @@ npm i mpvue-calendar
 | disabled  | Array  | 禁用日期  |
 | events  | Object  | 自定义备注  |
 | lunar  | Boolean  | 是否显示农历，默认为false  |
+| monFirst   | Boolean  | 是否每行日期以星期一作为开头，默认为false(默认为星期日开头)  |
+| completion   | Boolean  | 是否补全日期，设为true时会以每月6行展示，不足6行的会用下月日期补齐，默认为false  |
 | clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点，默认为false   |
 | now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字，默认为true   |
+| almanacs   | Object  | 自定义节日，如{'11-14': '学生日', '11-22': '感恩日'}  |
+| tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   |
 | range  | Boolean  | 是否为范围模式，默认为false   |
 | multi  | Boolean  | 是否为多选模式，默认为false   |
 | select(val, val2)  | function  | 日期选中事件,在range模式下val为开始日期、val2为结束日期，其他val为选中日期   |
@@ -45,6 +49,8 @@ events为自定义备注，例如备注2018年6月21日为`{'2018-6-21': '今日
 disabled为禁用日期，如禁用2018-6-21日为`['2018-6-21']`
 - `now` 参数<br>
 now参数可以选择是否将今天日期展示为`今`字，传入false则不展示，传入字符串则展示你定义等字符串内容，默认为true展示今字样
+- `tileContent` 参数<br>
+tileContent参数可以为具体某日定义一个class名，还可以插入一段文本内容。如`[{date: '2018-9-20', className: 'holiday', content: '休'}]`可以设置2018-9-20这天的class名为holiday，并且生成一个文本内容为 **休** 的dom节点
 
 ## 示例
 ```javascript
