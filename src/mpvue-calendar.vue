@@ -25,12 +25,12 @@
       </div>
       <div class="c-body">
         <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}" @click="select(k1,k2,$event)" class="day">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}, child.className]" @click="select(k1,k2,$event)" class="day">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="c-today">{{showToday.text}}</span>
-            <span :class="{'red':k2==0||k2==6}" v-else>{{child.day}}</span>
+            <span :class="{'red':k2===(monFirst ? 5 : 0)||k2===6}" v-else>{{child.day}}<view class="slot-element">{{child.content}}</view></span>
             <div class="text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="dot" v-if="child.eventName && clean"></div>
-            <div class="text" :class="{'isLunarFestival':child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival,'isTerm':child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.lunar}}</div>
+            <div class="text" :class="{'isLunarFestival':child.isAlmanac || child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival,'isTerm':child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
           </td>
         </tr>
       </div>
@@ -70,6 +70,10 @@
         type: Boolean,
         default: false
       },
+      completion:{
+        type: Boolean,
+        default: false
+      },
       value: {
         type: Array,
         default: function(){
@@ -98,14 +102,30 @@
           return []
         }
       },
+      almanacs:{
+        type: Array,
+        default: function(){
+          return []
+        }
+      },
+      tileContent:{
+        type: Array,
+        default: function(){
+          return []
+        }
+      },
       lunar: {
+        type: Boolean,
+        default: false
+      },
+      monFirst: {
         type: Boolean,
         default: false
       },
       weeks: {
         type: Array,
         default:function(){
-          return ['日', '一', '二', '三', '四', '五', '六']
+          return this.monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六']
         }
       },
       months:{
@@ -370,7 +390,8 @@
             line++
           }else if (i == lastDateOfMonth) {
             let k = 1
-            for (let d=day; d < 6; d++) {
+            const lastDateOfMonthLength = this.monFirst ? 7 : 6;
+            for (let d=day; d < lastDateOfMonthLength; d++) {
               temp[line].push(Object.assign(
                 {day: k,disabled: true},
                 this.getLunarInfo(this.computedNextYear(),this.computedNextMonth(true),k),
@@ -381,7 +402,8 @@
             nextMonthPushDays=k
           }
         }
-        if(line<=5 && nextMonthPushDays>0){
+        const completion = this.completion;
+        if(completion && line<=5 && nextMonthPushDays>0){
           for (let i = line+1; i<=5; i++) {
             temp[i] = []
             let start=nextMonthPushDays+(i-line-1)*7
@@ -393,6 +415,32 @@
               ))
             }
           }
+        }
+        if (this.monFirst) {
+          temp.forEach((item, index) => {
+            if (!index) {
+              return item.splice(0, 1);
+            };
+            temp[index-1].length < 7 && temp[index-1].push(item.splice(0, 1)[0]);
+          });
+          if (!completion) {
+            const lastIndex = temp.length - 1;
+            const secondToLastIndex = lastIndex - 1;
+            const differentMonth = temp[lastIndex][0].date.split('-')[1] !== temp[secondToLastIndex][6].date.split('-')[1];
+            differentMonth && temp.splice(lastIndex, 1)
+          }
+        }
+        if (this.tileContent.length) {
+          temp.forEach((item, index) => {
+            item.forEach((v, i) => {
+              const contents = this.tileContent.find(val => val.date === v.date);
+              if (contents) {
+                const {className, content} = contents || {};
+                v.className = className;
+                v.content = content;
+              }
+            });
+          });
         }
         this.days = temp;
         if (typeof this.now === 'boolean' && !this.now) {
@@ -466,19 +514,27 @@
         let Term=lunarInfo.Term
         let isLunarFestival=false
         let isGregorianFestival=false
-        if(this.festival.lunar[lunarInfo.lMonth+"-"+lunarInfo.lDay]!=undefined){
+        if(this.festival.lunar[lunarInfo.lMonth+"-"+lunarInfo.lDay]){
           lunarValue=this.festival.lunar[lunarInfo.lMonth+"-"+lunarInfo.lDay]
           isLunarFestival=true
-        }else if(this.festival.gregorian[m+"-"+d]!=undefined){
+        } else if(this.festival.gregorian[m+"-"+d]){
           lunarValue=this.festival.gregorian[m+"-"+d]
           isGregorianFestival=true
         }
-        return {
-          lunar:Term || lunarValue,
+        const lunarInfoObj = {
+          date: `${y}-${m}-${d}`,
+          lunar: Term || lunarValue,
           isLunarFestival:isLunarFestival,
           isGregorianFestival:isGregorianFestival,
           isTerm: lunarInfo.isTerm,
+        };
+        if (Object.keys(this.almanacs).length) {
+          Object.assign(lunarInfoObj, {
+            almanac: this.almanacs[m+"-"+d] || '',
+            isAlmanac: !!this.almanacs[m+"-"+d]
+          });
         }
+        return lunarInfoObj;
       },
       getEvents(y,m,d){
         if(Object.keys(this.events).length==0)return false;
