@@ -27,7 +27,8 @@
         <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}" :class="{'gregorianStyle': !lunar}">
           <td v-for="(child,k2) in day" :key="k2" :class="[{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}, child.className]" @click="select(k1,k2,$event)" class="day">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="c-today">{{showToday.text}}</span>
-            <span :class="{'red':k2===(monFirst ? 5 : 0)||k2===6}" v-else>{{child.day}}<view class="slot-element">{{child.content}}</view></span>
+            <span :class="{'red':k2===(monFirst ? 5 : 0)||k2===6}" v-else>{{child.day}}</span>
+            <view class="slot-element" v-if="!!child.content">{{child.content}}</view>
             <div class="text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="dot" v-if="child.eventName && clean"></div>
             <div class="text" :class="{'isLunarFestival':child.isAlmanac || child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival,'isTerm':child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
