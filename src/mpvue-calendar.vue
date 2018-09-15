@@ -103,9 +103,9 @@
         }
       },
       almanacs:{
-        type: Array,
+        type: Object,
         default: function(){
-          return []
+          return {}
         }
       },
       tileContent:{
