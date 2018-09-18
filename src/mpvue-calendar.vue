@@ -203,6 +203,12 @@
       },
       value(){
         this.init();
+      },
+      tileContent(){
+        this.render(this.year,this.month)
+      },
+      almanacs(){
+        this.render(this.year,this.month)
       }
     },
     mounted() {
@@ -467,9 +473,9 @@
         }
       },
       renderer(y, m) {
-        y = y || this.year;
-        m = typeof parseInt(m) === number ? (m-1) : this.month;
-        this.render(y, m, true);
+        const renderY = y || this.year;
+        const renderM = typeof parseInt(m) === 'number' ? (m-1) : this.month;
+        this.render(renderY, renderM, true);
       },
       computedPrevYear(){
         let value=this.year
