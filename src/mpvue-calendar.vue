@@ -25,9 +25,9 @@
       </div>
       <div class="c-body">
         <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}, child.className]" @click="select(k1,k2,$event)" class="day">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}, child.className]" @click="select(k1,k2,child,$event)" class="day">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="c-today">{{showToday.text}}</span>
-            <span :class="{'red':k2===(monFirst ? 5 : 0)||k2===6}" v-else>{{child.day}}</span>
+            <span :class="[{'red':k2===(monFirst ? 5 : 0)||k2===6}, 'calendar-date']" v-else>{{child.day}}</span>
             <view class="slot-element" v-if="!!child.content">{{child.content}}</view>
             <div class="text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="dot" v-if="child.eventName && clean"></div>
@@ -192,6 +192,7 @@
         },
         rangeBegin:[],
         rangeEnd:[],
+        multiDaysData: []
       }
     },
     watch:{
@@ -296,7 +297,7 @@
             k = lastDayOfLastMonth - firstDayOfMonth + 1
             for (let j = 0; j < firstDayOfMonth; j++) {
               temp[line].push(Object.assign(
-                {day: k,disabled: true},
+                {day: k,disabled: true, lastMonth: true},
                 this.getLunarInfo(this.computedPrevYear(),this.computedPrevMonth(true),k),
                 this.getEvents(this.computedPrevYear(),this.computedPrevMonth(true),k),
               ))
@@ -400,7 +401,7 @@
             const lastDateOfMonthLength = this.monFirst ? 7 : 6;
             for (let d=day; d < lastDateOfMonthLength; d++) {
               temp[line].push(Object.assign(
-                {day: k,disabled: true},
+                {day: k, disabled: true, nextMonth: true},
                 this.getLunarInfo(this.computedNextYear(),this.computedNextMonth(true),k),
                 this.getEvents(this.computedNextYear(),this.computedNextMonth(true),k),
               ))
@@ -410,20 +411,20 @@
           }
         }
         const completion = this.completion;
-        if(completion && line<=5 && nextMonthPushDays>0){
-          for (let i = line+1; i<=5; i++) {
-            temp[i] = []
-            let start=nextMonthPushDays+(i-line-1)*7
-            for (let d=start; d <= start+6; d++) {
-              temp[i].push(Object.assign(
-                {day: d,disabled: true},
-                this.getLunarInfo(this.computedNextYear(),this.computedNextMonth(true),d),
-                this.getEvents(this.computedNextYear(),this.computedNextMonth(true),d),
-              ))
-            }
-          }
-        }
         if (this.monFirst) {
+          if (!firstDayOfMonth) {
+            let lastMonthDay = lastDayOfLastMonth;
+            const LastMonthItems = [];
+            for (let i = 1; i <= 7; i++) {
+              LastMonthItems.unshift(Object.assign(
+                {day: lastMonthDay, disabled: true, lastMonth: true},
+                this.getLunarInfo(this.computedPrevYear(),this.computedPrevMonth(true),lastMonthDay),
+                this.getEvents(this.computedPrevYear(),this.computedPrevMonth(true),lastMonthDay),
+              ));
+              lastMonthDay --;
+            }
+            temp.unshift(LastMonthItems);
+          }
           temp.forEach((item, index) => {
             if (!index) {
               return item.splice(0, 1);
@@ -435,6 +436,19 @@
             const secondToLastIndex = lastIndex - 1;
             const differentMonth = temp[lastIndex][0].date.split('-')[1] !== temp[secondToLastIndex][6].date.split('-')[1];
             differentMonth && temp.splice(lastIndex, 1)
+          }
+        }
+        if(completion && temp.length <= 5 && nextMonthPushDays>0){
+          for (let i = temp.length; i<=5; i++) {
+            temp[i] = []
+            let start=nextMonthPushDays+(i-line-1)*7
+            for (let d=start; d <= start+6; d++) {
+              temp[i].push(Object.assign(
+                {day: d, disabled: true,  nextMonth: true},
+                this.getLunarInfo(this.computedNextYear(),this.computedNextMonth(true),d),
+                this.getEvents(this.computedNextYear(),this.computedNextMonth(true),d),
+              ))
+            }
           }
         }
         if (this.tileContent.length) {
@@ -580,8 +594,15 @@
         this.$emit('selectMonth',this.month+1,this.year)
         this.$emit('next',this.month+1,this.year)
       },
-      select(k1, k2, e) {
+      select(k1, k2, data, e) {
         if (e != undefined) e.stopPropagation()
+        if (data.lastMonth) {
+          return this.prev(e)
+        } else if (data.nextMonth){
+          return this.next(e)
+        }
+        if (data.disabled) return;
+        (data || {}).event = (this.events || {})[data.date] || '';
         if (this.range) {
           if (this.rangeBegin.length == 0 || this.rangeEndTemp != 0) {
             this.rangeBegin = [this.year, this.month,this.days[k1][k2].day]
@@ -614,15 +635,20 @@
             this.$emit('select',begin,end)
           }
           this.render(this.year, this.month)
-        }else if (this.multi) {
+        } else if (this.multi) {
           const filterDayIndex = this.multiDays.findIndex(v => this.year === v[0] && this.month === v[1]-1 && this.days[k1][k2].day === v[2]);
           if(~filterDayIndex) {
             this.handleMultiDay = this.multiDays.splice(filterDayIndex, 1);
           } else {
             this.multiDays.push([this.year, this.month+1, this.days[k1][k2].day]);
           }
-          this.days[k1][k2].selected = !this.days[k1][k2].selected
-          this.$emit('select',this.multiDays)
+          this.days[k1][k2].selected = !this.days[k1][k2].selected;
+          if (this.days[k1][k2].selected) {
+            this.multiDaysData.push(data);
+          } else {
+            this.multiDaysData = this.multiDaysData.filter(item => item.date !== data.date);
+          }
+          this.$emit('select',this.multiDays, this.multiDaysData);
         } else {
           if (this.today.length > 0) {
             this.days.forEach(v=>{
@@ -631,10 +657,10 @@
               })
             })
           }
-          this.days[k1][k2].selected = true
-          this.day = this.days[k1][k2].day
-          this.today = [k1, k2]
-          this.$emit('select',[this.year,this.zero?this.zeroPad(this.month + 1):this.month + 1,this.zero?this.zeroPad(this.days[k1][k2].day):this.days[k1][k2].day])
+          this.days[k1][k2].selected = true;
+          this.day = this.days[k1][k2].day;
+          this.today = [k1, k2];
+          this.$emit('select',[this.year,this.zero?this.zeroPad(this.month + 1):this.month + 1,this.zero?this.zeroPad(this.days[k1][k2].day):this.days[k1][k2].day], data);
         }
       },
       changeYear(){
@@ -789,8 +815,6 @@
   }
   .calendar td.disabled {
     color: #ccc;
-    pointer-events:none !important;
-    cursor: default !important;
   }
   .calendar td.disabled div{
     color: #ccc;
