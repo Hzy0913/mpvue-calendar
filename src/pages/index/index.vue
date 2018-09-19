@@ -221,6 +221,17 @@
         },
       }
     },
+    mounted() {
+      wx.showShareMenu({
+        withShareTicket: true
+      });
+    },
+    onShareAppMessage(res){
+      return {
+        title: '比邻binlive日历',
+        path: '/pages/index/main',
+      }
+    },
     components: {
       Calendar
     },
