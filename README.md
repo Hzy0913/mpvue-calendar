@@ -31,7 +31,7 @@ npm i mpvue-calendar
 | tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   |
 | range  | Boolean  | 是否为范围模式，默认为false   |
 | multi  | Boolean  | 是否为多选模式，默认为false   |
-| select(val, val2)  | function  | 日期选中事件,在range模式下val为开始日期、val2为结束日期，其他val为选中日期   |
+| select(val, val2)  | function  | 日期选中事件,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期,val2为日期信息   |
 | setToday()  | function  | 组件实例中的方法，可以返回今日   |
 | renderer(year, month)  | function  | 组件实例中的方法，可以重新渲染日期(参数中传入渲染的年份和月份，需要为数字类型) |
 | dateInfo(y, m, d)  | function  | 组件实例中的方法，传入年,月,日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
