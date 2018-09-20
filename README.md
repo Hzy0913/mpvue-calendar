@@ -69,6 +69,8 @@ tileContent参数可以为具体某日定义一个class名，还可以插入一�
       @selectMonth="selectMonth"
       @selectYear="selectYear"
       :arrowLeft="arrowLeft"
+      :tileContent="tileContent"
+      :almanacs="almanacs"
     />
     <button @click="setToday">返回今日</button>
     <button @click="dateInfo">日期信息</button>
@@ -89,6 +91,11 @@ export default {
       begin:[2016,1,1],
       end:[2020,1,1],
       events: {'2018-6-7':'今日备注', '2018-6-8':'一条很长的明日备注'},
+      almanacs: {'9-3': '抗战胜利日', '11-17': '学生日'},
+      tileContent: [
+          {date: '2018-9-22', className: 'holiday ', content: '休'},
+          {date: '2018-9-23', className: 'holiday ', content: '休'}
+      ],
       arrowLeft: arrowLeft
     }
   },
