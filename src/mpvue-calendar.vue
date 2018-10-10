@@ -1,5 +1,5 @@
 <template>
-  <div class="calendar">
+  <div class="mpvue-calendar">
     <div class="calendar-tools">
       <div class="calendar-prev" @click="prev">
         <img :src="arrowLeft">
@@ -8,30 +8,30 @@
         <img :src="arrowRight">
       </div>
       <div class="calendar-info" @click.stop="changeYear">
-        <div class="month">
-          <div class="month-inner" :style="{'top': monthPosition +'rpx'}" v-if="isIos">
+        <div class="mc-month">
+          <div class="mc-month-inner" :style="{'top': monthPosition +'rpx'}" v-if="isIos">
             <span v-for="m in months" :key="m" >{{m}}</span>
           </div>
-          <div class="month-text" v-else>{{monthText}}</div>
+          <div class="mc-month-text" v-else>{{monthText}}</div>
         </div>
-        <div class="year">{{year}}</div>
+        <div class="mc-year">{{year}}</div>
       </div>
     </div>
     <table cellpadding="5">
-      <div class="c-head">
-        <div class="c-head-box">
-          <div v-for="(week, index) in weeks" :key="index" class="week">{{week}}</div>
+      <div class="mc-head">
+        <div class="mc-head-box">
+          <div v-for="(week, index) in weeks" :key="index" class="mc-week">{{week}}</div>
         </div>
       </div>
-      <div class="c-body">
+      <div class="mc-body">
         <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected':child.selected,'disabled':child.disabled,'lunarStyle': lunar}, child.className]" @click="select(k1,k2,child,$event)" class="day">
-            <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="c-today">{{showToday.text}}</span>
-            <span :class="[{'red':k2===(monFirst ? 5 : 0)||k2===6}, 'calendar-date']" v-else>{{child.day}}</span>
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'disabled': child.disabled, 'lunarStyle': lunar}, child.className]" @click="select(k1, k2, child, $event)" class="mc-day">
+            <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today">{{showToday.text}}</span>
+            <span :class="[{'red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <view class="slot-element" v-if="!!child.content">{{child.content}}</view>
-            <div class="text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
-            <div class="dot" v-if="child.eventName && clean"></div>
-            <div class="text" :class="{'isLunarFestival':child.isAlmanac || child.isLunarFestival,'isGregorianFestival':child.isGregorianFestival,'isTerm':child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
+            <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
+            <div class="mc-dot" v-if="child.eventName && clean"></div>
+            <div class="mc-text" :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival,'isGregorianFestival': child.isGregorianFestival,'isTerm': child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
           </td>
         </tr>
       </div>
@@ -732,8 +732,8 @@
   }
 </script>
 
-<style>
-  .calendar {
+<style scoped>
+  .mpvue-calendar {
     margin:auto;
     width: 100%;
     min-width:300px;
@@ -770,7 +770,7 @@
     width: 220rpx;
     margin: 0 auto;
   }
-  .calendar-info>div.month{
+  .calendar-info>div.mc-month{
     margin:auto;
     height:40rpx;
     width:100px;
@@ -779,14 +779,14 @@
     overflow: hidden;
     position: relative;
   }
-  .calendar-info>div.month .month-inner{
+  .calendar-info>div.vm-month .mc-month-inner{
     position: absolute;
     left:0;
     top:0;
     height:480rpx;
     transition:top .5s cubic-bezier(0.075, 0.82, 0.165, 1);
   }
-  .calendar-info .month-text{
+  .calendar-info .mc-month-text{
     display:block;
     font-size:28rpx;
     height:40rpx;
@@ -794,7 +794,7 @@
     overflow:hidden;
     text-align:center;
   }
-  .calendar-info>div.month .month-inner>span{
+  .calendar-info>div.vm-month .mc-month-inner>span{
     display: block;
     font-size: 14px;
     height:20px;
@@ -802,7 +802,7 @@
     overflow: hidden;
     text-align: center;
   }
-  .calendar-info>div.year{
+  .calendar-info>div.mc-year{
     font-size:10px;
     line-height: 1;
     color:#999;
@@ -812,15 +812,14 @@
     float:right;
     text-align: center;
   }
-
-  .calendar table {
+  .mpvue-calendar table {
     clear: both;
     width: 100%;
     margin-bottom:10px;
     border-collapse: collapse;
     color: #444444;
   }
-  .calendar td {
+  .mpvue-calendar td {
     margin:2px !important;
     padding:0px 0;
     width: 14.28571429%;
@@ -833,18 +832,18 @@
     position: relative;
     vertical-align: top;
   }
-  .calendar td.week{
+  .mpvue-calendar td.mc-week{
     font-size:10px;
     pointer-events:none !important;
     cursor: default !important;
   }
-  .calendar td.disabled {
+  .mpvue-calendar td.disabled {
     color: #ccc;
   }
-  .calendar td.disabled div{
+  .mpvue-calendar td.disabled div{
     color: #ccc;
   }
-  .calendar td span{
+  .mpvue-calendar td span{
     display:block;
     height:76rpx;
     width:76rpx;
@@ -853,17 +852,17 @@
     margin:0px auto;
     border-radius:50%;
   }
-  .calendar td:not(.disabled) span.red{
+  .mpvue-calendar td:not(.disabled) span.red{
     color:#ea6151;
   }
-  .c-today{
+  .mc-today{
     color: #3b75fb;
   }
-  .calendar td.selected span{
+  .mpvue-calendar td.selected span{
     background-color: #3b75fb;
     color: #fff;
   }
-  .calendar td .text{
+  .mpvue-calendar td .mc-text{
     position: absolute;
     top:28px;
     left:0;
@@ -874,52 +873,30 @@
     line-height: 1.2;
     color:#444;
   }
-  .calendar td .isGregorianFestival,
-  .calendar td .isTerm,
-  .calendar td .isLunarFestival{
+  .mpvue-calendar td .isGregorianFestival,
+  .mpvue-calendar td .isTerm,
+  .mpvue-calendar td .isLunarFestival{
     color:#ea6151;
   }
-  .calendar td.selected span.red{
+  .mpvue-calendar td.selected span.red{
     background-color: #3b75fb;
     color: #fff;
   }
-  .selected .text {
+  .selected .mc-text {
     color: #fff !important;
   }
-  .calendar .lunarStyle span{
+  .mpvue-calendar .lunarStyle span{
     width: 80rpx;
     height: 80rpx;
     line-height:54rpx;
   }
-  .calendar .lunarStyle .text{
+  .mpvue-calendar .lunarStyle .mc-text{
     top: 44rpx;
   }
-  .calendar thead td {
+  .mpvue-calendar thead td {
     text-transform: uppercase;
     height:30px;
     vertical-align: middle;
-  }
-  .calendar-button{
-    text-align: center;
-  }
-  .calendar-button span{
-    cursor: pointer;
-    display: inline-block;
-    min-height: 1em;
-    min-width: 5em;
-    vertical-align: baseline;
-    background:#5e7a88;
-    color:#fff;
-    margin: 0 .25em 0 0;
-    padding: .6em 2em;
-    font-size: 1em;
-    line-height: 1em;
-    text-align: center;
-    border-radius: .3em;
-  }
-  .calendar-button span.cancel{
-    background:#efefef;
-    color:#666;
   }
   .calendar-years{
     position: absolute;
@@ -959,32 +936,32 @@
     box-shadow: 4rpx 4rpx 2rpx rgba(88, 125, 255, 0.4);
     color:#fff;
   }
-  .c-head {
+  .mc-head {
     margin-bottom: 20rpx;
   }
-  .c-head div {
+  .mc-head div {
     overflow: hidden;
   }
-  .c-head-box div {
+  .mc-head-box div {
     flex:1;
     text-align: center;
   }
-  .c-head-box {
+  .mc-head-box {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-content: space-between
   }
-  .c-head-box div {
+  .mc-head-box div {
     font-size: 28rpx;
   }
-  .c-body tr {
+  .mc-body tr {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-content: space-between
   }
-  .dot {
+  .mc-dot {
     width: 10rpx;
     height: 10rpx;
     background-color: #ea6151;
