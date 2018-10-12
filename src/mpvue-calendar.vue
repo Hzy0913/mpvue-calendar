@@ -37,7 +37,7 @@
       </div>
     </table>
     <div class="calendar-years" :class="{'show':yearsShow}">
-      <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active':y==year}">{{y}}</span>
+      <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active': y === year}">{{y}}</span>
     </div>
   </div>
 </template>
@@ -219,7 +219,7 @@
           self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
         }
       });
-      this.init()
+      this.init();
     },
     methods: {
       init() {
@@ -292,7 +292,7 @@
           let k;
           if (day == 0) {
             temp[line] = [];
-          } else if (i == 1) {
+          } else if (i === 1) {
             temp[line] = [];
             k = lastDayOfLastMonth - firstDayOfMonth + 1;
             for (let j = 0; j < firstDayOfMonth; j++) {
