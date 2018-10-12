@@ -779,7 +779,7 @@
     overflow: hidden;
     position: relative;
   }
-  .calendar-info>div.vm-month .mc-month-inner{
+  .calendar-info>div.mc-month .mc-month-inner{
     position: absolute;
     left:0;
     top:0;
@@ -794,7 +794,7 @@
     overflow:hidden;
     text-align:center;
   }
-  .calendar-info>div.vm-month .mc-month-inner>span{
+  .calendar-info>div.mc-month .mc-month-inner>span{
     display: block;
     font-size: 14px;
     height:20px;
