@@ -1,5 +1,5 @@
 <template>
-  <div class="mpvue-calendar">
+  <div class="mpvue-calendar" ref="calendar">
     <div class="calendar-tools">
       <div class="calendar-prev" @click="prev">
         <img :src="arrowLeft">
@@ -9,7 +9,7 @@
       </div>
       <div class="calendar-info" @click.stop="changeYear">
         <div class="mc-month">
-          <div class="mc-month-inner" :style="{'top': monthPosition +'rpx'}" v-if="isIos">
+          <div class="mc-month-inner" :style="{'top': monthPosition + unit}" v-if="isIos">
             <span v-for="m in months" :key="m" >{{m}}</span>
           </div>
           <div class="mc-month-text" v-else>{{monthText}}</div>
@@ -24,11 +24,11 @@
         </div>
       </div>
       <div class="mc-body">
-        <tr v-for="(day,k1) in days" :key="k1" style="{'animation-delay',(k1*30)+'ms'}" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'disabled': child.disabled, 'lunarStyle': lunar}, child.className]" @click="select(k1, k2, child, $event)" class="mc-day">
+        <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'disabled': child.disabled, 'lunarStyle': lunar}, child.className]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today">{{showToday.text}}</span>
-            <span :class="[{'red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
-            <view class="slot-element" v-if="!!child.content">{{child.content}}</view>
+            <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
+            <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="mc-dot" v-if="child.eventName && clean"></div>
             <div class="mc-text" :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival,'isGregorianFestival': child.isGregorianFestival,'isTerm': child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
@@ -43,8 +43,9 @@
 </template>
 
 <script>
-  import calendar from './calendarinit.js'
-  import {arrowLeft, arrowRight} from './images'
+  import calendar from './calendarinit.js';
+  import {arrowLeft, arrowRight} from './images';
+  const isBrowser = !!window;
   export default {
     props: {
       multi: {
@@ -64,7 +65,7 @@
         default: false
       },
       now: {
-        type: [String, Number],
+        type: [String, Boolean],
         default: true
       },
       range:{
@@ -155,7 +156,7 @@
         today: [],
         handleMultiDay: [],
         firstRender: true,
-        isIos: false,
+        isIos: true,
         showToday: {},
         monthText: '',
         festival:{
@@ -192,7 +193,10 @@
         },
         rangeBegin:[],
         rangeEnd:[],
-        multiDaysData: []
+        multiDaysData: [],
+        itemStyle: {},
+        unit: isBrowser ? 'px' : 'rpx',
+        positionH: isBrowser ? -24 : -40
       }
     },
     watch:{
@@ -214,11 +218,16 @@
     },
     mounted() {
       const self = this;
-      wx.getSystemInfo({
-        success: function(res) {
-          self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
-        }
-      });
+      const calendar = this.$refs.calendar;
+      const itemWidth = (calendar.clientWidth/7 - 4).toFixed(5) + 'px';
+      this.itemStyle = {width: itemWidth, height: itemWidth, lineHeight: itemWidth};
+      if (!isBrowser) {
+        wx.getSystemInfo({
+          success: function(res) {
+            self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
+          }
+        });
+      }
       this.init();
     },
     methods: {
@@ -263,7 +272,7 @@
             this.day = parseInt(this.value[2]);
           }
         }
-        this.monthPosition = this.month * -40;
+        this.monthPosition = this.month * this.positionH;
         this.monthText = this.months[this.month];
         this.render(this.year, this.month);
       },
@@ -272,7 +281,7 @@
         if (renderer) {
           this.year = y;
           this.month = m;
-          this.monthPosition = m * -40;
+          this.monthPosition = m * this.positionH;
           this.monthText = this.months[this.month];
         }
         let firstDayOfMonth = new Date(y, m, 1).getDay();
@@ -594,7 +603,7 @@
         } else {
           this.month = parseInt(this.month) - 1;
         }
-        this.monthPosition = this.month * -40;
+        this.monthPosition = this.month * this.positionH;
         this.monthText = this.months[this.month];
         this.render(this.year, this.month);
         this.$emit('selectMonth', this.month + 1, this.year);
@@ -608,7 +617,7 @@
         } else {
           this.month = parseInt(this.month) + 1;
         }
-        this.monthPosition = this.month * -40;
+        this.monthPosition = this.month * this.positionH;
         this.monthText = this.months[this.month];
         this.render(this.year, this.month);
         this.$emit('selectMonth', this.month + 1, this.year);
@@ -711,7 +720,7 @@
         this.month = now.getMonth();
         this.day = now.getDate();
         this.render(this.year,this.month);
-        this.monthPosition = this.month * -40;
+        this.monthPosition = this.month * this.positionH;
         this.monthText = this.months[this.month];
         this.days.forEach(v => {
           let day = v.find(vv => {
@@ -731,251 +740,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .mpvue-calendar {
-    margin:auto;
-    width: 100%;
-    min-width:300px;
-    background: #fff;
-    user-select:none;
-    position: relative;
-  }
-  .calendar-tools{
-    height:40px;
-    font-size: 20px;
-    line-height: 40px;
-    color:#5e7a88;
-    box-shadow: 0rpx 4rpx 8rpx rgba(25, 47, 89, 0.1);
-    margin-bottom: 30rpx;
-    border-top: 1px solid rgba(200, 200, 200, .1);
-  }
-  .calendar-tools span{
-    cursor: pointer;
-  }
-  .calendar-prev{
-    width: 14.28571429%;
-    float:left;
-    text-align: center;
-  }
-  .calendar-prev img, .calendar-next img{
-    width: 34rpx;
-    height: 34rpx;
-  }
-  .calendar-info{
-    padding-top: 3px;
-    font-size:16px;
-    line-height: 1.3;
-    text-align: center;
-    width: 220rpx;
-    margin: 0 auto;
-  }
-  .calendar-info>div.mc-month{
-    margin:auto;
-    height:40rpx;
-    width:100px;
-    text-align: center;
-    color:#5e7a88;
-    overflow: hidden;
-    position: relative;
-  }
-  .calendar-info>div.mc-month .mc-month-inner{
-    position: absolute;
-    left:0;
-    top:0;
-    height:480rpx;
-    transition:top .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-  }
-  .calendar-info .mc-month-text{
-    display:block;
-    font-size:28rpx;
-    height:40rpx;
-    width:200rpx;
-    overflow:hidden;
-    text-align:center;
-  }
-  .calendar-info>div.mc-month .mc-month-inner>span{
-    display: block;
-    font-size: 14px;
-    height:20px;
-    width:100px;
-    overflow: hidden;
-    text-align: center;
-  }
-  .calendar-info>div.mc-year{
-    font-size:10px;
-    line-height: 1;
-    color:#999;
-  }
-  .calendar-next{
-    width: 14.28571429%;
-    float:right;
-    text-align: center;
-  }
-  .mpvue-calendar table {
-    clear: both;
-    width: 100%;
-    margin-bottom:10px;
-    border-collapse: collapse;
-    color: #444444;
-  }
-  .mpvue-calendar td {
-    margin:2px !important;
-    padding:0px 0;
-    width: 14.28571429%;
-    height:88rpx;
-    text-align: center;
-    vertical-align: middle;
-    font-size:14px;
-    line-height: 125%;
-    cursor: pointer;
-    position: relative;
-    vertical-align: top;
-  }
-  .mpvue-calendar td.mc-week{
-    font-size:10px;
-    pointer-events:none !important;
-    cursor: default !important;
-  }
-  .mpvue-calendar td.disabled {
-    color: #ccc;
-  }
-  .mpvue-calendar td.disabled div{
-    color: #ccc;
-  }
-  .mpvue-calendar td span{
-    display:block;
-    height:76rpx;
-    width:76rpx;
-    font-size: 28rpx;
-    line-height:76rpx;
-    margin:0px auto;
-    border-radius:50%;
-  }
-  .mpvue-calendar td:not(.disabled) span.red{
-    color:#ea6151;
-  }
-  .mc-today{
-    color: #3b75fb;
-  }
-  .mpvue-calendar td.selected span{
-    background-color: #3b75fb;
-    color: #fff;
-  }
-  .mpvue-calendar td .mc-text{
-    position: absolute;
-    top:28px;
-    left:0;
-    right:0;
-    text-align: center;
-    padding:2px;
-    font-size:20rpx;
-    line-height: 1.2;
-    color:#444;
-  }
-  .mpvue-calendar td .isGregorianFestival,
-  .mpvue-calendar td .isTerm,
-  .mpvue-calendar td .isLunarFestival{
-    color:#ea6151;
-  }
-  .mpvue-calendar td.selected span.red{
-    background-color: #3b75fb;
-    color: #fff;
-  }
-  .selected .mc-text {
-    color: #fff !important;
-  }
-  .mpvue-calendar .lunarStyle span{
-    width: 80rpx;
-    height: 80rpx;
-    line-height:54rpx;
-  }
-  .mpvue-calendar .lunarStyle .mc-text{
-    top: 44rpx;
-  }
-  .mpvue-calendar thead td {
-    text-transform: uppercase;
-    height:30px;
-    vertical-align: middle;
-  }
-  .calendar-years{
-    position: absolute;
-    left:0px;
-    top:85rpx;
-    right:0px;
-    bottom:0px;
-    background:#fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap:wrap;
-    overflow: auto;
-    transition:all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-10px);
-  }
-  .calendar-years.show{
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0px);
-  }
-  .calendar-years>span{
-    margin:1px 5px;
-    display: inline-block;
-    width:60px;
-    line-height: 30px;
-    border-radius: 20px;
-    text-align:center;
-    border:1px solid #fbfbfb;
-    color:#999;
-  }
-  .calendar-years>span.active{
-    border:1px solid #587dff;
-    background-color: #587dff;
-    box-shadow: 4rpx 4rpx 2rpx rgba(88, 125, 255, 0.4);
-    color:#fff;
-  }
-  .mc-head {
-    margin-bottom: 20rpx;
-  }
-  .mc-head div {
-    overflow: hidden;
-  }
-  .mc-head-box div {
-    flex:1;
-    text-align: center;
-  }
-  .mc-head-box {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-content: space-between
-  }
-  .mc-head-box div {
-    font-size: 28rpx;
-  }
-  .mc-body tr {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-content: space-between
-  }
-  .mc-dot {
-    width: 10rpx;
-    height: 10rpx;
-    background-color: #ea6151;
-    border-radius: 50%;
-    margin: 0 auto;
-    margin-top: 5rpx;
-  }
-  .remark-text {
-    padding-left: 8rpx;
-    padding-right: 8rpx;
-    box-sizing: border-box;
-    height: 34rpx;
-    overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;
-  }
-</style>
