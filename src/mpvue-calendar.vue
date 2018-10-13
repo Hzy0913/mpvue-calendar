@@ -2,10 +2,12 @@
   <div class="mpvue-calendar" ref="calendar">
     <div class="calendar-tools">
       <div class="calendar-prev" @click="prev">
-        <img :src="arrowLeft">
+        <img :src="arrowLeft" v-if="!!arrowLeft">
+        <i class="iconfont icon-arrow-left" v-else></i>
       </div>
       <div class="calendar-next"  @click="next">
-        <img :src="arrowRight">
+        <img :src="arrowRight" v-if="!!arrowRight">
+        <i class="iconfont icon-arrow-right" v-else></i>
       </div>
       <div class="calendar-info" @click.stop="changeYear">
         <div class="mc-month">
@@ -44,7 +46,6 @@
 
 <script>
   import calendar from './calendarinit.js';
-  import {arrowLeft, arrowRight} from './images';
   const isBrowser = !!window;
   export default {
     props: {
@@ -54,11 +55,11 @@
       },
       arrowLeft: {
         type: String,
-        default: arrowLeft
+        default: ''
       },
       arrowRight: {
         type: String,
-        default: arrowRight
+        default: ''
       },
       clean: {
         type: Boolean,
