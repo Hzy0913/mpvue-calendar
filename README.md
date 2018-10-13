@@ -1,5 +1,5 @@
 ## mpvue-calendar
-基于vue-calendar的适配**mpvue**平台的的微信小程序日历组件，现在已可以同时使用在**浏览器端**
+基于vue-calendar的适配**mpvue**平台的的微信小程序日历组件，现在已可以使用在**浏览器端**
 ## 预览
 ![比邻binlive](http://img.binlive.cn/xcx.jpg)
 ## 安装
@@ -11,7 +11,6 @@ npm i mpvue-calendar
 - `import 'mpvue-calendar/src/style.css'` 引入样式文件(mpvue 小程序端)
 - `components`中注册组件`Calendar `
 - `template`中使用组件`<Calendar />`
-
 ⚠️在浏览器端使用要引入下面browser-style.css替换上面的style.css
 - `import 'mpvue-calendar/src/browser-style.css'` 引入样式文件(浏览器端)
 
@@ -41,8 +40,8 @@ npm i mpvue-calendar
 | selectYear(val)  | function  | 选择年份事件，val为选中的年份   |
 | prev(val)  | function  | 选择上一月事件，val为月份   |
 | next(val)  | function  | 选择下一月事件，val为月份   |
-| arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认图片   |
-| arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认图片   |
+| arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认字体图标   |
+| arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认字体图标   |
 
 - `value` 参数<br>
 在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如multi模式选中2018年6月21和6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`(⚠️从开始日期到结束日期)
@@ -83,6 +82,7 @@ tileContent参数可以为具体某日定义一个class名，还可以插入一�
 
 <script>
 import Calendar from 'mpvue-calendar'
+import 'mpvue-calendar/src/style.css'
 import arrowLeft from '../assets/arrowLeft.png'
 
 export default {
