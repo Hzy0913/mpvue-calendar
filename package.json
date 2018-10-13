@@ -1,6 +1,6 @@
 {
   "name": "mpvue-calendar",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "mpvue calendar",
   "main": "./src/mpvue-calendar.vue",
   "scripts": {
@@ -12,8 +12,10 @@
   },
   "keywords": [
     "mpvue",
+    "vue",
     "calendar",
-    "小程序"
+    "小程序",
+    "日历组件"
   ],
   "author": "hzy",
   "license": "ISC",
