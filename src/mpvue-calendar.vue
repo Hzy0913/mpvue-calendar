@@ -46,6 +46,7 @@
 
 <script>
   import calendar from './calendarinit.js';
+  import './icon.css';
   const isBrowser = !!window;
   export default {
     props: {
