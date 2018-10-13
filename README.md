@@ -11,6 +11,7 @@ npm i mpvue-calendar
 - `import 'mpvue-calendar/src/style.css'` 引入样式文件(mpvue 小程序端)
 - `components`中注册组件`Calendar `
 - `template`中使用组件`<Calendar />`
+
 ⚠️在浏览器端使用要引入下面browser-style.css替换上面的style.css
 - `import 'mpvue-calendar/src/browser-style.css'` 引入样式文件(浏览器端)
 
