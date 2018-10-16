@@ -2,6 +2,8 @@
 基于vue-calendar的适配**mpvue**平台的的微信小程序日历组件，现在已可以使用在**浏览器端**
 ## 预览
 ![比邻binlive](http://img.binlive.cn/xcx.jpg)
+
+####🖥  [点击浏览器端预览](http://preview.binlive.cn/mpvue-calendar#/ "浏览器端预览")
 ## 安装
 ```
 npm i mpvue-calendar
