@@ -3,7 +3,7 @@
 ## 预览
 ![比邻binlive](http://img.binlive.cn/xcx.jpg)
 
-####🖥  [点击浏览器端预览](http://preview.binlive.cn/mpvue-calendar#/ "浏览器端预览")
+#### 🖥  [点击浏览器端预览](http://preview.binlive.cn/mpvue-calendar#/ "浏览器端预览")
 ## 安装
 ```
 npm i mpvue-calendar
