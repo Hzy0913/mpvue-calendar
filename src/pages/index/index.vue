@@ -143,7 +143,7 @@
 <script>
   import Calendar from 'mpvue-calendar'
   import fly from '@/utils/fly'
-
+  import 'mpvue-calendar/src/style.css'
   export default {
     data () {
       return {
@@ -1133,5 +1133,12 @@
   }
   .week:nth-child(7){
     color: #ea6151 !important;
+  }
+  .iconfont{
+    color: #2864e0 !important;
+    font-weight: 900;
+  }
+  .mc-day span{
+    margin-top: 4rpx !important;
   }
 </style>
