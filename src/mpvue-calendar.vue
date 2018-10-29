@@ -38,8 +38,13 @@
         </tr>
       </div>
     </table>
-    <div class="calendar-years" :class="{'show':yearsShow}">
-      <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active': y === year}">{{y}}</span>
+    <div class="mpvue-calendar-change" :class="{'show': yearsShow}">
+      <div class="calendar-years">
+        <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active': y === year}">{{y}}</span>
+      </div>
+      <div class="calendar-months">
+        <span v-for="(m, i) in months" :key="m" @click.stop="changeMonth(i)" :class="{'active': i === month}">{{m}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -706,9 +711,15 @@
         }
         this.yearsShow = true;
         this.years = [];
-        for(let i = ~~this.year-10; i < ~~this.year+10; i++){
+        for (let i = this.year - 5; i < this.year + 7; i++){
           this.years.push(i);
         }
+      },
+      changeMonth(value) {
+        this.yearsShow = false;
+        this.month = value;
+        this.render(this.year, this.month);
+        this.$emit('selectMonth', this.month + 1, this.year);
       },
       selectYear(value) {
         this.yearsShow = false;
@@ -724,12 +735,11 @@
         this.render(this.year,this.month);
         this.monthPosition = this.month * this.positionH;
         this.monthText = this.months[this.month];
-        this.days.forEach(v => {
-          let day = v.find(vv => {
-            return vv.day == this.day && !vv.disabled
-          })
-          if(day!=undefined){
+        this.days.some(v => {
+          const day = v.find(vv => vv.day === this.day && !vv.disabled);
+          if (day) {
             day.selected = true;
+            return true;
           }
         })
       },
