@@ -163,44 +163,6 @@
     height:30px;
     vertical-align: middle;
 }
-.calendar-years{
-    position: absolute;
-    left:0px;
-    top:42px;
-    right:0px;
-    bottom:0px;
-    background:#fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap:wrap;
-    overflow: auto;
-    transition:all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-10px);
-}
-.calendar-years.show{
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0px);
-}
-.calendar-years>span{
-    margin:1px 5px;
-    display: inline-block;
-    width:60px;
-    line-height: 30px;
-    border-radius: 20px;
-    text-align:center;
-    border:1px solid #fbfbfb;
-    color:#999;
-}
-.calendar-years>span.active{
-    border:1px solid #587dff;
-    background-color: #587dff;
-    box-shadow: 2px 2px 2px rgba(88, 125, 255, 0.7);
-    color:#fff;
-}
 .mc-head {
     margin-bottom: 10px;
 }
@@ -251,4 +213,62 @@
 }
 .slot-element{
     line-height: normal;
+}
+.mpvue-calendar-change{
+    position: absolute;
+    left:0px;
+    top:42px;
+    right:0px;
+    bottom:0px;
+    background:#fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap:wrap;
+    overflow: auto;
+    transition:all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+}
+.mpvue-calendar-change.show{
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0px);
+}
+.mpvue-calendar-change span{
+    margin:4px 2%;
+    display: inline-block;
+    line-height: 30px;
+    border-radius: 20px;
+    text-align:center;
+    color:#999;
+    width: 20%;
+    float: left;
+    text-align: center;
+    border-radius: 40px;
+    box-sizing: border-box;
+    margin-bottom: 4%;
+}
+.mpvue-calendar-change span.active{
+    background-color: #587dff;
+    box-shadow: 2px 2px 2px rgba(88, 125, 255, 0.7);
+    color:#fff;
+}
+.calendar-years, .calendar-months{
+    height: 50%;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+}
+.calendar-years:after {
+    content: '';
+    display: block;
+    width: 86%;
+    height: 1px;
+    background-color: #eee;
+    position: absolute;
+    bottom: 2%;
+    left: 7%;
 }
