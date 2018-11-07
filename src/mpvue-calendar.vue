@@ -179,14 +179,13 @@
             "10-1":"寒衣节",
             "10-15":"下元节",
             "12-8":"腊八节",
-            "12-23":"祭灶节",
+            "12-23":"小年",
           },
           gregorian:{
             "1-1":"元旦",
             "2-14":"情人节",
             "3-8":"妇女节",
             "3-12":"植树节",
-            "4-5":"清明节",
             "5-1":"劳动节",
             "5-4":"青年节",
             "6-1":"儿童节",
@@ -279,8 +278,7 @@
             this.day = parseInt(this.value[2]);
           }
         }
-        this.monthPosition = this.month * this.positionH;
-        this.monthText = this.months[this.month];
+        this.updateHeadMonth();
         this.render(this.year, this.month);
       },
       // 渲染日期
@@ -288,8 +286,7 @@
         if (renderer) {
           this.year = y;
           this.month = m;
-          this.monthPosition = m * this.positionH;
-          this.monthText = this.months[this.month];
+          this.updateHeadMonth();
         }
         let firstDayOfMonth = new Date(y, m, 1).getDay();
         let lastDateOfMonth = new Date(y, m + 1, 0).getDate();
@@ -567,6 +564,10 @@
       },
       getLunarInfo(y, m, d) {
         let lunarInfo = calendar.solar2lunar(y, m, d);
+        let yearEve = '';
+        if (lunarInfo.lMonth === 12 && lunarInfo.lDay === calendar.monthDays(lunarInfo.lYear, 12)) {
+          yearEve = '除夕';
+        }
         let lunarValue = lunarInfo.IDayCn;
         let Term = lunarInfo.Term;
         let isLunarFestival = false;
@@ -580,10 +581,10 @@
         }
         const lunarInfoObj = {
           date: `${y}-${m}-${d}`,
-          lunar: Term || lunarValue,
+          lunar: lunarValue || yearEve || Term,
           isLunarFestival: isLunarFestival,
           isGregorianFestival: isGregorianFestival,
-          isTerm: lunarInfo.isTerm
+          isTerm: !!yearEve || lunarInfo.isTerm
         };
         if (Object.keys(this.almanacs).length) {
           Object.assign(lunarInfoObj, {
@@ -610,8 +611,7 @@
         } else {
           this.month = parseInt(this.month) - 1;
         }
-        this.monthPosition = this.month * this.positionH;
-        this.monthText = this.months[this.month];
+        this.updateHeadMonth();
         this.render(this.year, this.month);
         this.$emit('selectMonth', this.month + 1, this.year);
         this.$emit('prev', this.month + 1, this.year);
@@ -624,8 +624,7 @@
         } else {
           this.month = parseInt(this.month) + 1;
         }
-        this.monthPosition = this.month * this.positionH;
-        this.monthText = this.months[this.month];
+        this.updateHeadMonth();
         this.render(this.year, this.month);
         this.$emit('selectMonth', this.month + 1, this.year);
         this.$emit('next', this.month + 1, this.year);
@@ -719,6 +718,7 @@
         this.yearsShow = false;
         this.month = value;
         this.render(this.year, this.month);
+        this.updateHeadMonth();
         this.$emit('selectMonth', this.month + 1, this.year);
       },
       selectYear(value) {
@@ -733,8 +733,7 @@
         this.month = now.getMonth();
         this.day = now.getDate();
         this.render(this.year,this.month);
-        this.monthPosition = this.month * this.positionH;
-        this.monthText = this.months[this.month];
+        this.updateHeadMonth();
         this.days.some(v => {
           const day = v.find(vv => vv.day === this.day && !vv.disabled);
           if (day) {
@@ -748,6 +747,10 @@
       },
       zeroPad(n){
         return String(n < 10 ? '0' + n : n)
+      },
+      updateHeadMonth() {
+        this.monthPosition = this.month * this.positionH;
+        this.monthText = this.months[this.month];
       }
     }
   }
