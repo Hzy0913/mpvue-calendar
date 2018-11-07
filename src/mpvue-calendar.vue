@@ -581,7 +581,7 @@
         }
         const lunarInfoObj = {
           date: `${y}-${m}-${d}`,
-          lunar: lunarValue || yearEve || Term,
+          lunar: yearEve || Term || lunarValue,
           isLunarFestival: isLunarFestival,
           isGregorianFestival: isGregorianFestival,
           isTerm: !!yearEve || lunarInfo.isTerm
