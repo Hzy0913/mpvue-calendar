@@ -48,6 +48,8 @@
     left:0;
     top:0;
     height:480px;
+}
+.month-transition{
     transition:top .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .calendar-info .mc-month-text{
