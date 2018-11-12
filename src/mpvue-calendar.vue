@@ -11,8 +11,8 @@
       </div>
       <div class="calendar-info" @click.stop="changeYear">
         <div class="mc-month">
-          <div class="mc-month-inner" :style="{'top': monthPosition + unit}" v-if="isIos">
-            <span v-for="m in months" :key="m" >{{m}}</span>
+          <div :class="['mc-month-inner', oversliding ? '' : 'month-transition']" :style="{'top': monthPosition + unit}" v-if="isIos">
+            <span v-for="(m, i) in monthsLoop" :key="i" >{{m}}</span>
           </div>
           <div class="mc-month-text" v-else>{{monthText}}</div>
         </div>
@@ -202,7 +202,9 @@
         multiDaysData: [],
         itemStyle: {},
         unit: isBrowser ? 'px' : 'rpx',
-        positionH: isBrowser ? -24 : -40
+        positionH: isBrowser ? -24 : -40,
+        monthIndex: 0,
+        oversliding: false
       }
     },
     watch:{
@@ -222,6 +224,15 @@
         this.render(this.year, this.month)
       }
     },
+    computed: {
+      monthsLoop() {
+        const loopArray = [];
+        this.months.forEach(v => loopArray.push(v));
+        loopArray.unshift(this.months[this.months.length - 1]);
+        loopArray.push(this.months[0]);
+        return loopArray;
+      }
+    },
     mounted() {
       const self = this;
       const calendar = this.$refs.calendar;
@@ -234,6 +245,7 @@
           }
         });
       }
+      this.oversliding = true;
       this.init();
     },
     methods: {
@@ -242,6 +254,7 @@
         this.year = now.getFullYear();
         this.month = now.getMonth();
         this.day = now.getDate();
+        this.monthIndex = this.month + 1;
         if (this.value.length || this.multi) {
           if (this.range) {
             this.year = parseInt(this.value[0][0]);
@@ -605,26 +618,44 @@
       },
       prev(e) {
         e.stopPropagation();
-        if (this.month == 0) {
+        if (this.monthIndex === 1) {
           this.month = 11;
           this.year = parseInt(this.year) - 1;
+          this.monthIndex = this.monthIndex - 1;
+        } else if (this.monthIndex === 0) {
+          this.oversliding = true;
+          this.monthIndex = 12;
+          setTimeout(() => this.prev(e), 50);
+        } else if (this.monthIndex === 13) {
+          this.month = 11;
+          this.year = parseInt(this.year) - 1;
+          this.monthIndex = this.monthIndex - 1;
         } else {
+          this.oversliding = false;
           this.month = parseInt(this.month) - 1;
+          this.monthIndex = this.monthIndex - 1;
         }
-        this.updateHeadMonth();
+        this.updateHeadMonth('custom');
         this.render(this.year, this.month);
         this.$emit('selectMonth', this.month + 1, this.year);
         this.$emit('prev', this.month + 1, this.year);
       },
       next(e) {
         e.stopPropagation();
-        if (this.month == 11) {
+        if (this.monthIndex === 12) {
           this.month = 0;
           this.year = parseInt(this.year) + 1;
+          this.monthIndex = this.monthIndex + 1;
+        } else if (this.monthIndex === 13) {
+          this.oversliding = true;
+          this.monthIndex = 1;
+          setTimeout(() => this.next(e), 50);
         } else {
+          this.oversliding = false;
           this.month = parseInt(this.month) + 1;
+          this.monthIndex = this.monthIndex + 1;
         }
-        this.updateHeadMonth();
+        this.updateHeadMonth('custom');
         this.render(this.year, this.month);
         this.$emit('selectMonth', this.month + 1, this.year);
         this.$emit('next', this.month + 1, this.year);
@@ -748,8 +779,9 @@
       zeroPad(n){
         return String(n < 10 ? '0' + n : n)
       },
-      updateHeadMonth() {
-        this.monthPosition = this.month * this.positionH;
+      updateHeadMonth(type) {
+        if (!type) this.monthIndex = this.month + 1;
+        this.monthPosition = this.monthIndex * this.positionH;
         this.monthText = this.months[this.month];
       }
     }
