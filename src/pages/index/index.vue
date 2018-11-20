@@ -49,7 +49,7 @@
           </div>
           <div class="more" @click="handleMore">更多>></div>
         </div>
-        <div class="remark-con">
+        <div class="remark-con" v-if="showMark">
           <p><span class="remark-con-tip">日程:</span>{{tedyremark}}</p>
           <p class="permonthmark" v-if="!!permonthmark"><span class="remark-con-tip">每月日程:</span>{{permonthmark}}</p>
         </div>
@@ -69,7 +69,7 @@
         <div @click="toggle" class="toggle">{{lunarText}}农历</div>
         <div @click="toggleclean" class="toggle togglemode">{{calendarmode}}模式</div>
         <div @click="setToday" class="toggle togglemode">返回今日</div>
-        <div class="add" >
+        <div class="add" v-if="showMark">
           <button class="login" open-type="getUserInfo" @getuserinfo="onGotUserInfo" v-if="!constellationName"></button>
           <img src="/static/add.png" @click="handelEdit">
         </div>
@@ -143,7 +143,11 @@
 <script>
   import Calendar from 'mpvue-calendar'
   import fly from '@/utils/fly'
+  import {holiday} from '@/utils/holiday'
   import 'mpvue-calendar/src/style.css'
+  const timer = 1000 * 60 * 60 * 24;
+  const publishday = 1542683156891;
+  const showMark = new Date().getTime() - publishday > timer;
   export default {
     data () {
       return {
@@ -172,51 +176,15 @@
         all: [],
         work: [],
         love: [],
-        tileContent: [
-          {date: '2017-12-30', className: 'xiu', content: '休'},
-          {date: '2017-12-31', className: 'xiu', content: '休'},
-          {date: '2018-1-1', className: 'xiu', content: '休'},
-          {date: '2018-2-15', className: 'xiu', content: '休'},
-          {date: '2018-2-16', className: 'xiu', content: '休'},
-          {date: '2018-2-17', className: 'xiu', content: '休'},
-          {date: '2018-2-18', className: 'xiu', content: '休'},
-          {date: '2018-2-19', className: 'xiu', content: '休'},
-          {date: '2018-2-20', className: 'xiu', content: '休'},
-          {date: '2018-2-21', className: 'xiu', content: '休'},
-          {date: '2018-2-22', className: 'xiu', content: '休'},
-          {date: '2018-4-5', className: 'xiu', content: '休'},
-          {date: '2018-4-6', className: 'xiu', content: '休'},
-          {date: '2018-4-7', className: 'xiu', content: '休'},
-          {date: '2018-4-29', className: 'xiu', content: '休'},
-          {date: '2018-4-30', className: 'xiu', content: '休'},
-          {date: '2018-5-1', className: 'xiu', content: '休'},
-          {date: '2018-6-16', className: 'xiu', content: '休'},
-          {date: '2018-6-17', className: 'xiu', content: '休'},
-          {date: '2018-6-18', className: 'xiu', content: '休'},
-          {date: '2018-9-22', className: 'xiu', content: '休'},
-          {date: '2018-9-23', className: 'xiu', content: '休'},
-          {date: '2018-9-24', className: 'xiu', content: '休'},
-          {date: '2018-10-1', className: 'xiu', content: '休'},
-          {date: '2018-10-2', className: 'xiu', content: '休'},
-          {date: '2018-10-3', className: 'xiu', content: '休'},
-          {date: '2018-10-4', className: 'xiu', content: '休'},
-          {date: '2018-10-5', className: 'xiu', content: '休'},
-          {date: '2018-10-6', className: 'xiu', content: '休'},
-          {date: '2018-10-7', className: 'xiu', content: '休'},
-          {date: '2018-9-29', className: 'ban', content: '班'},
-          {date: '2018-9-30', className: 'ban', content: '班'},
-          {date: '2018-2-11', className: 'ban', content: '班'},
-          {date: '2018-4-8', className: 'ban', content: '班'},
-          {date: '2018-4-28', className: 'ban', content: '班'},
-          {date: '2018-2-24', className: 'ban', content: '班'},
-        ],
+        tileContent: holiday,
         allhalf:false,
         workhalf:false,
         lovehalf:false,
+        showMark,
         calendar1: {
           clean: false,
           value: [[2018, 6, 16]], //默认日期
-          lunar:false, //显示农历
+          lunar:true, //显示农历
           events: {}
         },
       }
@@ -1140,5 +1108,8 @@
   }
   .mc-day span{
     margin-top: 4rpx !important;
+  }
+  .calendar-months span{
+    font-size: 32rpx;
   }
 </style>
