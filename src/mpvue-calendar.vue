@@ -676,7 +676,7 @@
         if (data.disabled) return;
         (data || {}).event = (this.events || {})[data.date] || '';
         if (this.range) {
-          if (this.rangeBegin.length == 0 || this.rangeEndTemp != 0) {
+          if (this.rangeBegin.length === 0 || this.rangeEndTemp !== 0) {
             this.rangeBegin = [this.year, this.month, this.days[k1][k2].day];
             this.rangeBeginTemp = this.rangeBegin;
             this.rangeEnd = [this.year, this.month, this.days[k1][k2].day];
@@ -688,25 +688,14 @@
               this.rangeBegin = this.rangeEnd;
               this.rangeEnd = this.rangeBeginTemp;
             }
-            let begin = [];
-            let end = [];
-            if (this.zero) {
-              this.rangeBegin.forEach((v,k)=>{
-                if (k == 1) {
-                  v = v + 1;
-                }
-                begin.push(this.zeroPad(v));
+            const rangeDate = (date) => {
+              return date.map((v, k) =>{
+                const value = k === 1 ? v + 1 : v;
+                return this.zero ? this.zeroPad(value) : value;
               });
-              this.rangeEnd.forEach((v,k) => {
-                if(k==1) {
-                  v = v + 1;
-                }
-                end.push(this.zeroPad(v));
-              });
-            } else {
-              begin = this.rangeBegin;
-              end = this.rangeEnd;
             }
+            const begin = rangeDate(this.rangeBegin);
+            const end = rangeDate(this.rangeEnd);
             this.$emit('select', begin, end);
           }
           this.render(this.year, this.month);
