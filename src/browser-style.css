@@ -117,6 +117,8 @@
     font-size: 18px;
     margin:0px auto;
     border-radius:50%;
+    position: relative;
+    z-index: 3;
 }
 .mpvue-calendar td:not(.disabled) span.mc-date-red{
     color:#ea6151;
@@ -141,6 +143,7 @@
     text-align: center;
     font-size: 12px;
     line-height: 12px;
+    z-index: 4;
 }
 .mpvue-calendar td .isGregorianFestival,
 .mpvue-calendar td .isTerm,
@@ -196,8 +199,11 @@
     height: 8px;
     background-color: #ea6151;
     border-radius: 50%;
-    margin: 0 auto;
-    margin-top: 0px;
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    margin-left: -4px;
+    z-index: 5;
 }
 .remark-text {
     box-sizing: border-box;
@@ -212,9 +218,12 @@
     text-align: center;
     font-size: 12px;
     line-height: 12px;
+    z-index: 5;
 }
 .slot-element{
     line-height: normal;
+    position: absolute;
+    z-index: 5;
 }
 .mpvue-calendar-change{
     position: absolute;
@@ -273,4 +282,52 @@
     position: absolute;
     bottom: 2%;
     left: 7%;
+}
+/*range background*/
+.mc-range-mode .selected .mc-range-bg{
+    content: '';
+    display: block;
+    width: 125%;
+    height: 100%;
+    background-color: #01a1ed;
+    position: relative;
+    top: -100%;
+    left: 50%;
+}
+.mpvue-calendar .mc-range-mode .selected .calendar-date{
+    background-color: transparent;
+}
+.mpvue-calendar .mc-range-mode .mc-range-row-last .calendar-date, .mpvue-calendar .mc-range-mode .mc-range-row-first .calendar-date{
+    border-radius: 4px;
+    background-color: #01a1ed;
+}
+.mpvue-calendar .mc-range-mode .mc-range-month-first .calendar-date, .mpvue-calendar .mc-range-mode .mc-range-month-last .calendar-date{
+    background-color: #01a1ed;
+    border-radius: 4px;
+}
+.mc-range-mode .mc-range-month-last .mc-range-bg{
+    background-color: transparent;
+    border-radius: 4px;
+}
+.mc-range-mode .mc-range-end .mc-range-bg, .mc-range-mode .mc-range-row-last .mc-range-bg{
+    display: none;
+}
+.mpvue-calendar .mc-range-mode .mc-range-end .calendar-date, .mpvue-calendar .mc-range-mode .mc-range-begin .calendar-date{
+    background-color: #3b75fb;
+    color: #fff;
+    border-radius: 50%;
+}
+.mc-range-row-first.mc-range-end .mc-range-bg{
+    display: block;
+    margin-left: -50%;
+    width: 50%;
+    border-radius: 4px;
+}
+.mc-range-row-last.mc-range-begin .mc-range-bg{
+    display: block;
+    width: 50%;
+    border-radius: 4px;
+}
+.mc-range-mode .mc-range-select-one .mc-range-bg{
+    display: none;
 }
