@@ -115,6 +115,8 @@
     line-height:76rpx;
     margin:0px auto;
     border-radius:50%;
+    position: relative;
+    z-index: 3;
 }
 .mpvue-calendar td:not(.disabled) span.mc-date-red{
     color:#ea6151;
@@ -136,6 +138,7 @@
     font-size:20rpx;
     line-height: 1.2;
     color:#444;
+    z-index: 4;
 }
 .mpvue-calendar td .isGregorianFestival,
 .mpvue-calendar td .isTerm,
@@ -194,6 +197,11 @@
     border-radius: 50%;
     margin: 0 auto;
     margin-top: 5rpx;
+    position: absolute;
+    bottom: -5rpx;
+    left: 50%;
+    margin-left: -5rpx;
+    z-index: 5;
 }
 .remark-text {
     padding-left: 8rpx;
@@ -203,6 +211,11 @@
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
+}
+.slot-element{
+    line-height: normal;
+    position: absolute;
+    z-index: 5;
 }
 .mpvue-calendar-change{
     position: absolute;
@@ -261,4 +274,53 @@
     position: absolute;
     bottom: 2%;
     left: 7%;
+}
+/*range background*/
+.mc-range-mode .selected .mc-range-bg{
+    content: '';
+    display: block;
+    width: 110rpx;
+    height: 80rpx;
+    background-color: #01a1ed;
+    position: absolute;
+    top: 0rpx;
+    left: 50%;
+}
+.mpvue-calendar .mc-range-mode .selected .calendar-date{
+    background-color: transparent;
+}
+.mpvue-calendar .mc-range-mode .mc-range-row-last span.calendar-date, .mpvue-calendar .mc-range-mode .mc-range-row-first span.calendar-date{
+    border-radius: 4rpx;
+    background-color: #01a1ed;
+}
+.mpvue-calendar .mc-range-mode .mc-range-month-first .calendar-date, .mpvue-calendar .mc-range-mode .mc-range-month-last .calendar-date{
+    border-radius: 4rpx;
+    background-color: #01a1ed;
+}
+.mc-range-mode .mc-range-month-last .mc-range-bg{
+    background-color: transparent;
+    border-radius: 4rpx;
+}
+.mc-range-mode .mc-range-end .mc-range-bg, .mc-range-mode .mc-range-row-last .mc-range-bg{
+    display: none;
+}
+.mpvue-calendar .mc-range-mode .mc-range-end span.calendar-date, .mpvue-calendar .mc-range-mode .mc-range-begin span.calendar-date{
+    background-color: #3b75fb;
+    color: #fff;
+    border-radius: 50%;
+}
+.mc-range-mode .mc-range-row-first.mc-range-end .mc-range-bg{
+    display: block;
+    border-radius: 4rpx;
+    width: 40rpx;
+    left: 5px;
+}
+.mc-range-mode .mc-range-row-last.mc-range-begin .mc-range-bg{
+    display: block;
+    border-radius: 4rpx;
+    width: 40rpx;
+    right: 5px;
+}
+.mc-range-mode .mc-range-select-one div.mc-range-bg{
+    display: none;
 }
