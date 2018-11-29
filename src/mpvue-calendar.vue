@@ -25,15 +25,16 @@
           <div v-for="(week, index) in weeks" :key="index" class="mc-week">{{week}}</div>
         </div>
       </div>
-      <div class="mc-body">
+      <div :class="['mc-body', {'mc-range-mode': range}]">
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'disabled': child.disabled, 'lunarStyle': lunar}, child.className]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
-            <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today">{{showToday.text}}</span>
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
+            <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="mc-dot" v-if="child.eventName && clean"></div>
             <div class="mc-text" :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival,'isGregorianFestival': child.isGregorianFestival,'isTerm': child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
+            <div class="mc-range-bg" v-if="range && child.selected"/>
           </td>
         </tr>
       </div>
@@ -204,7 +205,8 @@
         unit: isBrowser ? 'px' : 'rpx',
         positionH: isBrowser ? -24 : -40,
         monthIndex: 0,
-        oversliding: false
+        oversliding: false,
+        rangeBgHide: false
       }
     },
     watch:{
@@ -336,6 +338,13 @@
               this.getLunarInfo(this.year, this.month+1, i),
               this.getEvents(this.year, this.month+1, i)
             );
+            const {date} = options;
+            const copyRangeBegin = this.rangeBegin.concat();
+            const copyRangeEnd = this.rangeEnd.concat();
+            copyRangeBegin[1] = copyRangeBegin[1] + 1;
+            copyRangeEnd[1] = copyRangeEnd[1] + 1;
+            (copyRangeBegin.join('-') === date) && (options.rangeClassName = 'mc-range-begin');
+            (copyRangeEnd.join('-') === date) && (options.rangeClassName = 'mc-range-end');
             if (this.rangeBegin.length > 0) {
               let beginTime = Number(new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2]));
               let endTime = Number(new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]));
@@ -361,6 +370,10 @@
                 options.disabled = true;
               }
             }
+            const monthFirstDay = this.year + '-' + (this.month + 1) + '-' + 1;
+            const monthLastDay = this.year + '-' + (this.month + 1) + '-' + new Date(this.year, this.month + 1, 0).getDate();
+            (monthFirstDay === date && options.selected && !options.rangeClassName) && (options.rangeClassName = 'mc-range-month-first');
+            (monthLastDay === date && options.selected && !options.rangeClassName) && (options.rangeClassName = 'mc-range-month-last');
             temp[line].push(options);
           } else if(this.multi) {
             let options;
@@ -683,6 +696,9 @@
             this.rangeEndTemp = 0;
           } else {
             this.rangeEnd = [this.year, this.month, this.days[k1][k2].day];
+            if (this.rangeBegin.join('-') === this.rangeEnd.join('-')) {
+              return this.rangeEndTemp = 0;
+            }
             this.rangeEndTemp = 1;
             if (+new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]) < +new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2])) {
               this.rangeBegin = this.rangeEnd;
@@ -698,19 +714,21 @@
             const end = rangeDate(this.rangeEnd);
             this.$emit('select', begin, end);
           }
+          this.rangeBgHide = !this.rangeEndTemp || (this.rangeBegin.join('-') === this.rangeEnd.join('-'));
           this.render(this.year, this.month);
         } else if (this.multi) {
-          const filterDayIndex = this.multiDays.findIndex(v => this.year === v[0] && this.month === v[1]-1 && this.days[k1][k2].day === v[2]);
+          const {selected, day, date} = data;
+          const filterDayIndex = this.multiDays.findIndex(v => this.year === v[0] && this.month === v[1]-1 && day === v[2]);
           if(~filterDayIndex) {
             this.handleMultiDay = this.multiDays.splice(filterDayIndex, 1);
           } else {
-            this.multiDays.push([this.year, this.month+1, this.days[k1][k2].day]);
+            this.multiDays.push([this.year, this.month+1, day]);
           }
-          this.days[k1][k2].selected = !this.days[k1][k2].selected;
+          this.days[k1][k2].selected = !selected;
           if (this.days[k1][k2].selected) {
             this.multiDaysData.push(data);
           } else {
-            this.multiDaysData = this.multiDaysData.filter(item => item.date !== data.date);
+            this.multiDaysData = this.multiDaysData.filter(item => item.date !== date);
           }
           this.$emit('select',this.multiDays, this.multiDaysData);
         } else {
