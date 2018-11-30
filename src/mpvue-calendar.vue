@@ -332,6 +332,8 @@
               k++;
             }
           }
+          const now = new Date();
+          const todayString = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
           if (this.range) {
             let options = Object.assign(
               {day: i},
@@ -339,8 +341,6 @@
               this.getEvents(this.year, this.month+1, i)
             );
             const {date, day} = options;
-            const now = new Date();
-            (date === ([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-'))) && (options.isToday = true);
             const copyRangeBegin = this.rangeBegin.concat();
             const copyRangeEnd = this.rangeEnd.concat();
             copyRangeBegin[1] = copyRangeBegin[1] + 1;
@@ -379,6 +379,7 @@
             const monthLastDay = this.year + '-' + (this.month + 1) + '-' + new Date(this.year, this.month + 1, 0).getDate();
             (monthFirstDay === date && options.selected && !options.rangeClassName) && (options.rangeClassName = 'mc-range-month-first');
             (monthLastDay === date && options.selected && !options.rangeClassName) && (options.rangeClassName = 'mc-range-month-last');
+            todayString === date && (options.isToday = true);
             temp[line].push(options);
           } else if(this.multi) {
             let options;
@@ -415,6 +416,7 @@
             if (options.selected && this.multiDaysData.length !== this.value.length) {
               this.multiDaysData.push(options);
             }
+            todayString === options.date && (options.isToday = true);
             temp[line].push(options);
           } else {
             // 单选
@@ -458,6 +460,7 @@
                   options.disabled = true;
                 }
               }
+              todayString === options.date && (options.isToday = true);
               temp[line].push(options);
             }
           }
