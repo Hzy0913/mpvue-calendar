@@ -27,7 +27,7 @@
       </div>
       <div :class="['mc-body', {'mc-range-mode': range}]">
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
@@ -217,13 +217,13 @@
         this.render(this.year, this.month);
       },
       value(){
-        this.init();
+        this.render(this.year, this.month);
       },
       tileContent(){
-        this.render(this.year, this.month)
+        this.render(this.year, this.month);
       },
       almanacs(){
-        this.render(this.year, this.month)
+        this.render(this.year, this.month);
       }
     },
     computed: {
@@ -338,13 +338,18 @@
               this.getLunarInfo(this.year, this.month+1, i),
               this.getEvents(this.year, this.month+1, i)
             );
-            const {date} = options;
+            const {date, day} = options;
+            const now = new Date();
+            (date === ([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-'))) && (options.isToday = true);
             const copyRangeBegin = this.rangeBegin.concat();
             const copyRangeEnd = this.rangeEnd.concat();
             copyRangeBegin[1] = copyRangeBegin[1] + 1;
             copyRangeEnd[1] = copyRangeEnd[1] + 1;
             (copyRangeBegin.join('-') === date) && (options.rangeClassName = 'mc-range-begin');
             (copyRangeEnd.join('-') === date) && (options.rangeClassName = 'mc-range-end');
+            if (this.year === copyRangeEnd[0] && (this.month + 1) === copyRangeEnd[1] && day === (copyRangeEnd[2] - 1)) {
+              options.rangeClassName = options.rangeClassName ? ['mc-range-begin', 'mc-range-second-to-last'] : 'mc-range-second-to-last';
+            }
             if (this.rangeBegin.length > 0) {
               let beginTime = Number(new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2]));
               let endTime = Number(new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]));
@@ -406,6 +411,9 @@
                   options.disabled = true;
                 }
               }
+            }
+            if (options.selected && this.multiDaysData.length !== this.value.length) {
+              this.multiDaysData.push(options);
             }
             temp[line].push(options);
           } else {
@@ -688,6 +696,7 @@
         }
         if (data.disabled) return;
         (data || {}).event = (this.events || {})[data.date] || '';
+        const {selected, day, date} = data;
         if (this.range) {
           if (this.rangeBegin.length === 0 || this.rangeEndTemp !== 0) {
             this.rangeBegin = [this.year, this.month, this.days[k1][k2].day];
@@ -712,17 +721,18 @@
             }
             const begin = rangeDate(this.rangeBegin);
             const end = rangeDate(this.rangeEnd);
+            this.value.splice(0, 1, begin)
+            this.value.splice(1, 1, end)
             this.$emit('select', begin, end);
           }
           this.rangeBgHide = !this.rangeEndTemp || (this.rangeBegin.join('-') === this.rangeEnd.join('-'));
-          this.render(this.year, this.month);
+          this.render(this.rangeEnd[0], this.rangeEnd[1]);
         } else if (this.multi) {
-          const {selected, day, date} = data;
-          const filterDayIndex = this.multiDays.findIndex(v => this.year === v[0] && this.month === v[1]-1 && day === v[2]);
+          const filterDayIndex = this.value.findIndex(v => this.year === v[0] && this.month === v[1]-1 && day === v[2]);
           if(~filterDayIndex) {
-            this.handleMultiDay = this.multiDays.splice(filterDayIndex, 1);
+            this.handleMultiDay = this.value.splice(filterDayIndex, 1);
           } else {
-            this.multiDays.push([this.year, this.month+1, day]);
+            this.value.push([this.year, this.month+1, day]);
           }
           this.days[k1][k2].selected = !selected;
           if (this.days[k1][k2].selected) {
@@ -730,7 +740,7 @@
           } else {
             this.multiDaysData = this.multiDaysData.filter(item => item.date !== date);
           }
-          this.$emit('select',this.multiDays, this.multiDaysData);
+          this.$emit('select',this.value, this.multiDaysData);
         } else {
           if (this.today.length > 0) {
             this.days.forEach(v=>{
@@ -740,9 +750,13 @@
             });
           }
           this.days[k1][k2].selected = true;
-          this.day = this.days[k1][k2].day;
+          this.day = day;
+          const selectDay = this.zero ? [this.year, this.zeroPad(this.month + 1), this.zeroPad(day)] : [this.year, this.month + 1, day];
+          this.value[0] = this.year;
+          this.value[1] = this.month + 1;
+          this.value[2] = day;
           this.today = [k1, k2];
-          this.$emit('select', [this.year,this.zero ? this.zeroPad(this.month + 1) : this.month + 1, this.zero ? this.zeroPad(this.days[k1][k2].day) : this.days[k1][k2].day], data);
+          this.$emit('select', selectDay, data);
         }
       },
       changeYear() {
@@ -770,19 +784,12 @@
         this.$emit('selectYear', value);
       },
       setToday() {
-        let now = new Date();
+        const now = new Date();
         this.year = now.getFullYear();
         this.month = now.getMonth();
         this.day = now.getDate();
         this.render(this.year,this.month);
         this.updateHeadMonth();
-        this.days.some(v => {
-          const day = v.find(vv => vv.day === this.day && !vv.disabled);
-          if (day) {
-            day.selected = true;
-            return true;
-          }
-        })
       },
       dateInfo(y, m, d) {
         return calendar.solar2lunar(y, m, d);
