@@ -287,7 +287,7 @@
 .mc-range-mode .selected .mc-range-bg{
     content: '';
     display: block;
-    width: 125%;
+    width: 150%;
     height: 100%;
     background-color: #01a1ed;
     position: relative;
@@ -330,4 +330,12 @@
 }
 .mc-range-mode .mc-range-select-one .mc-range-bg{
     display: none;
+}
+.mc-range-mode .mc-range-second-to-last .mc-range-bg{
+    border-radius: 0px 20% 20% 0px;
+}
+
+.mc-today-element .calendar-date{
+    background-color: rgba(25, 47, 89, 0.1);
+    border-radius: 4px;
 }

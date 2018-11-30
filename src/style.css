@@ -324,3 +324,7 @@
 .mc-range-mode .mc-range-select-one div.mc-range-bg{
     display: none;
 }
+.mc-today-element .calendar-date{
+    background-color: rgba(25, 47, 89, 0.1);
+    border-radius: 4rpx;
+}
