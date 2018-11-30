@@ -130,6 +130,7 @@
 .mpvue-calendar td.selected span{
     background-color: #3b75fb;
     color: #fff;
+    border-radius: 50%;
 }
 .mpvue-calendar td .mc-text{
     box-sizing: border-box;
