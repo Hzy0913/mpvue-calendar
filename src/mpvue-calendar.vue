@@ -423,22 +423,26 @@
             let chk = new Date();
             let chkY = chk.getFullYear();
             let chkM = chk.getMonth();
+            const options = {};
             if (parseInt(seletSplit[0]) == this.year && parseInt(seletSplit[1]) - 1 == this.month && parseInt(seletSplit[2]) == i) {
-              temp[line].push(Object.assign(
+              Object.assign(
+                options,
                 {day: i, selected: true},
                 this.getLunarInfo(this.year, this.month + 1, i),
                 this.getEvents(this.year, this.month + 1, i)
-              ));
+              );
               this.today = [line, temp[line].length - 1];
             } else if (chkY == this.year && chkM == this.month && i == this.day && this.value == "") {
-              temp[line].push(Object.assign(
+              Object.assign(
+                options,
                 {day: i,selected: true},
                 this.getLunarInfo(this.year,this.month+1,i),
                 this.getEvents(this.year,this.month+1,i)
-              ));
+              );
               this.today = [line, temp[line].length - 1];
             } else {
-              let options = Object.assign(
+              Object.assign(
+                options,
                 {day: i,selected:false},
                 this.getLunarInfo(this.year,this.month+1,i),
                 this.getEvents(this.year,this.month+1,i)
@@ -460,9 +464,9 @@
                   options.disabled = true;
                 }
               }
-              todayString === options.date && (options.isToday = true);
-              temp[line].push(options);
             }
+            todayString === options.date && (options.isToday = true);
+            temp[line].push(options);
           }
           if (day == 6 && i < lastDateOfMonth) {
             line++;
