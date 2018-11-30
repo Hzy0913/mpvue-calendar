@@ -114,7 +114,6 @@
     font-size: 28rpx;
     line-height:76rpx;
     margin:0px auto;
-    border-radius:50%;
     position: relative;
     z-index: 3;
 }
@@ -127,6 +126,7 @@
 .mpvue-calendar td.selected span{
     background-color: #3b75fb;
     color: #fff;
+    border-radius:50%;
 }
 .mpvue-calendar td .mc-text{
     position: absolute;
@@ -324,7 +324,7 @@
 .mc-range-mode .mc-range-select-one div.mc-range-bg{
     display: none;
 }
-.mc-today-element .calendar-date{
+.mc-body .mc-today-element .calendar-date{
     background-color: rgba(25, 47, 89, 0.1);
     border-radius: 4rpx;
 }
