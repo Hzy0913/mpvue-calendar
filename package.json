@@ -1,6 +1,6 @@
 {
   "name": "mpvue-calendar",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "mpvue calendar",
   "main": "./src/mpvue-calendar.vue",
   "scripts": {
