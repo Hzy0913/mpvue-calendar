@@ -290,16 +290,16 @@
     background-color: transparent;
 }
 .mpvue-calendar .mc-range-mode .mc-range-row-last span.calendar-date, .mpvue-calendar .mc-range-mode .mc-range-row-first span.calendar-date{
-    border-radius: 4rpx;
+    border-radius: 6rpx;
     background-color: #01a1ed;
 }
 .mpvue-calendar .mc-range-mode .mc-range-month-first .calendar-date, .mpvue-calendar .mc-range-mode .mc-range-month-last .calendar-date{
-    border-radius: 4rpx;
+    border-radius: 6rpx;
     background-color: #01a1ed;
 }
 .mc-range-mode .mc-range-month-last .mc-range-bg{
     background-color: transparent;
-    border-radius: 4rpx;
+    border-radius: 6rpx;
 }
 .mc-range-mode .mc-range-end .mc-range-bg, .mc-range-mode .mc-range-row-last .mc-range-bg{
     display: none;
@@ -311,7 +311,7 @@
 }
 .mc-range-mode .mc-range-row-first.mc-range-end .mc-range-bg{
     display: block;
-    border-radius: 4rpx;
+    border-radius: 6rpx;
     width: 40rpx;
     left: 5px;
 }
@@ -319,12 +319,23 @@
     display: block;
     border-radius: 4rpx;
     width: 40rpx;
-    right: 5px;
+    right: 10px;
 }
-.mc-range-mode .mc-range-select-one div.mc-range-bg{
-    display: none;
+.mpvue-calendar .mc-range-mode .month-last-date.mc-range-begin .mc-range-bg{
+    display: block;
+    width: 40rpx;
+    border-radius: 6rpx;
+}
+.mpvue-calendar .mc-range-mode .month-first-date.mc-range-end .mc-range-bg{
+    display: block;
+    width: 40rpx;
+    border-radius: 6rpx;
+    left: 10rpx;
+}
+.mpvue-calendar .mc-range-mode .mc-range-select-one div.mc-range-bg{
+    display: none !important;
 }
 .mc-body .mc-today-element .calendar-date{
     background-color: rgba(25, 47, 89, 0.1);
-    border-radius: 4rpx;
+    border-radius: 6rpx;
 }
