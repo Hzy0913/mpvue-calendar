@@ -27,7 +27,7 @@
       </div>
       <div :class="['mc-body', {'mc-range-mode': range}]">
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': lastDateOfMonth === child.day, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
@@ -205,6 +205,7 @@
         unit: isBrowser ? 'px' : 'rpx',
         positionH: isBrowser ? -24 : -40,
         monthIndex: 0,
+        lastDateOfMonth: '',
         oversliding: false,
         rangeBgHide: false
       }
@@ -306,6 +307,7 @@
         let firstDayOfMonth = new Date(y, m, 1).getDay();
         let lastDateOfMonth = new Date(y, m + 1, 0).getDate();
         let lastDayOfLastMonth = new Date(y, m, 0).getDate();
+        this.lastDateOfMonth = lastDateOfMonth;
         const disabledFilter = (disabled) => {
           return disabled.filter(v => {
             const arr = v.split('-');
