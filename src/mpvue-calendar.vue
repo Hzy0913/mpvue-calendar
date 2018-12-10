@@ -673,10 +673,12 @@
       next(e) {
         e.stopPropagation();
         if (this.monthIndex === 12) {
+          this.oversliding = false;
           this.month = 0;
           this.year = parseInt(this.year) + 1;
           this.monthIndex = this.monthIndex + 1;
         } else if (this.monthIndex === 0 && this.month === 11) {
+          this.oversliding = false;
           this.month = 0;
           this.year = parseInt(this.year) + 1;
           this.monthIndex = this.monthIndex + 1;
