@@ -27,7 +27,7 @@
       </div>
       <div :class="['mc-body', {'mc-range-mode': range}]">
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': lastDateOfMonth === child.day, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': lastDateOfMonth === child.day, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
@@ -347,8 +347,8 @@
             const copyRangeEnd = this.rangeEnd.concat();
             copyRangeBegin[1] = copyRangeBegin[1] + 1;
             copyRangeEnd[1] = copyRangeEnd[1] + 1;
-            (copyRangeBegin.join('-') === date) && (options.rangeClassName = 'mc-range-begin');
             (copyRangeEnd.join('-') === date) && (options.rangeClassName = 'mc-range-end');
+            (copyRangeBegin.join('-') === date) && (options.rangeClassName = 'mc-range-begin');
             if (this.year === copyRangeEnd[0] && (this.month + 1) === copyRangeEnd[1] && day === (copyRangeEnd[2] - 1)) {
               options.rangeClassName = options.rangeClassName ? ['mc-range-begin', 'mc-range-second-to-last'] : 'mc-range-second-to-last';
             }
