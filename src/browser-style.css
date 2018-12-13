@@ -243,6 +243,7 @@
     opacity: 0;
     pointer-events: none;
     transform: translateY(-10px);
+    z-index: 9;
 }
 .mpvue-calendar-change.show{
     opacity: 1;
