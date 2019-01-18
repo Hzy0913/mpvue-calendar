@@ -649,6 +649,7 @@
       prev(e) {
         e.stopPropagation();
         if (this.monthIndex === 1) {
+          this.oversliding = false;
           this.month = 11;
           this.year = parseInt(this.year) - 1;
           this.monthIndex = this.monthIndex - 1;
@@ -782,6 +783,7 @@
         }
       },
       changeMonth(value) {
+        this.oversliding && (this.oversliding = false);
         this.yearsShow = false;
         this.month = value;
         this.render(this.year, this.month);
