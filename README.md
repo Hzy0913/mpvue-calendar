@@ -88,7 +88,7 @@ tileContent参数可以为具体某日定义一个class名，还可以插入一�
 <script>
 import Calendar from 'mpvue-calendar'
 import 'mpvue-calendar/src/style.css'
-import arrowLeft from '../assets/arrowLeft.png'
+import arrowLeft from '../assets/arrowLeft.png' //使用自定义箭头图片
 
 export default {
   data () {
