@@ -43,7 +43,7 @@
       <div class="calendar-years" v-if="!weekSwitch">
         <span v-for="y in years" :key="y" @click.stop="selectYear(y)" :class="{'active': y === year}">{{y}}</span>
       </div>
-      <div class="calendar-months calendar-week-switch-months">
+      <div :class="['calendar-months', {'calendar-week-switch-months': weekSwitch}]">
         <span v-for="(m, i) in months" :key="m" @click.stop="changeMonth(i)" :class="{'active': i === month}">{{m}}</span>
       </div>
     </div>
@@ -207,6 +207,7 @@
         rangeBegin: [],
         rangeEnd: [],
         multiDaysData: [],
+        monthsLoop: [],
         itemStyle: {},
         unit: isBrowser ? 'px' : 'rpx',
         positionH: isBrowser ? -24 : -40,
@@ -959,7 +960,7 @@
         this.month = value;
         this.render(this.year, this.month, 'CUSTOMRENDER');
         this.updateHeadMonth();
-        this.setMonthRangeofWeekSwitch();
+        this.weekSwitch && this.setMonthRangeofWeekSwitch();
         this.$emit('selectMonth', this.month + 1, this.year);
       },
       selectYear(value) {
