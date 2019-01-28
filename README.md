@@ -39,7 +39,7 @@ npm i mpvue-calendar
 | multi  | Boolean  | 是否为多选模式，默认为false   |
 | select(val, val2)  | function  | 日期选中事件的回调方法,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期,val2为日期信息   |
 | setToday()  | function  | 组件实例中的方法，可以返回今日   |
-| renderer(year, month, palyload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，palyload传数字(0~5)时，根据周的索引渲染该周。如果传入字符串'1'~'31'，则会查找出该年月日所在的周进行渲染|
+| renderer(year, month, palyload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，palyload传数字(0-5)时，根据周的索引渲染该周。如果传入字符串'1'-'31'，则会查找出该年月日所在的周进行渲染|
 | dateInfo(y, m, d)  | function  | 组件实例中的方法，传入年,月,日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
 | selectYear(year)  | function  | 选择年份事件的回调方法，year为选中的年份   |
 | selectMonth(month, year)  | function  | 选择月份事件的回调方法，month为选中的月份，year为选中的年份   |
@@ -111,23 +111,23 @@ export default {
     Calendar
   },
   methods: {
-    selectMonth(month,year){
-      console.log(year,month)
+    prev(year, month, weekIndex) {
+      console.log(year, month, weekIndex)
     },
-    prev(month){
-      console.log(month)
+    next(year, month, weekIndex) {
+      console.log(year, month, weekIndex)
     },
-    next(month){
-      console.log(month)
-    },
-    selectYear(year){
+    selectYear(year) {
       console.log(year)
     },
+    selectMonth(month, year) {
+      console.log(year, month)
+    },
     setToday() {
-      this.$refs.calendar.setToday();
+      this.$refs.calendar.setToday()
     },
     dateInfo() {
-      const info = this.$refs.calendar.dateInfo(2018, 8, 23);
+      const info = this.$refs.calendar.dateInfo(2018, 8, 23)
       console.log(info);
     },
     renderer() {
