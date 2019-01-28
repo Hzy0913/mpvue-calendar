@@ -23,6 +23,7 @@ npm i mpvue-calendar
 | months  | Array  | 自定义月份，不传默认为中文一到十二月  |
 | weeks  | Array  | 自定义星期，不传默认为中文日到六  |
 | value  | Array  | 默认选中日期  |
+| weekSwitch  | Boolean  | 按周切换日期模式，默认为false  |
 | begin  | Array  | 限制开始日期，不传则不限制  |
 | end  | Array  | 限制结束日期，不传则不限制  |
 | disabled  | Array  | 禁用日期  |
@@ -36,13 +37,14 @@ npm i mpvue-calendar
 | tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   |
 | range  | Boolean  | 是否为范围模式，默认为false   |
 | multi  | Boolean  | 是否为多选模式，默认为false   |
-| select(val, val2)  | function  | 日期选中事件,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期,val2为日期信息   |
+| select(val, val2)  | function  | 日期选中事件的回调方法,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期,val2为日期信息   |
 | setToday()  | function  | 组件实例中的方法，可以返回今日   |
-| renderer(year, month)  | function  | 组件实例中的方法，可以重新渲染日期(参数中传入渲染的年份和月份，需要为数字类型) |
+| renderer(year, month, palyload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，palyload传数字(0~5)时，根据周的索引渲染该周。如果传入字符串'1'~'31'，则会查找出该年月日所在的周进行渲染|
 | dateInfo(y, m, d)  | function  | 组件实例中的方法，传入年,月,日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
-| selectYear(val)  | function  | 选择年份事件，val为选中的年份   |
-| prev(val)  | function  | 选择上一月事件，val为月份   |
-| next(val)  | function  | 选择下一月事件，val为月份   |
+| selectYear(year)  | function  | 选择年份事件的回调方法，year为选中的年份   |
+| selectMonth(month, year)  | function  | 选择月份事件的回调方法，month为选中的月份，year为选中的年份   |
+| prev(year, month, weekIndex)  | function  | 选择上一月事件的回调方法，参数year为年、month为月份，在weekSwitch模式下，weekIndex为周的索引   |
+| next(year, month, weekIndex)  | function  | 选择下一月事件的回调方法，参数同prev方法一致   |
 | arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认字体图标   |
 | arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认字体图标   |
 
