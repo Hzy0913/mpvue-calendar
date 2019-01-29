@@ -1,4 +1,19 @@
-## mpvue-calendar
+<p align="center">
+<img width="100" src="https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/mpvue-calendar.png" alt="Vue logo">
+</p>
+<p align="center">
+  <a href="https://npmcharts.com/compare/mpvue-calendar?minimal=true">
+  <img src="https://img.shields.io/npm/dm/mpvue-calendar.svg" alt="Downloads">
+  </a>
+  <a href="https://www.npmjs.com/package/mpvue-calendar">
+  <img src="https://img.shields.io/npm/v/mpvue-calendar.svg" alt="Version">
+  </a>
+  <a href="https://www.npmjs.com/package/mpvue-calendar">
+  <img src="https://img.shields.io/npm/l/mpvue-calendar.svg" alt="License">
+  </a>
+</p>
+
+<h1 align="center">mpvue-calendar</h1>
 基于vue-calendar的适配**mpvue**平台的的微信小程序日历组件，现在已可以使用在**浏览器端**
 ## 预览
 ![比邻binlive](http://img.binlive.cn/xcx.jpg)
