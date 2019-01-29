@@ -14,6 +14,7 @@
 </p>
 
 <h1 align="center">mpvue-calendar</h1>
+
 基于vue-calendar的适配**mpvue**平台的的微信小程序日历组件，现在已可以使用在**浏览器端**
 ## 预览
 ![比邻binlive](http://img.binlive.cn/xcx.jpg)
