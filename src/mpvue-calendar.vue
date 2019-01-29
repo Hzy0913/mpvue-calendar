@@ -313,12 +313,12 @@
         const disabledFilter = (disabled) => {
           return disabled.find(v => {
             const dayArr = v.split('-');
-            return this.year === dayArr[0] && this.month === (dayArr[1]-1) && i === dayArr[2];
+            return year === Number(dayArr[0]) && month === (dayArr[1] - 1) && i === Number(dayArr[2]);
           });
         }
         if (this.range) {
           const lastDay = new Date(year, month + 1, 0).getDate() === i ? {lastDay: true} : null;
-          let options = Object.assign(
+          const options = Object.assign(
             {day: i},
             this.getLunarInfo(year, month + 1, i),
             this.getEvents(year, month + 1, i),
@@ -345,18 +345,20 @@
             }
           }
           if (this.begin.length) {
-            let beginTime = Number(new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2])));
-            if (beginTime > Number(new Date(year, month, i)) && false) {
+            const beginTime = +new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2]));
+            if (beginTime > +new Date(year, month, i)) {
               options.disabled = true;
             }
           }
           if (this.end.length) {
             let endTime = Number(new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2])));
-            if (endTime <  Number(new Date(year, month, i)) && false) {
+            if (endTime <  Number(new Date(year, month, i))) {
               options.disabled = true;
             }
           }
-          if (this.disabled.length && disabledFilter(this.disabled)) {
+          if (playload && !weekSwitch) {
+            options.disabled = true;
+          } else if (this.disabled.length && disabledFilter(this.disabled)) {
             options.disabled = true;
           }
           const monthFirstDay = year + '-' + (month + 1) + '-' + 1;
@@ -368,7 +370,7 @@
           return options;
         } else if(this.multi) {
           let options;
-          if(this.value.filter(v => {return year === v[0] && month === v[1]-1 && i === v[2] }).length > 0){
+          if (this.value.find(v => year === v[0] && month === v[1]-1 && i === v[2])){
             options = Object.assign(
               {day: i, selected: true},
               this.getLunarInfo(year, month + 1, i),
@@ -380,22 +382,22 @@
               this.getLunarInfo(year, month + 1, i),
               this.getEvents(year, month + 1, i)
             );
-            if (this.begin.length > 0) {
-              let beginTime = Number(new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2])));
-              if (beginTime > Number(new Date(year, month, i))) {
+            if (this.begin.length) {
+              const beginTime = +new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2]));
+              if (beginTime > +(new Date(year, month, i))) {
                 options.disabled = true;
               }
             }
-            if (this.end.length > 0){
-              let endTime = Number(new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2])));
-              if (endTime <  Number(new Date(year, month, i))) {
+            if (this.end.length){
+              const endTime = +new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2]));
+              if (endTime < +(new Date(year, month, i))) {
                 options.disabled = true;
               }
             }
-            if (this.disabled.length > 0){
-              if ((disabledFilter(this.disabled)).length) {
-                options.disabled = true;
-              }
+            if (playload && !weekSwitch) {
+              options.disabled = true;
+            } else if (this.disabled.length && disabledFilter(this.disabled)) {
+              options.disabled = true;
             }
           }
           if (options.selected && this.multiDaysData.length !== this.value.length) {
@@ -405,9 +407,6 @@
           (!weekSwitch && playload) && (options.selected = false);
           return options;
         } else {
-          let chk = new Date();
-          let chkY = chk.getFullYear();
-          let chkM = chk.getMonth();
           const options = {};
           const monthHuman = month + 1;
           if (seletSplit[0] === year && seletSplit[1] === monthHuman && seletSplit[2] === i) {
@@ -424,22 +423,22 @@
               this.getLunarInfo(year, monthHuman, i),
               this.getEvents(year, monthHuman, i)
             );
-            if (this.begin.length > 0) {
-              let beginTime = Number(new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2])));
+            if (this.begin.length) {
+              const beginTime = +new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2]));
               if (beginTime > Number(new Date(year, month, i))) {
                 options.disabled = true;
               }
             }
-            if (this.end.length > 0){
-              let endTime = Number(new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2])));
-              if (endTime <  Number(new Date(year, month, i))) {
+            if (this.end.length){
+              const endTime = +new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2]));
+              if (endTime < +(new Date(year, month, i))) {
                 options.disabled = true;
               }
             }
-            if (this.disabled.length > 0){
-              if ((disabledFilter(this.disabled)).length) {
-                options.disabled = true;
-              }
+            if (playload && !weekSwitch) {
+              options.disabled = true;
+            } else if (this.disabled.length && disabledFilter(this.disabled)) {
+              options.disabled = true;
             }
           }
           this.isCurrentMonthToday(options) && (options.isToday = true);
@@ -537,7 +536,7 @@
             for (let j = 0; j < firstDayOfMonth; j++) { //generate prev month surplus option
               temp[line].push(Object.assign(
                 this.renderOption(this.computedPrevYear(), this.computedPrevMonth(), k, 'prevMonth'),
-                {disabled: !weekSwitch, lastMonth: true}
+                {lastMonth: true}
               ));
               k++;
             }
@@ -553,7 +552,7 @@
             for (let d = day; d < lastDateOfMonthLength; d++) { //generate next month surplus option
               temp[line].push(Object.assign(
                 this.renderOption(this.computedNextYear(), this.computedNextMonth(), k, 'nextMonth'),
-                {disabled: !weekSwitch, nextMonth: true}
+                {nextMonth: true}
               ));
               k++;
             }
@@ -684,6 +683,7 @@
         const renderM = typeof parseInt(m) === 'number' ? (m - 1) : this.month;
         this.initRender = true;
         this.render(renderY, renderM, 'CUSTOMRENDER', w);
+        !this.weekSwitch && (this.monthsLoop = this.monthsLoopCopy.concat());
       },
       computedPrevYear() {
         let value = this.year;
