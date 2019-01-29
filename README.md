@@ -26,7 +26,7 @@ npm i mpvue-calendar
 | weekSwitch  | Boolean  | 按周切换日期模式，默认为false  |
 | begin  | Array  | 限制开始日期，不传则不限制  |
 | end  | Array  | 限制结束日期，不传则不限制  |
-| disabled  | Array  | 禁用日期  |
+| disabled  | Array  | 禁用日期指定日期，如禁用2018-6-21日为`['2018-6-21']`  |
 | events  | Object  | 自定义备注  |
 | lunar  | Boolean  | 是否显示农历，默认为false  |
 | monFirst   | Boolean  | 是否每行日期以星期一作为开头，默认为false(默认为星期日开头)  |
@@ -52,8 +52,6 @@ npm i mpvue-calendar
 在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如multi模式选中2018年6月21和6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`(⚠️从开始日期到结束日期)
 - `events` 参数<br>
 events为自定义备注，例如备注2018年6月21日为`{'2018-6-21': '今日备注', '2018-6-22':'明日备注'}`，在**clean**模式下备注为圆点，**lunar**农历模式下备注会替代农历优先展示
-- `disabled` 参数<br>
-disabled为禁用日期，如禁用2018-6-21日为`['2018-6-21']`
 - `now` 参数<br>
 now参数可以选择是否将今天日期展示为`今`字，传入false则不展示，传入字符串则展示你定义等字符串内容，默认为true展示今字样
 - `tileContent` 参数<br>
