@@ -28,7 +28,7 @@
       <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch}]">
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
           <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
-            <span v-if="showToday.show && showToday.today === child.day && !child.disabled" class="mc-today calendar-date">{{showToday.text}}</span>
+            <span v-if="showToday.show && child.isToday && (weekSwitch || !child.disabled)" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
@@ -447,7 +447,9 @@
         }
       },
       isCurrentMonthToday(options) {
-        return (todayString === options.date) && (Number(todayString.split('-')[1]) === this.month + 1);
+        const isToday = todayString === options.date;
+        if (!isToday) return false;
+        return this.weekSwitch ? isToday : (Number(todayString.split('-')[1]) === this.month + 1);
       },
       watchRender(type) {
         const weekSwitch = this.weekSwitch;
@@ -656,26 +658,19 @@
         } else {
           this.days = temp;
         }
+        const todayText = '今';
         if (typeof this.now === 'boolean' && !this.now) {
           this.showToday = {show: false};
+        } else if (typeof this.now === 'string') {
+          this.showToday = {
+            show: true,
+            text: this.now || todayText
+          };
         } else {
-          const now = new Date();
-          const nowYear = now.getFullYear();
-          const nowMonth = now.getMonth();
-          const nowDay = now.getDate();
-          if (this.now && this.year === nowYear && this.month === nowMonth) {
-            const now = new Date();
-            const nowYear = now.getFullYear();
-            const nowMonth = now.getMonth();
-            const nowDay = now.getDate();
-            this.showToday = {
-              show: true,
-              today: nowDay,
-              text: typeof this.now === 'string' ? this.now : '今'
-            };
-          } else {
-            this.showToday = {show: false};
-          }
+          this.showToday = {
+            show: true,
+            text: todayText
+          };
         }
       },
       renderer(y, m, w) {
@@ -958,7 +953,7 @@
         this.oversliding && (this.oversliding = false);
         this.yearsShow = false;
         this.month = value;
-        this.render(this.year, this.month, 'CUSTOMRENDER');
+        this.render(this.year, this.month, 'CUSTOMRENDER', 0);
         this.updateHeadMonth();
         this.weekSwitch && this.setMonthRangeofWeekSwitch();
         this.$emit('selectMonth', this.month + 1, this.year);
