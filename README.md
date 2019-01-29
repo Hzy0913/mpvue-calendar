@@ -1,5 +1,7 @@
 <p align="center">
-<img width="100" src="https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/mpvue-calendar.png" alt="Vue logo">
+<a href="http://preview.binlive.cn/mpvue-calendar#/">
+<img width="100" src="https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/mpvue-calendar.png" alt="mpvue-calendar logo">
+</a>
 </p>
 <p align="center">
   <a href="https://npmcharts.com/compare/mpvue-calendar?minimal=true">
