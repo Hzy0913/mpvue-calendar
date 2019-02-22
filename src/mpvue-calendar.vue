@@ -25,7 +25,8 @@
           <div v-for="(week, index) in weeks" :key="index" class="mc-week">{{week}}</div>
         </div>
       </div>
-      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch}]">
+      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch}]" v-for="(days, index) in monthRangeDays">
+        <div class="month-rang-head" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[2]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
           <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && child.isToday && (weekSwitch || !child.disabled)" class="mc-today calendar-date">{{showToday.text}}</span>
@@ -155,6 +156,12 @@
       weekSwitch: {
         type: Boolean,
         default: false
+      },
+      monthRange: {
+        type: Array,
+        default: function(){
+          return []
+        }
       }
     },
     data() {
@@ -214,30 +221,39 @@
         monthIndex: 0,
         oversliding: false,
         rangeBgHide: false,
+        monthRangeDays: [],
+        rangeOfMonths: [],
         monthDays: [],
         weekIndex: 0,
         startWeekIndex: 0,
         positionWeek: true,
+        isMonthRange: false
       }
     },
     watch:{
       events() {
+        if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'events');
       },
       disabled() {
+        if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'disabled');
       },
       value() {
+        if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDERVALUE_');
       },
       tileContent() {
+        if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'tileContent');
       },
       almanacs() {
+        if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'almanacs');
       }
     },
     created() {
+      this.isMonthRange = !!this.monthRange.length;
       const loopArray = this.months.concat();
       loopArray.unshift(this.months[this.months.length - 1]);
       loopArray.push(this.months[0]);
@@ -304,6 +320,7 @@
           }
         }
         this.updateHeadMonth();
+        if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month);
       },
       renderOption(year, month, i, playload) {
@@ -537,14 +554,14 @@
             k = lastDayOfLastMonth - firstDayOfMonth + 1;
             for (let j = 0; j < firstDayOfMonth; j++) { //generate prev month surplus option
               temp[line].push(Object.assign(
-                this.renderOption(this.computedPrevYear(), this.computedPrevMonth(), k, 'prevMonth'),
+                this.renderOption(this.computedPrevYear(y, m), this.computedPrevMonth(false, m), k, 'prevMonth'),
                 {lastMonth: true}
               ));
               k++;
             }
           }
 
-          temp[line].push(this.renderOption(this.year, this.month, i)); //generate current month option
+          temp[line].push(this.renderOption(y, m, i)); //generate current month option
 
           if (day === 6 && i < lastDateOfMonth) {
             line++;
@@ -553,7 +570,7 @@
             const lastDateOfMonthLength = this.monFirst ? 7 : 6;
             for (let d = day; d < lastDateOfMonthLength; d++) { //generate next month surplus option
               temp[line].push(Object.assign(
-                this.renderOption(this.computedNextYear(), this.computedNextMonth(), k, 'nextMonth'),
+                this.renderOption(this.computedNextYear(y, m), this.computedNextMonth(false, m), k, 'nextMonth'),
                 {nextMonth: true}
               ));
               k++;
@@ -614,7 +631,7 @@
           });
         }
         this.monthDays = temp;
-        if (weekSwitch) {
+        if (weekSwitch && !this.isMonthRange) {
           if (this.positionWeek) {
             let payloadDay = '';
             let searchIndex = true;
@@ -672,6 +689,51 @@
             text: todayText
           };
         }
+        this.monthRangeDays = [this.days];
+        return this.days;
+      },
+      rendeRange() {
+        const range = [];
+        const monthRange = this.monthRange;
+        function formatDateText(fYear, fMonth) {
+          return `${fYear}月${fMonth}日`;
+        }
+        if (monthRange[0] === monthRange[1]) {
+          const [y, m] = monthRange[0].split('-');
+          range.push([Number(y), Number(m), formatDateText(y, m)])
+        } else {
+          const monthRangeOfStart = monthRange[0].split('-');
+          const monthRangeOfEnd = monthRange[1].split('-');
+
+          let startYear = +monthRangeOfStart[0];
+          let startMonth = +monthRangeOfStart[1];
+
+          let endYear = +monthRangeOfEnd[0];
+          let endtMonth = +monthRangeOfEnd[1];
+
+          while (startYear < endYear || startMonth <= endtMonth) {
+
+            range.push([startYear, startMonth, formatDateText(startYear, startMonth)]);
+            if (startMonth === 12 && startYear !== endYear) {
+              startYear++;
+              startMonth = 0;
+            }
+            startMonth++;
+          }
+        }
+        this.rangeOfMonths = range;
+
+        const monthsRange = range.map(item => {
+          const [yearParam, monthParam] = item;
+          return this.render(yearParam, monthParam - 1, '_WATCHRENDERVALUE_');
+        });
+        this.monthRangeDays = monthsRange;
+      },
+      isRendeRangeMode() {
+        if (this.isMonthRange) {
+          this.rendeRange();
+          return true;
+        }
       },
       renderer(y, m, w) {
         const renderY = y || this.year;
@@ -680,15 +742,15 @@
         this.render(renderY, renderM, 'CUSTOMRENDER', w);
         !this.weekSwitch && (this.monthsLoop = this.monthsLoopCopy.concat());
       },
-      computedPrevYear() {
-        let value = this.year;
-        if((this.month - 1) < 0){
+      computedPrevYear(year, month) {
+        let value = year;
+        if((month - 1) < 0){
           value--;
         }
         return value;
       },
-      computedPrevMonth(isString) {
-        let value = this.month;
+      computedPrevMonth(isString, month) {
+        let value = month;
         if((this.month - 1) < 0){
           value = 11;
         } else {
@@ -699,16 +761,16 @@
         }
         return value;
       },
-      computedNextYear() {
-        let value = this.year;
-        if((this.month + 1) > 11){
+      computedNextYear(year, month) {
+        let value = year;
+        if((month + 1) > 11){
           value++;
         }
         return value;
       },
-      computedNextMonth(isString) {
-        let value = this.month;
-        if((this.month + 1) > 11){
+      computedNextMonth(isString, month) {
+        let value = month;
+        if((month + 1) > 11){
           value = 0;
         } else {
           value++;
@@ -904,7 +966,11 @@
           }
           this.rangeBgHide = !this.rangeEndTemp || (this.rangeBegin.join('-') === this.rangeEnd.join('-'));
           this.positionWeek = true;
-          this.render(this.year, this.month, undefined, this.thisTimeSelect);
+          if (this.isMonthRange) {
+            this.rendeRange();
+          } else {
+            this.render(this.year, this.month, undefined, this.thisTimeSelect);
+          }
         } else if (this.multi) {
           const filterDayIndex = this.value.findIndex(v => v.join('-') === date);
           if(~filterDayIndex) {
