@@ -1,6 +1,6 @@
 <template>
   <div class="mpvue-calendar" ref="calendar">
-    <div class="calendar-tools">
+    <div class="calendar-tools" v-if="!isMonthRange">
       <div class="calendar-prev" @click="prev">
         <img :src="arrowLeft" v-if="!!arrowLeft">
         <i class="iconfont icon-arrow-left" v-else></i>
@@ -20,16 +20,16 @@
       </div>
     </div>
     <table cellpadding="5">
-      <div class="mc-head">
+      <div class="mc-head" :class="['mc-head', {'mc-month-range-mode-head': isMonthRange}]">
         <div class="mc-head-box">
           <div v-for="(week, index) in weeks" :key="index" class="mc-week">{{week}}</div>
         </div>
       </div>
-      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch}]" v-for="(days, index) in monthRangeDays">
+      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays">
         <div class="month-rang-head" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[2]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
-            <span v-if="showToday.show && child.isToday && (weekSwitch || !child.disabled)" class="mc-today calendar-date">{{showToday.text}}</span>
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
+            <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
@@ -250,6 +250,10 @@
       almanacs() {
         if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'almanacs');
+      },
+      monthRange() {
+        if (this.isRendeRangeMode()) return;
+        this.render(this.year, this.month, '_WATCHRENDER_', 'almanacs');
       }
     },
     created() {
@@ -324,7 +328,7 @@
         this.render(this.year, this.month);
       },
       renderOption(year, month, i, playload) {
-        const weekSwitch = this.weekSwitch;
+        const weekSwitch = this.monthRange.length ? false : this.weekSwitch;
         const seletSplit = this.value;
         const isMonthModeCurrentMonth = !weekSwitch && !playload;
         const disabledFilter = (disabled) => {
@@ -516,9 +520,11 @@
         }
         if (weekSwitch) {
           this.monthDays = daysDeepCopy;
-          this.days = [daysDeepCopy[this.weekIndex]]
+          this.days = [daysDeepCopy[this.weekIndex]];
+          this.monthRangeDays = [this.days];
         } else {
           this.days = daysDeepCopy;
+          this.monthRangeDays = [this.days];
         }
       },
       render(y, m, renderer, payload) {
@@ -585,7 +591,7 @@
             const LastMonthItems = [];
             for (let i = 1; i <= 7; i++) {
               LastMonthItems.unshift(Object.assign(
-                this.renderOption(this.computedPrevYear(), this.computedPrevMonth(), lastMonthDay),
+                this.renderOption(this.computedPrevYear(y, m), this.computedPrevMonth(false, m), lastMonthDay),
                 {disabled: false, lastMonth: true}
               ));
               lastMonthDay --;
@@ -598,6 +604,9 @@
             };
             temp[index-1].length < 7 && temp[index-1].push(item.splice(0, 1)[0]);
           });
+          if (this.isMonthRange && temp[temp.length - 1][0].nextMonth) {
+            temp.splice(temp.length - 1, 1); //if the first day of last line is nextMonth, delete this line
+          }
           if (!completion && !weekSwitch) {
             const lastIndex = temp.length - 1;
             const secondToLastIndex = lastIndex - 1;
@@ -730,6 +739,7 @@
         this.monthRangeDays = monthsRange;
       },
       isRendeRangeMode() {
+        this.isMonthRange = !!this.monthRange.length;
         if (this.isMonthRange) {
           this.rendeRange();
           return true;
@@ -751,7 +761,7 @@
       },
       computedPrevMonth(isString, month) {
         let value = month;
-        if((this.month - 1) < 0){
+        if((month - 1) < 0){
           value = 11;
         } else {
           value--;
@@ -854,6 +864,7 @@
         const changeWeek = () => {
           this.weekIndex = this.weekIndex - 1;
           this.days = [this.monthDays[this.weekIndex]];
+          this.monthRangeDays = [this.days];
           this.setMonthRangeofWeekSwitch();
           this.$emit('prev', this.year, this.month + 1, this.weekIndex);
         }
@@ -905,6 +916,7 @@
         const changeWeek = () => {
           this.weekIndex = this.weekIndex + 1;
           this.days = [this.monthDays[this.weekIndex]];
+          this.monthRangeDays = [this.days];
           this.setMonthRangeofWeekSwitch();
           this.$emit('next', this.year, this.month + 1, this.weekIndex);
         }
