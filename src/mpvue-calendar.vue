@@ -266,9 +266,7 @@
     },
     mounted() {
       const self = this;
-      const calendar = this.$refs.calendar;
-      const itemWidth = (calendar.clientWidth/7 - 4).toFixed(5);
-      this.itemStyle = {width: itemWidth + 'px', height: itemWidth + 'px', lineHeight: itemWidth - 8 + 'px'};
+      this.resize();
       if (!isBrowser) {
         wx.getSystemInfo({
           success: function(res) {
@@ -1078,6 +1076,10 @@
         if (!type) this.monthIndex = this.month + 1;
         this.monthPosition = this.monthIndex * this.positionH;
         this.monthText = this.months[this.month];
+      },
+      resize() {
+        const itemWidth = Number((this.$el.clientWidth/7 - 4).toFixed(5));
+        this.itemStyle = {width: itemWidth + 'px', height: itemWidth + 'px', lineHeight: itemWidth - 8 + 'px'};
       }
     }
   }
