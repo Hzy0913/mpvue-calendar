@@ -1,28 +1,24 @@
 <template>
-  <div class="calendar-wrapper">
-    <div class="calendar">
-      <Calendar
-        :clean="clean"
-        :lunar="lunar"
-        ref="calendar"
-        :range="isrange"
-        :multi="ismulti"
-        :almanacs="almanacs"
-        :tileContent="tileContent"
-        @select="select"
-        @next="next"
-        @prev="prev"
-        :value="value"
-        :disabled="disabledArray"
-        :weekSwitch="weekSwitch"
-        :events="events"
-      />
-    </div>
-    <div class="box">
-      <div class="setToday" @click="setToday">返回今日</div>
-      <div class="setToday" @click="renderer">渲染指定月份(2018-8)</div>
-      <div class="setToday" @click="dateInfo">打印日期信息(2018-8-23)</div>
-    </div>
+<div class="calendar-wrapper">
+  <div class="calendar">
+    <Calendar
+      :clean="clean"
+      :lunar="lunar"
+      ref="calendar"
+      :range="isrange"
+      :multi="ismulti"
+      :almanacs="almanacs"
+      :tileContent="tileContent"
+      @select="select"
+      @next="next"
+      @prev="prev"
+      :value="value"
+      :disabled="disabledArray"
+      :weekSwitch="weekSwitch"
+      :events="events"
+    />
+  </div>
+  <div class="right">
     <div class="box-mode">
       <div :class="[{'selectMode': isrange}, 'mode-btn']" @click="rangeMode">范围模式</div>
       <div :class="[{'selectMode': ismulti}, 'mode-btn']" @click="multiMode">多选模式</div>
@@ -35,6 +31,11 @@
         </div>
       </div>
     </div>
+    <div class="box">
+      <div class="setToday" @click="setToday">返回今日</div>
+      <div class="setToday" @click="renderer">渲染指定月份(2018-8)</div>
+      <div class="setToday" @click="dateInfo">打印日期信息(2018-8-23)</div>
+    </div>
     <div class="data-info" v-if="!!dataInfo.cYear">
       <p><span>公历日期:</span>{{dataInfo.cYear}}-{{dataInfo.cMonth}}-{{dataInfo.cDay}}</p>
       <p><span>星期:</span>{{dataInfo.ncWeek}}</p>
@@ -46,6 +47,7 @@
       <p><span>节气:</span>{{dataInfo.Term}}</p>
     </div>
   </div>
+</div>
 </template>
 
 <script>
