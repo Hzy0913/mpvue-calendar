@@ -1,7 +1,7 @@
 .mpvue-calendar {
     margin:auto;
     width: 100%;
-    min-width:300px;
+    min-width:350px;
     background: #fff;
     user-select:none;
     position: relative;
@@ -113,7 +113,6 @@
     display:block;
     height:100%;
     width:100%;
-    font-size: 18px;
     margin:0px auto;
     border-radius:50%;
     position: relative;
@@ -132,7 +131,7 @@
 }
 .mpvue-calendar td .mc-text{
     box-sizing: border-box;
-    height: 12px;
+    height: 0.7em;
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
@@ -141,8 +140,8 @@
     left: 0;
     right: 0;
     text-align: center;
-    font-size: 12px;
-    line-height: 12px;
+    font-size: 0.7em;
+    line-height: 0.7em;
     z-index: 4;
 }
 .mpvue-calendar td .isGregorianFestival,
@@ -158,10 +157,11 @@
     color: #fff !important;
 }
 .mpvue-calendar .lunarStyle span{
-    line-height:2.2;
+    line-height: 200%;
 }
 .mpvue-calendar .lunarStyle .mc-text{
-    bottom: 2px;
+    overflow: visible;
+    bottom: 20%;
 }
 .mpvue-calendar thead td {
     text-transform: uppercase;
@@ -207,7 +207,7 @@
 }
 .remark-text {
     box-sizing: border-box;
-    height: 12px;
+    height: 0.7em;
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
@@ -216,8 +216,8 @@
     left: 0;
     right: 0;
     text-align: center;
-    font-size: 12px;
-    line-height: 12px;
+    font-size: 0.7em;
+    line-height: 0.7em;
     z-index: 5;
 }
 .slot-element{

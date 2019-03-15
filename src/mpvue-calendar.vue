@@ -25,7 +25,7 @@
           <div v-for="(week, index) in weeks" :key="index" class="mc-week">{{week}}</div>
         </div>
       </div>
-      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays">
+      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays" :key='index'>
         <div class="month-rang-head" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[2]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
           <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
@@ -215,7 +215,7 @@
         rangeEnd: [],
         multiDaysData: [],
         monthsLoop: [],
-        itemStyle: {},
+        itemWidth: 50,
         unit: isBrowser ? 'px' : 'rpx',
         positionH: isBrowser ? -24 : -40,
         monthIndex: 0,
@@ -227,7 +227,13 @@
         weekIndex: 0,
         startWeekIndex: 0,
         positionWeek: true,
-        isMonthRange: false
+        isMonthRange: false,
+        resizeListender: this.resize.bind(this)
+      }
+    },
+    computed: {
+      itemStyle() {
+        return  {width: this.itemWidth + 'px', height: this.itemWidth + 'px', lineHeight: this.itemWidth - 8 + 'px', fontSize: this.itemWidth / 4.5 + 'px', lineHeigh: this.itemWidth / 4.5 + 'px'}
       }
     },
     watch:{
@@ -266,9 +272,8 @@
     },
     mounted() {
       const self = this;
-      const calendar = this.$refs.calendar;
-      const itemWidth = (calendar.clientWidth/7 - 4).toFixed(5);
-      this.itemStyle = {width: itemWidth + 'px', height: itemWidth + 'px', lineHeight: itemWidth - 8 + 'px'};
+      this.resize();
+      window.addEventListener('resize', this.resizeListender)
       if (!isBrowser) {
         wx.getSystemInfo({
           success: function(res) {
@@ -279,6 +284,9 @@
       this.oversliding = true;
       this.initRender = true;
       this.init();
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', this.resizeListender)
     },
     methods: {
       init() {
@@ -1078,6 +1086,9 @@
         if (!type) this.monthIndex = this.month + 1;
         this.monthPosition = this.monthIndex * this.positionH;
         this.monthText = this.months[this.month];
+      },
+      resize() {
+        this.itemWidth = Number((this.$el.clientWidth/7 - 4).toFixed(5));
       }
     }
   }
