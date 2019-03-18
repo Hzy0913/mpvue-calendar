@@ -273,20 +273,23 @@
     mounted() {
       const self = this;
       this.resize();
-      window.addEventListener('resize', this.resizeListender)
       if (!isBrowser) {
         wx.getSystemInfo({
           success: function(res) {
             self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
           }
         });
+      } else {
+        window.addEventListener('resize', this.resizeListender);
       }
       this.oversliding = true;
       this.initRender = true;
       this.init();
     },
     beforeDestroy() {
-      window.removeEventListener('resize', this.resizeListender)
+      if (isBrowser) {
+        window.removeEventListener('resize', this.resizeListender)
+      }
     },
     methods: {
       init() {
