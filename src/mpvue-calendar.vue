@@ -228,12 +228,11 @@
         startWeekIndex: 0,
         positionWeek: true,
         isMonthRange: false,
-        resizeListender: this.resize.bind(this)
       }
     },
     computed: {
       itemStyle() {
-        return  {width: this.itemWidth + 'px', height: this.itemWidth + 'px', lineHeight: this.itemWidth - 8 + 'px', fontSize: this.itemWidth / 4.5 + 'px', lineHeigh: this.itemWidth / 4.5 + 'px'}
+        return {width: this.itemWidth + 'px', height: this.itemWidth + 'px', fontSize: this.itemWidth / 4 + 'px', lineHeight: this.lunar ? (this.itemWidth / 1.5 + 'px') : (this.itemWidth + 'px')}
       }
     },
     watch:{
@@ -280,7 +279,7 @@
           }
         });
       } else {
-        window.addEventListener('resize', this.resizeListender);
+        window.addEventListener('resize', this.resize);
       }
       this.oversliding = true;
       this.initRender = true;
@@ -288,7 +287,7 @@
     },
     beforeDestroy() {
       if (isBrowser) {
-        window.removeEventListener('resize', this.resizeListender)
+        window.removeEventListener('resize', this.resize)
       }
     },
     methods: {
@@ -1091,7 +1090,7 @@
         this.monthText = this.months[this.month];
       },
       resize() {
-        this.itemWidth = Number((this.$el.clientWidth/7 - 4).toFixed(5));
+        this.itemWidth = (this.$el.clientWidth/7 - 4).toFixed(5);
       }
     }
   }
