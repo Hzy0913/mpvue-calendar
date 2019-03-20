@@ -156,9 +156,6 @@
 .selected .mc-text {
     color: #fff !important;
 }
-.mpvue-calendar .lunarStyle span{
-    line-height: 200%;
-}
 .mpvue-calendar .lunarStyle .mc-text{
     overflow: visible;
     bottom: 20%;
@@ -363,7 +360,7 @@
     display: none;
 }
 .mc-range-mode .mc-range-second-to-last .mc-range-bg{
-    border-radius: 0px 20% 20% 0px;
+    border-radius: 0px 25% 25% 0px;
 }
 .mc-today-element .calendar-date{
     background-color: rgba(25, 47, 89, 0.1);
