@@ -162,6 +162,10 @@
         default: function(){
           return []
         }
+      },
+      responsive: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -259,6 +263,9 @@
       monthRange() {
         if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'almanacs');
+      },
+      responsive() {
+        if (this.responsive) this.addResponsiveListener();
       }
     },
     created() {
@@ -278,8 +285,8 @@
             self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
           }
         });
-      } else {
-        window.addEventListener('resize', this.resize);
+      } else if (this.responsive){
+        this.addResponsiveListener();
       }
       this.oversliding = true;
       this.initRender = true;
@@ -1088,6 +1095,9 @@
         if (!type) this.monthIndex = this.month + 1;
         this.monthPosition = this.monthIndex * this.positionH;
         this.monthText = this.months[this.month];
+      },
+      addResponsiveListener() {
+        window.addEventListener('resize', this.resize);
       },
       resize() {
         this.itemWidth = (this.$el.clientWidth/7 - 4).toFixed(5);
