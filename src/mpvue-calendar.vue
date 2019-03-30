@@ -309,11 +309,11 @@
             this.year = parseInt(this.value[0][0]);
             this.month = parseInt(this.value[0][1]) - 1;
             this.day = parseInt(this.value[0][2]);
-            let year2 = parseInt(this.value[1][0]);
-            let month2 = parseInt(this.value[1][1]) - 1;
-            let day2 = parseInt(this.value[1][2]);
+            const yearEnd = parseInt(this.value[1][0]);
+            const monthEnd = parseInt(this.value[1][1]) - 1;
+            const dayEnd = parseInt(this.value[1][2]);
             this.rangeBegin = [this.year, this.month, this.day];
-            this.rangeEnd = [year2, month2, day2];
+            this.rangeEnd = [yearEnd, monthEnd, dayEnd];
           } else if(this.multi) {
             this.multiDays = this.value;
             const handleMultiDay = this.handleMultiDay;
