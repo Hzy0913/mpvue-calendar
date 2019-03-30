@@ -27,6 +27,7 @@
       </div>
       <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays" :key='index'>
         <div class="month-rang-head" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[2]}}</div>
+        <div class="month-text-background" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[1]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
           <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
@@ -493,7 +494,7 @@
         const weekSwitch = this.weekSwitch;
         const daysDeepCopy = JSON.parse(JSON.stringify(this.monthDays));
         if (type === 'events') {
-          const events = this.events || {}
+          const events = this.events || {};
           Object.keys(events).forEach(value => {
             daysDeepCopy.some(v => v.some(vv => {
               if (vv.date === value) {
@@ -722,7 +723,7 @@
         const range = [];
         const monthRange = this.monthRange;
         function formatDateText(fYear, fMonth) {
-          return `${fYear}月${fMonth}日`;
+          return `${fYear}年${fMonth}月`;
         }
         if (monthRange[0] === monthRange[1]) {
           const [y, m] = monthRange[0].split('-');
