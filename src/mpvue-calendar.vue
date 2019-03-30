@@ -550,6 +550,15 @@
         const isCustomRender = renderer === 'CUSTOMRENDER';
         const isWatchRenderValue = renderer === '_WATCHRENDERVALUE_';
         if (renderer === '_WATCHRENDER_') return this.watchRender(payload);
+        if (this.range && isWatchRenderValue) {
+          if (!Array.isArray((this.value || [])[0])) {
+            this.rangeBegin = [];
+            this.rangeEnd = [];
+          } else {
+            this.rangeBegin = [this.value[0][0], this.value[0][1] - 1, this.value[0][2]];
+            this.rangeEnd = [this.value[1][0], this.value[1][1] - 1, this.value[1][2]];
+          }
+        }
         if (isWatchRenderValue && weekSwitch) {
           this.positionWeek = true;
         }
