@@ -307,12 +307,12 @@
         this.monthIndex = this.month + 1;
         if (this.value.length || this.multi) {
           if (this.range) {
-            this.year = parseInt(this.value[0][0]);
-            this.month = parseInt(this.value[0][1]) - 1;
-            this.day = parseInt(this.value[0][2]);
-            const yearEnd = parseInt(this.value[1][0]);
-            const monthEnd = parseInt(this.value[1][1]) - 1;
-            const dayEnd = parseInt(this.value[1][2]);
+            this.year = Number(this.value[0][0]);
+            this.month = this.value[0][1] - 1;
+            this.day = Number(this.value[0][2]);
+            const yearEnd = Number(this.value[1][0]);
+            const monthEnd = this.value[1][1] - 1;
+            const dayEnd = this.value[1][2];
             this.rangeBegin = [this.year, this.month, this.day];
             this.rangeEnd = [yearEnd, monthEnd, dayEnd];
           } else if(this.multi) {
