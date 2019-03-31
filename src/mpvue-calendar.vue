@@ -29,7 +29,7 @@
         <div class="month-rang-head" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[2]}}</div>
         <div class="month-text-background" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[1]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event)" class="mc-day" :style="itemStyle">
+          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event, index)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
@@ -250,7 +250,7 @@
         this.render(this.year, this.month, '_WATCHRENDER_', 'disabled');
       },
       value() {
-        if (this.isRendeRangeMode()) return;
+        if (this.isRendeRangeMode('_WATCHRENDERVALUE_')) return;
         this.render(this.year, this.month, '_WATCHRENDERVALUE_');
       },
       tileContent() {
@@ -728,7 +728,7 @@
         this.monthRangeDays = [this.days];
         return this.days;
       },
-      rendeRange() {
+      rendeRange(renderer) {
         const range = [];
         const monthRange = this.monthRange;
         function formatDateText(fYear, fMonth) {
@@ -761,14 +761,14 @@
 
         const monthsRange = range.map(item => {
           const [yearParam, monthParam] = item;
-          return this.render(yearParam, monthParam - 1, '_WATCHRENDERVALUE_');
+          return this.render(yearParam, monthParam - 1, renderer);
         });
         this.monthRangeDays = monthsRange;
       },
-      isRendeRangeMode() {
+      isRendeRangeMode(renderer) {
         this.isMonthRange = !!this.monthRange.length;
         if (this.isMonthRange) {
-          this.rendeRange();
+          this.rendeRange(renderer);
           return true;
         }
       },
@@ -957,7 +957,7 @@
           changeWeek();
         }
       },
-      select(k1, k2, data, e) {
+      select(k1, k2, data, e, monthIndex) {
         e && e.stopPropagation();
         const weekSwitch = this.weekSwitch;
         if (data.lastMonth && !weekSwitch) {
@@ -1027,13 +1027,13 @@
           this.$emit('select', this.value, this.multiDaysData);
         } else {
           const currentSelected = this.value.join('-');
-          this.monthDays.some(v => !!v.find(vv => {
+          this.monthRangeDays.some(value => value.some(v => !!v.find(vv => {
             if (vv.date === currentSelected) {
               vv.selected = false;
               return true;
             }
-          }));
-          this.days[k1][k2].selected = true;
+          })));
+          this.monthRangeDays[monthIndex][k1][k2].selected = true;
           this.day = day;
           const selectDate = [selectYear, selectMonthHuman, selectDay];
           this.value[0] = selectYear;
