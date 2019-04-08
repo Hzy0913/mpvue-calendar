@@ -26,8 +26,7 @@
         </div>
       </div>
       <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays" :key='index'>
-        <div class="month-rang-head" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[2]}}</div>
-        <div class="month-text-background" v-if="isMonthRange">{{(rangeOfMonths[index] || [])[1]}}</div>
+        <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
           <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event, index)" class="mc-day" :style="itemStyle">
             <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
@@ -960,6 +959,7 @@
       select(k1, k2, data, e, monthIndex) {
         e && e.stopPropagation();
         const weekSwitch = this.weekSwitch;
+        if (this.isMonthRange) return;
         if (data.lastMonth && !weekSwitch) {
           return this.prev(e);
         } else if (data.nextMonth && !weekSwitch) {
@@ -1110,7 +1110,8 @@
         window.addEventListener('resize', this.resize);
       },
       resize() {
-        this.itemWidth = (this.$el.clientWidth/7 - 4).toFixed(5);
+        const calendar = this.$refs.calendar;
+        this.itemWidth = (calendar.clientWidth/7 - 4).toFixed(5);
       }
     }
   }
