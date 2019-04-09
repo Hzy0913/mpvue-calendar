@@ -859,6 +859,7 @@
       },
       prev(e) {
         e && e.stopPropagation();
+        if (this.isMonthRange) return;
         const weekSwitch = this.weekSwitch;
         const changeMonth = (changed) => {
           if (this.monthIndex === 1) {
@@ -910,6 +911,7 @@
       },
       next(e) {
         e && e.stopPropagation();
+        if (this.isMonthRange) return;
         const weekSwitch = this.weekSwitch;
         const changeMonth = () => {
           if (this.monthIndex === 12) {
@@ -959,7 +961,6 @@
       select(k1, k2, data, e, monthIndex) {
         e && e.stopPropagation();
         const weekSwitch = this.weekSwitch;
-        if (this.isMonthRange) return;
         if (data.lastMonth && !weekSwitch) {
           return this.prev(e);
         } else if (data.nextMonth && !weekSwitch) {
