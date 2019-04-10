@@ -166,6 +166,10 @@
       responsive: {
         type: Boolean,
         default: false
+      },
+      rangeMonthFormat: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -729,9 +733,13 @@
       },
       rendeRange(renderer) {
         const range = [];
+        const self = this;
         const monthRange = this.monthRange;
         function formatDateText(fYear, fMonth) {
-          return `${fYear}年${fMonth}月`;
+          const reg = /([y]+)(.*?)([M]+)(.*?)$/i;
+          const rangeMonthFormat = self.rangeMonthFormat || 'yyyy-MM';
+          reg.exec(rangeMonthFormat);
+          return String(fYear).substring(4 - RegExp.$1.length) + RegExp.$2 + String(fMonth).substring(2 - RegExp.$3.length) + RegExp.$4;
         }
         if (monthRange[0] === monthRange[1]) {
           const [y, m] = monthRange[0].split('-');
@@ -739,15 +747,11 @@
         } else {
           const monthRangeOfStart = monthRange[0].split('-');
           const monthRangeOfEnd = monthRange[1].split('-');
-
           let startYear = +monthRangeOfStart[0];
           let startMonth = +monthRangeOfStart[1];
-
           let endYear = +monthRangeOfEnd[0];
-          let endtMonth = +monthRangeOfEnd[1];
-
+          let endtMonth = +monthRangeOfEnd[1] > 12 ? 12 : +monthRangeOfEnd[1];
           while (startYear < endYear || startMonth <= endtMonth) {
-
             range.push([startYear, startMonth, formatDateText(startYear, startMonth)]);
             if (startMonth === 12 && startYear !== endYear) {
               startYear++;
