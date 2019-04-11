@@ -370,6 +370,10 @@
 .mpvue-calendar .mc-month-range-mode-head{
   box-shadow: 0 4px 8px rgba(25,47,89,.1);
   padding: 15rpx 0rpx;
+  position: sticky;
+  top: 0px;
+  background-color: #fff;
+  z-index: 9;
 }
 .month-range-mode .month-rang-head {
   text-align: left;

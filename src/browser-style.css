@@ -382,7 +382,11 @@
 }
 .mpvue-calendar .mc-month-range-mode-head{
   box-shadow: 0 4px 8px rgba(25,47,89,.1);
-  padding: 5px 0px;
+  padding: 8px 0px;
+  position: sticky;
+  top: 0px;
+  background-color: #fff;
+  z-index: 9;
 }
 .month-range-mode .month-rang-head {
   text-align: left;
