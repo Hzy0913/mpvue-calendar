@@ -1,6 +1,10 @@
+body{
+  width: 100%;
+  overflow-x: hidden;
+}
 .calendar-wrapper{
   width: 100%;
-  max-width: 650px;
+  max-width: 500px;
   margin: 0 auto;
   position: relative;
 }
@@ -37,7 +41,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  font-size: 0.7em;
+  font-size: 12px;
   background-color: #ff4433;
   color: #fff;
   padding: 0px 2px;
@@ -54,7 +58,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  font-size: 0.7em;
+  font-size: 12px;
   background-color: #969799;
   color: #fff;
   padding: 0px 2px;
@@ -64,6 +68,9 @@
 .mpvue-calendar td{
   padding: 4px;
   box-sizing: border-box;
+}
+.mc-text{
+  bottom: 8px !important;
 }
 .selected{
   background-color: rgba(0,0,0,0) !important;
@@ -79,13 +86,25 @@
   display: inline-block;
   margin-right: 10px;
 }
-
+.box-mode{
+  width: 400px;
+  position: absolute;
+  left: 550px;
+  top: 0px;
+  padding-top: 10px;
+}
+.box-mode .data-info{
+  width: 340px;
+}
+.data-info{
+  width: 430px;
+}
 .box-mode .data-info p{
   margin-bottom: 14px;
 }
 .box-mode .data-info .content{
+  height: 315px;
   overflow: auto;
-  margin: 1em 0;
 }
 .box-mode .data-info span{
   margin: 0px 2px;
@@ -93,6 +112,7 @@
 }
 .box-mode .selectMode{
   background-color: #3b75fb;
+  margin-bottom: 10px;
 }
 .box-mode .mode-btn{
   padding: 4px 6px;
@@ -109,20 +129,21 @@
 .mc-range-begin .mc-text, .mc-range-end .mc-text{
   display: none !important;
 }
-.mc-range-begin:after{
+.mc-range-begin:after, .mc-range-begin:after{
   content: '开始';
   display: block;
   box-sizing: border-box;
-  height: 0.7em;
+  height: 12px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   position: absolute;
-  bottom: 20%;
+  bottom: 8px;
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 0.7em;
-  line-height: 0.7em;
+  font-size: 12px;
+  line-height: 12px;
   z-index: 4;
   color: #fff;
 }
@@ -130,16 +151,17 @@
   content: '结束';
   display: block;
   box-sizing: border-box;
-  height: 0.7em;
+  height: 12px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   position: absolute;
-  bottom: 20%;
+  bottom: 8px;
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 0.7em;
-  line-height: 0.7em;
+  font-size: 12px;
+  line-height: 12px;
   z-index: 4;
   color: #fff;
 }
@@ -149,12 +171,36 @@
 .selected .calendar-date{
   color: #fff !important;
 }
-@media screen and (min-width: 1200px) {
-  .right{
-    width: 430px;
-    position: absolute;
-    left: calc(100% + 1em);
-    top: 0px;
-    padding-top: 10px;
+@media screen and (max-width: 420px) {
+  .mpvue-calendar .lunarStyle span{
+    line-height: 1.9 !important;
+  }
+  .box-mode .data-info{
+    display: none !important;
+  }
+  .box{
+    margin-top: 60px;
+  }
+  .box div{
+    font-size: 12px;
+  }
+  .box-mode{
+    left: 0px;
+    top: -80px;
+    position: relative !important;
+  }
+}
+@media screen and (max-width: 320px) {
+  .mpvue-calendar .lunarStyle span{
+    line-height: 1.4 !important;
+    font-size: 13px;
+  }
+  .mpvue-calendar .lunarStyle .mc-text{
+    font-size: 12px !important;
+  }
+}
+@media screen and (max-width: 500px) {
+  .box-mode{
+    display: none;
   }
 }
