@@ -289,7 +289,7 @@
             self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
           }
         });
-      } else if (this.responsive){
+      } else if (this.responsive) {
         this.addResponsiveListener();
       }
       this.oversliding = true;
@@ -318,7 +318,7 @@
             const dayEnd = this.value[1][2];
             this.rangeBegin = [this.year, this.month, this.day];
             this.rangeEnd = [yearEnd, monthEnd, dayEnd];
-          } else if(this.multi) {
+          } else if (this.multi) {
             this.multiDays = this.value;
             const handleMultiDay = this.handleMultiDay;
             if (this.firstRender) {
@@ -357,7 +357,7 @@
             const dayArr = v.split('-');
             return year === Number(dayArr[0]) && month === (dayArr[1] - 1) && i === Number(dayArr[2]);
           });
-        }
+        };
         if (this.range) {
           const lastDay = new Date(year, month + 1, 0).getDate() === i ? {lastDay: true} : null;
           const options = Object.assign(
@@ -1103,7 +1103,7 @@
       dateInfo(y, m, d) {
         return calendar.solar2lunar(y, m, d);
       },
-      zeroPad(n){
+      zeroPad(n) {
         return String(n < 10 ? '0' + n : n)
       },
       updateHeadMonth(type) {
