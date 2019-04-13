@@ -3,6 +3,7 @@ build
 config
 example
 dist
+static
 .babelrc
 .editorconfig
 .postcssrc.js
