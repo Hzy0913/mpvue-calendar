@@ -59,7 +59,9 @@ npm i mpvue-calendar
 | setToday()  | function  | 组件实例中的方法，可以返回今日   |
 | renderer(year, month, palyload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，palyload传数字(0-5)时，根据周的索引渲染该周。如果传入字符串'1'-'31'，则会查找出该年月日所在的周进行渲染|
 | dateInfo(y, m, d)  | function  | 组件实例中的方法，传入年,月,日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
-| resize()  | function  | 组件实例中的方法，调整日历内部元素到合适大小(暂未发布)   |
+| responsive  | Boolean  | 是否启用样式自适应(只支持浏览器端)，会自动调整日历内部元素到合适大小   |
+| monthRange  | Array  | 会根据传入的开始年月到结束年月，显示多个在范围内的月份，如['2019-2', '2020-3']会显示从2019年2月-2020年3月的13个月份日期   |
+| rangeMonthFormat  | String  | 在monthRange传入情况下，用来格式化年月份标题，如'yyyy-MM'则会显示2019-12、'yy年MM月'则会显示19年12月   |
 | selectYear(year)  | function  | 选择年份事件的回调方法，year为选中的年份   |
 | selectMonth(month, year)  | function  | 选择月份事件的回调方法，month为选中的月份，year为选中的年份   |
 | prev(year, month, weekIndex)  | function  | 选择上一月事件的回调方法，参数year为年、month为月份，在weekSwitch模式下，weekIndex为周的索引   |
@@ -68,7 +70,7 @@ npm i mpvue-calendar
 | arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认字体图标   |
 
 - `value` 参数<br>
-在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如multi模式选中2018年6月21和6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`(⚠️从开始日期到结束日期)
+在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如multi模式选中2018年6月21和6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`(⚠️从开始日期到结束日期)。若需要清空选中value时，将value参数设置为[](空数组)即可
 - `events` 参数<br>
 events为自定义备注，例如备注2018年6月21日为`{'2018-6-21': '今日备注', '2018-6-22':'明日备注'}`，在**clean**模式下备注为圆点，**lunar**农历模式下备注会替代农历优先展示
 - `now` 参数<br>
