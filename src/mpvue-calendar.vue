@@ -940,7 +940,6 @@
           }
           this.updateHeadMonth('custom');
           this.render(this.year, this.month);
-          this.$emit('selectMonth', this.month + 1, this.year);
           const weekIndex = weekSwitch ? this.weekIndex : undefined;
           this.$emit('next', this.year, this.month + 1, weekIndex);
         }
