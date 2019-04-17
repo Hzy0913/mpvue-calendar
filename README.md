@@ -42,8 +42,8 @@ npm i mpvue-calendar
 | weeks  | Array  | 自定义星期，不传默认为中文日到六  |
 | value  | Array  | 默认选中日期  |
 | weekSwitch  | Boolean  | 按周切换日期模式，默认为false  |
-| begin  | Array  | 限制开始日期，不传则不限制  |
-| end  | Array  | 限制结束日期，不传则不限制  |
+| begin  | Array  | 设置日期开始时间，不传则不限制，例如想禁用2018-6-21日之前的所有日期，设为`[2018, 6, 21]`  |
+| end  | Array  | 设置日期开始时间，不传则不限制，例想禁用2022-10-8日之后的所有日期，设为`[2022, 10, 8]`   |
 | disabled  | Array  | 禁用日期指定日期，如禁用2018-6-21日为`['2018-6-21']`  |
 | events  | Object  | 自定义备注  |
 | lunar  | Boolean  | 是否显示农历，默认为false  |
