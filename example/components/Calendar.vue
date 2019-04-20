@@ -20,6 +20,8 @@
         rangeMonthFormat="yyyy年MM月"
         monFirst
         responsive
+        :begin='[2019,4,12]'
+        :end='[2019,4,22]'
       />
     </div>
     <div class="box">
