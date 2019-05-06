@@ -653,7 +653,7 @@
                 {day: d, disabled: true,  nextMonth: true},
                 this.getLunarInfo(this.computedNextYear(), this.computedNextMonth(true), d),
                 this.getEvents(this.computedNextYear(), this.computedNextMonth(true), d)
-              ))
+              ));
             }
           }
         }
@@ -677,7 +677,7 @@
             if (Array.isArray(payload)) { //range
               payloadDay = [payload[0], payload[1] + 1, payload[2]].join('-');
             } else if (this.multi || isWatchRenderValue) {
-              payloadDay = this.thisTimeSelect
+              payloadDay = this.thisTimeSelect;
             }
             if (payload === 'SETTODAY') {
               payloadDay = todayString;
