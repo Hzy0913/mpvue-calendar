@@ -254,7 +254,16 @@
       },
       value() {
         if (this.isRendeRangeMode('_WATCHRENDERVALUE_')) return;
-        this.render(this.year, this.month, '_WATCHRENDERVALUE_');
+        const value = this.value;
+        let year = value[0], month = value[1] - 1;
+        if (this.multi) {
+          year = value[value.length - 1][0];
+          month = value[value.length - 1][1] - 1;
+        } else if (this.range) {
+          year = value[1][0];
+          month = value[1][1] - 1;
+        }
+        this.render(year, month, '_WATCHRENDERVALUE_');
       },
       tileContent() {
         if (this.isRendeRangeMode()) return;
