@@ -561,6 +561,8 @@
         const weekSwitch = this.weekSwitch;
         const isCustomRender = renderer === 'CUSTOMRENDER';
         const isWatchRenderValue = renderer === '_WATCHRENDERVALUE_';
+        this.year = y;
+        this.month = m;
         if (renderer === '_WATCHRENDER_') return this.watchRender(payload);
         if (this.range && isWatchRenderValue) {
           if (!Array.isArray((this.value || [])[0])) {
@@ -686,7 +688,11 @@
             if (Array.isArray(payload)) { //range
               payloadDay = [payload[0], payload[1] + 1, payload[2]].join('-');
             } else if (this.multi || isWatchRenderValue) {
-              payloadDay = this.thisTimeSelect;
+              if (this.thisTimeSelect) {
+                payloadDay = this.thisTimeSelect;
+              } else {
+                payloadDay = this.multi ? this.value[this.value.length - 1].join('-') : this.value.join('-') ;
+              }
             }
             if (payload === 'SETTODAY') {
               payloadDay = todayString;
