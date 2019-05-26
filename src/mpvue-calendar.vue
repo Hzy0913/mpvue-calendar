@@ -744,6 +744,7 @@
           };
         }
         this.monthRangeDays = [this.days];
+        isWatchRenderValue && this.updateHeadMonth();
         return this.days;
       },
       rendeRange(renderer) {
