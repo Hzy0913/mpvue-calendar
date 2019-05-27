@@ -680,6 +680,12 @@
             });
           });
         }
+        if (weekSwitch) {
+          const tempLength = temp.length;
+          const lastLineMonth = temp[tempLength - 1][0].date.split('-')[1]; // last line month
+          const secondLastMonth = temp[tempLength - 2][0].date.split('-')[1]; // second-to-last line month
+          lastLineMonth !== secondLastMonth && temp.splice(tempLength - 1, 1);
+        }
         this.monthDays = temp;
         if (weekSwitch && !this.isMonthRange) {
           if (this.positionWeek) {
