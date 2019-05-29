@@ -260,8 +260,16 @@
           year = value[value.length - 1][0];
           month = value[value.length - 1][1] - 1;
         } else if (this.range) {
-          year = value[1][0];
-          month = value[1][1] - 1;
+          if (this.isUserSelect) {
+            year = this.year;
+            month = this.month;
+            this.isUserSelect = false;
+          } else {
+            year = value[0][0];
+            month = value[0][1] - 1;
+            const day = value[0][2];
+            return this.render(year, month, '_WATCHRENDERVALUE_', [year, month, day]);
+          }
         }
         this.render(year, month, '_WATCHRENDERVALUE_');
       },
@@ -1000,6 +1008,7 @@
         const selectMonthHuman = Number(selectedDates[1]);
         const selectDay = Number(selectedDates[2]);;
         if (this.range) {
+          this.isUserSelect = true;
           if (this.rangeBegin.length === 0 || this.rangeEndTemp !== 0) {
             this.rangeBegin = [selectYear, selectMonth, selectDay];
             this.rangeBeginTemp = this.rangeBegin;
