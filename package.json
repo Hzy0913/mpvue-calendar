@@ -1,7 +1,7 @@
 {
   "name": "mpvue-calendar",
   "version": "2.2.2",
-  "description": "mpvue calendar",
+  "description": "calendar mpvue-calendar vue-calendar",
   "main": "./src/mpvue-calendar.vue",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
