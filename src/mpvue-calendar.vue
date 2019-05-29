@@ -640,8 +640,8 @@
             const LastMonthItems = [];
             for (let i = 1; i <= 7; i++) {
               LastMonthItems.unshift(Object.assign(
-                this.renderOption(this.computedPrevYear(y, m), this.computedPrevMonth(false, m), lastMonthDay),
-                {disabled: false, lastMonth: true}
+                this.renderOption(this.computedPrevYear(y, m), this.computedPrevMonth(false, m), lastMonthDay, 'prevMonth'),
+                {lastMonth: true}
               ));
               lastMonthDay --;
             }
