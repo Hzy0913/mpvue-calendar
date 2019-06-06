@@ -1009,12 +1009,19 @@
         const selectDay = Number(selectedDates[2]);;
         if (this.range) {
           this.isUserSelect = true;
+          const rangeDate = (date) => {
+            return date.map((v, k) =>{
+              const value = k === 1 ? v + 1 : v;
+              return this.zero ? this.zeroPad(value) : value;
+            });
+          };
           if (this.rangeBegin.length === 0 || this.rangeEndTemp !== 0) {
             this.rangeBegin = [selectYear, selectMonth, selectDay];
             this.rangeBeginTemp = this.rangeBegin;
             this.rangeEnd = [selectYear, selectMonth, selectDay];
             this.thisTimeSelect = this.rangeEnd;
             this.rangeEndTemp = 0;
+            this.$emit('select', rangeDate(this.rangeBegin), undefined);
           } else {
             this.rangeEnd = [selectYear, selectMonth, selectDay];
             this.thisTimeSelect = [selectYear, selectMonth, selectDay];
@@ -1025,12 +1032,6 @@
             if (+new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]) < +new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2])) {
               this.rangeBegin = this.rangeEnd;
               this.rangeEnd = this.rangeBeginTemp;
-            }
-            const rangeDate = (date) => {
-              return date.map((v, k) =>{
-                const value = k === 1 ? v + 1 : v;
-                return this.zero ? this.zeroPad(value) : value;
-              });
             }
             const begin = rangeDate(this.rangeBegin);
             const end = rangeDate(this.rangeEnd);
