@@ -89,19 +89,19 @@
       },
       value: {
         type: Array,
-        default: function(){
+        default: function() {
           return []
         }
       },
       begin:  {
         type: Array,
-        default: function(){
+        default: function() {
           return []
         }
       },
       end:  {
         type: Array,
-        default: function(){
+        default: function() {
           return []
         }
       },
@@ -111,19 +111,19 @@
       },
       disabled:{
         type: Array,
-        default: function(){
+        default: function() {
           return []
         }
       },
       almanacs:{
         type: Object,
-        default: function(){
+        default: function() {
           return {}
         }
       },
       tileContent:{
         type: Array,
-        default: function(){
+        default: function() {
           return []
         }
       },
@@ -137,13 +137,13 @@
       },
       weeks: {
         type: Array,
-        default:function(){
+        default: function() {
           return this.monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六']
         }
       },
       months:{
         type: Array,
-        default:function(){
+        default: function() {
           return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
         }
       },
@@ -159,7 +159,7 @@
       },
       monthRange: {
         type: Array,
-        default: function(){
+        default: function() {
           return []
         }
       },
