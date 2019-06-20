@@ -15,7 +15,8 @@
     "experimentalObjectRestSpread": true
   },
   "globals": {
-    "__PRO__": false
+    "__PRO__": false,
+    "wx": false
   },
   "rules": {
     "import/no-named-as-default": ["off"],

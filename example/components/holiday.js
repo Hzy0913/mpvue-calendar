@@ -71,5 +71,5 @@ const holiday = [
   {date: '2019-4-28', className: 'ban', content: '班'},
   {date: '2019-9-29', className: 'ban', content: '班'},
   {date: '2019-10-12', className: 'ban', content: '班'},
-]
-export {holiday}
+];
+export {holiday};
