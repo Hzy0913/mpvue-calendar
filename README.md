@@ -5,7 +5,7 @@
 </p>
 <p align="center">
   <a href="https://npmcharts.com/compare/mpvue-calendar?minimal=true">
-  <img src="https://img.shields.io/npm/dy/mpvue-calendar.svg?color=00abe0&style=popout" alt="Downloads">
+  <img src="https://img.shields.io/npm/dt/mpvue-calendar.svg?color=00abe0&style=popout" alt="Downloads">
   </a>
   <a href="https://www.npmjs.com/package/mpvue-calendar">
   <img src="https://img.shields.io/npm/v/mpvue-calendar.svg" alt="Version">
