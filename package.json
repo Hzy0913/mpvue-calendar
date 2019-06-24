@@ -71,7 +71,7 @@
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-dev-middleware": "^1.10.0",
-    "webpack-dev-server": "^2.11.3",
+    "webpack-dev-server": "^3.1.11",
     "webpack-hot-middleware": "^2.16.1",
     "webpack-merge": "^4.1.0",
     "yaml-loader": "^0.4.0"
