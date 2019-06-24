@@ -287,6 +287,11 @@
       },
       responsive() {
         if (this.responsive) this.addResponsiveListener();
+      },
+      // 添加 weekswitch 监听
+      weekSwitch() {
+        if (this.isRendeRangeMode()) return;
+        this.render(this.year, this.month, '_WATCHRENDER_', 'almanacs');
       }
     },
     created() {
