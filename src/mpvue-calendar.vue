@@ -11,7 +11,11 @@
       </div>
       <div class="calendar-info" @click.stop="changeYear">
         <div class="mc-month">
-          <div :class="['mc-month-inner', oversliding ? '' : 'month-transition']" :style="{'top': monthPosition + unit}" v-if="isIos">
+          <div
+            :class="['mc-month-inner', oversliding ? '' : 'month-transition']"
+            :style="{'top': monthPosition + unit}"
+            v-if="isIos"
+          >
             <span v-for="(m, i) in monthsLoop" :key="i" >{{m}}</span>
           </div>
           <div class="mc-month-text" v-else>{{monthText}}</div>
@@ -25,16 +29,36 @@
           <div v-for="(week, index) in weeks" :key="index" class="mc-week">{{week}}</div>
         </div>
       </div>
-      <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays" :key='index'>
+      <div
+        :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]"
+        v-for="(days, index) in monthRangeDays"
+        :key='index'
+      >
         <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
         <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
-          <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled, 'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected, 'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected, 'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]" @click="select(k1, k2, child, $event, index)" class="mc-day" :style="itemStyle">
+          <td
+            v-for="(child,k2) in day"
+            :key="k2"
+            :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled,
+             'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected,
+              'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected,
+               'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]"
+            @click="select(k1, k2, child, $event, index)"
+            class="mc-day"
+            :style="itemStyle"
+          >
             <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="mc-dot" v-if="child.eventName && clean"></div>
-            <div class="mc-text" :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival,'isGregorianFestival': child.isGregorianFestival,'isTerm': child.isTerm}" v-if="lunar && (!child.eventName || clean)">{{child.almanac || child.lunar}}</div>
+            <div
+              class="mc-text"
+              :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival,'isGregorianFestival': child.isGregorianFestival,'isTerm': child.isTerm}"
+              v-if="lunar && (!child.eventName || clean)"
+            >
+              {{child.almanac || child.lunar}}
+            </div>
             <div class="mc-range-bg" v-if="range && child.selected"/>
           </td>
         </tr>
@@ -288,7 +312,6 @@
       responsive() {
         if (this.responsive) this.addResponsiveListener();
       },
-      // 添加 weekswitch 监听
       weekSwitch() {
         if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'almanacs');
