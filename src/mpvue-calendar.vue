@@ -78,6 +78,7 @@
 <script>
   import calendar from './calendarinit.js';
   import './icon.css';
+
   const isBrowser = !!window;
   const now = new Date();
   const todayString = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
@@ -103,52 +104,52 @@
         type: [String, Boolean],
         default: true
       },
-      range:{
+      range: {
         type: Boolean,
         default: false
       },
-      completion:{
+      completion: {
         type: Boolean,
         default: false
       },
       value: {
         type: Array,
-        default: function() {
-          return []
+        default() {
+          return [];
         }
       },
-      begin:  {
+      begin: {
         type: Array,
-        default: function() {
-          return []
+        default() {
+          return [];
         }
       },
-      end:  {
+      end: {
         type: Array,
-        default: function() {
-          return []
+        default() {
+          return [];
         }
       },
-      zero:{
+      zero: {
         type: Boolean,
         default: false
       },
-      disabled:{
+      disabled: {
         type: Array,
-        default: function() {
-          return []
+        default() {
+          return [];
         }
       },
-      almanacs:{
+      almanacs: {
         type: Object,
-        default: function() {
-          return {}
+        default() {
+          return {};
         }
       },
-      tileContent:{
+      tileContent: {
         type: Array,
-        default: function() {
-          return []
+        default() {
+          return [];
         }
       },
       lunar: {
@@ -161,20 +162,20 @@
       },
       weeks: {
         type: Array,
-        default: function() {
-          return this.monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六']
+        default() {
+          return this.monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六'];
         }
       },
-      months:{
+      months: {
         type: Array,
-        default: function() {
-          return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+        default() {
+          return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
         }
       },
-      events:  {
+      events: {
         type: Object,
-        default: function(){
-          return {}
+        default() {
+          return {};
         }
       },
       weekSwitch: {
@@ -183,8 +184,8 @@
       },
       monthRange: {
         type: Array,
-        default: function() {
-          return []
+        default() {
+          return [];
         }
       },
       responsive: {
