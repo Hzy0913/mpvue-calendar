@@ -265,7 +265,12 @@
     },
     computed: {
       itemStyle() {
-        return {width: this.itemWidth + 'px', height: this.itemWidth + 'px', fontSize: this.itemWidth / 4 + 'px', lineHeight: this.lunar ? (this.itemWidth / 1.5 + 'px') : (this.itemWidth + 'px')}
+        return {
+          width: `${this.itemWidth}px`,
+          height: `${this.itemWidth}px`,
+          fontSize: `${this.itemWidth / 4}px`,
+          lineHeight: this.lunar ? `${this.itemWidth / 1.5}px` : `${this.itemWidth}px`
+        };
       }
     },
     watch:{
