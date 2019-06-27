@@ -76,7 +76,7 @@
 </template>
 
 <script>
-  import calendar from './calendarinit.js';
+  import calendar, {defaultLunar, defaultGregorian} from './calendarinit.js';
   import './icon.css';
 
   const isBrowser = !!window;
@@ -214,35 +214,8 @@
         showToday: {},
         monthText: '',
         festival: {
-          lunar: {
-            '1-1': '春节',
-            '1-15': '元宵节',
-            '2-2': '龙头节',
-            '5-5': '端午节',
-            '7-7': '七夕节',
-            '7-15': '中元节',
-            '8-15': '中秋节',
-            '9-9': '重阳节',
-            '10-1': '寒衣节',
-            '10-15': '下元节',
-            '12-8': '腊八节',
-            '12-23': '小年',
-          },
-          gregorian: {
-            '1-1': '元旦',
-            '2-14': '情人节',
-            '3-8': '妇女节',
-            '3-12': '植树节',
-            '5-1': '劳动节',
-            '5-4': '青年节',
-            '6-1': '儿童节',
-            '7-1': '建党节',
-            '8-1': '建军节',
-            '9-10': '教师节',
-            '10-1': '国庆节',
-            '12-24': '平安夜',
-            '12-25': '圣诞节',
-          },
+          lunar: defaultLunar,
+          gregorian: defaultGregorian,
         },
         rangeBegin: [],
         rangeEnd: [],
@@ -273,7 +246,7 @@
         };
       }
     },
-    watch:{
+    watch: {
       events() {
         if (this.isRendeRangeMode()) return;
         this.render(this.year, this.month, '_WATCHRENDER_', 'events');
@@ -284,8 +257,9 @@
       },
       value() {
         if (this.isRendeRangeMode('_WATCHRENDERVALUE_')) return;
-        const value = this.value;
-        let year = value[0], month = value[1] - 1;
+        const {value} = this;
+        let year = value[0];
+        let month = value[1] - 1;
         if (this.multi) {
           year = value[value.length - 1][0];
           month = value[value.length - 1][1] - 1;
@@ -336,7 +310,7 @@
       this.resize();
       if (!isBrowser) {
         wx.getSystemInfo({
-          success: function(res) {
+          success(res) {
             self.isIos = (res.system.split(' ') || [])[0] === 'iOS';
           }
         });
@@ -349,7 +323,7 @@
     },
     beforeDestroy() {
       if (isBrowser) {
-        window.removeEventListener('resize', this.resize)
+        window.removeEventListener('resize', this.resize);
       }
     },
     methods: {
