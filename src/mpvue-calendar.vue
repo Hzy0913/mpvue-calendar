@@ -76,12 +76,9 @@
 </template>
 
 <script>
-  import calendar, {defaultLunar, defaultGregorian} from './calendarinit.js';
+  import calendar, {defaultLunar, defaultGregorian, todayString, isBrowser} from './calendarinit.js';
   import './icon.css';
 
-  const isBrowser = !!window;
-  const now = new Date();
-  const todayString = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
   export default {
     props: {
       multi: {
@@ -328,7 +325,7 @@
     },
     methods: {
       init() {
-        let now = new Date();
+        const now = new Date();
         this.year = now.getFullYear();
         this.month = now.getMonth();
         this.day = now.getDate();
@@ -345,28 +342,28 @@
             this.rangeEnd = [yearEnd, monthEnd, dayEnd];
           } else if (this.multi) {
             this.multiDays = this.value;
-            const handleMultiDay = this.handleMultiDay;
+            const {handleMultiDay} = this;
             if (this.firstRender) {
               this.firstRender = false;
               const thatYear = (this.value[0] || [])[0];
               const thatMonth = (this.value[0] || [])[1];
               if (isFinite(thatYear) && isFinite(thatMonth)) {
-                this.month = parseInt(thatMonth) - 1;
-                this.year = parseInt(thatYear);
+                this.month = parseInt(thatMonth, 10) - 1;
+                this.year = parseInt(thatYear, 10);
               }
             } else if (this.handleMultiDay.length) {
-              this.month = parseInt(handleMultiDay[handleMultiDay.length - 1][1]) - 1;
-              this.year = parseInt(handleMultiDay[handleMultiDay.length - 1][0]);
+              this.month = parseInt(handleMultiDay[handleMultiDay.length - 1][1], 10) - 1;
+              this.year = parseInt(handleMultiDay[handleMultiDay.length - 1][0], 10);
               this.handleMultiDay = [];
             } else {
-              this.month = parseInt(this.value[this.value.length - 1][1]) - 1;
-              this.year = parseInt(this.value[this.value.length - 1][0]);
+              this.month = parseInt(this.value[this.value.length - 1][1], 10) - 1;
+              this.year = parseInt(this.value[this.value.length - 1][0], 10);
             }
-            this.day = parseInt((this.value[0] || [])[2]);
+            this.day = parseInt((this.value[0] || [])[2], 10);
           } else {
-            this.year = parseInt(this.value[0]);
-            this.month = parseInt(this.value[1]) - 1;
-            this.day = parseInt(this.value[2]);
+            this.year = parseInt(this.value[0], 10);
+            this.month = parseInt(this.value[1], 10) - 1;
+            this.day = parseInt(this.value[2], 10);
           }
         }
         this.updateHeadMonth();
@@ -375,14 +372,12 @@
       },
       renderOption(year, month, i, playload) {
         const weekSwitch = this.monthRange.length ? false : this.weekSwitch;
-        const seletSplit = this.value;
+        const {value: seletSplit} = this;
         const isMonthModeCurrentMonth = !weekSwitch && !playload;
-        const disabledFilter = (disabled) => {
-          return disabled.find(v => {
-            const dayArr = v.split('-');
-            return year === Number(dayArr[0]) && month === (dayArr[1] - 1) && i === Number(dayArr[2]);
-          });
-        };
+        const disabledFilter = (disabled) => disabled.find(v => {
+          const dayArr = v.split('-');
+          return year === Number(dayArr[0]) && month === (dayArr[1] - 1) && i === Number(dayArr[2]);
+        });
         if (this.range) {
           const lastDay = new Date(year, month + 1, 0).getDate() === i ? {lastDay: true} : null;
           const options = Object.assign(
@@ -394,8 +389,8 @@
           const {date, day} = options;
           const copyRangeBegin = this.rangeBegin.concat();
           const copyRangeEnd = this.rangeEnd.concat();
-          copyRangeBegin[1] = copyRangeBegin[1] + 1;
-          copyRangeEnd[1] = copyRangeEnd[1] + 1;
+          copyRangeBegin[1] += 1;
+          copyRangeEnd[1] += 1;
           if (weekSwitch || isMonthModeCurrentMonth) {
             (copyRangeEnd.join('-') === date) && (options.rangeClassName = 'mc-range-end');
             (copyRangeBegin.join('-') === date) && (options.rangeClassName = 'mc-range-begin');
@@ -412,14 +407,14 @@
             }
           }
           if (this.begin.length) {
-            const beginTime = +new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2]));
+            const beginTime = +new Date(parseInt(this.begin[0], 10), parseInt(this.begin[1], 10) - 1, parseInt(this.begin[2], 10));
             if (beginTime > +new Date(year, month, i)) {
               options.disabled = true;
             }
           }
           if (this.end.length) {
-            let endTime = Number(new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2])));
-            if (endTime <  Number(new Date(year, month, i))) {
+            const endTime = Number(new Date(parseInt(this.end[0], 10), parseInt(this.end[1], 10) - 1, parseInt(this.end[2], 10)));
+            if (endTime < Number(new Date(year, month, i))) {
               options.disabled = true;
             }
           }
@@ -428,16 +423,17 @@
           } else if (this.disabled.length && disabledFilter(this.disabled)) {
             options.disabled = true;
           }
-          const monthFirstDay = year + '-' + (month + 1) + '-' + 1;
-          const monthLastDay = year + '-' + (month + 1) + '-' + new Date(year, month + 1, 0).getDate();
+          const monthFirstDay = `${year}-${month + 1}-1`;
+          const monthLastDay = `${year}-${month + 1}-${new Date(year, month + 1, 0).getDate()}`;
           (monthFirstDay === date && options.selected && !options.rangeClassName) && (options.rangeClassName = 'mc-range-month-first');
           (monthLastDay === date && options.selected && !options.rangeClassName) && (options.rangeClassName = 'mc-range-month-last');
           this.isCurrentMonthToday(options) && (options.isToday = true);
           (!weekSwitch && playload) && (options.selected = false);
           return options;
-        } else if(this.multi) {
+        }
+        if (this.multi) {
           let options;
-          if (this.value.find(v => year === v[0] && month === v[1]-1 && i === v[2])){
+          if (this.value.find(v => year === v[0] && (month === v[1] - 1) && i === v[2])) {
             options = Object.assign(
               {day: i, selected: true},
               this.getLunarInfo(year, month + 1, i),
@@ -450,12 +446,12 @@
               this.getEvents(year, month + 1, i)
             );
             if (this.begin.length) {
-              const beginTime = +new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2]));
+              const beginTime = +new Date(parseInt(this.begin[0], 10), parseInt(this.begin[1], 10) - 1, parseInt(this.begin[2], 10));
               if (beginTime > +(new Date(year, month, i))) {
                 options.disabled = true;
               }
             }
-            if (this.end.length){
+            if (this.end.length) {
               const endTime = +new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2]));
               if (endTime < +(new Date(year, month, i))) {
                 options.disabled = true;
