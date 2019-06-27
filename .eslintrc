@@ -47,6 +47,18 @@
     "no-return-assign": 0,
     "no-underscore-dangle": 0,
     "no-unused-vars": 0,
-    "no-useless-concat": 0
+    "no-useless-concat": 0,
+    "prefer-destructuring": ["error", {
+      "VariableDeclarator": {
+        "array": false,
+        "object": true
+      },
+      "AssignmentExpression": {
+        "array": false,
+        "object": false
+      }
+    }, {
+      "enforceForRenamedProperties": true
+    }]
   }
 }
