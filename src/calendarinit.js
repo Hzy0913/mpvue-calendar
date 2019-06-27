@@ -551,5 +551,12 @@ export const defaultGregorian = {
   '10-1': '国庆节',
   '12-24': '平安夜',
   '12-25': '圣诞节',
-}
+};
+
+export const isBrowser = !!window;
+
+const now = new Date();
+export const todayString = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
+
+
 export default calendar
