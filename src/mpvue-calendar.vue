@@ -600,11 +600,14 @@
         }
         const firstDayOfMonth = new Date(y, m, 1).getDay();
         const lastDateOfMonth = new Date(y, m + 1, 0).getDate();
-        let lastDayOfLastMonth = new Date(y, m, 0).getDate();
+        const lastDayOfLastMonth = new Date(y, m, 0).getDate();
         this.year = y;
-        let i = 1, line = 0, temp = [], nextMonthPushDays = 1;
+        let i = 1;
+        let line = 0;
+        let nextMonthPushDays = 1;
+        const temp = [];
         for (i; i <= lastDateOfMonth; i++) {
-          let day = new Date(y, m, i).getDay();
+          const day = new Date(y, m, i).getDay();
           let k;
           if (day === 0) {
             temp[line] = [];
