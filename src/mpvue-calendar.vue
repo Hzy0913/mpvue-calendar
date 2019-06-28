@@ -452,7 +452,7 @@
               }
             }
             if (this.end.length) {
-              const endTime = +new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2]));
+              const endTime = +new Date(parseInt(this.end[0], 10), parseInt(this.end[1], 10) - 1, parseInt(this.end[2], 10));
               if (endTime < +(new Date(year, month, i))) {
                 options.disabled = true;
               }
@@ -487,13 +487,13 @@
               this.getEvents(year, monthHuman, i)
             );
             if (this.begin.length) {
-              const beginTime = +new Date(parseInt(this.begin[0]), parseInt(this.begin[1]) - 1, parseInt(this.begin[2]));
+              const beginTime = +new Date(parseInt(this.begin[0], 10), parseInt(this.begin[1], 10) - 1, parseInt(this.begin[2], 10));
               if (beginTime > Number(new Date(year, month, i))) {
                 options.disabled = true;
               }
             }
-            if (this.end.length){
-              const endTime = +new Date(parseInt(this.end[0]), parseInt(this.end[1]) - 1, parseInt(this.end[2]));
+            if (this.end.length) {
+              const endTime = +new Date(parseInt(this.end[0], 10), parseInt(this.end[1], 10) - 1, parseInt(this.end[2], 10));
               if (endTime < +(new Date(year, month, i))) {
                 options.disabled = true;
               }
@@ -515,7 +515,7 @@
         return this.weekSwitch ? isToday : (Number(todayString.split('-')[1]) === this.month + 1);
       },
       watchRender(type) {
-        const weekSwitch = this.weekSwitch;
+        const {weekSwitch} = this;
         const daysDeepCopy = JSON.parse(JSON.stringify(this.monthDays));
         if (type === 'events') {
           const events = this.events || {};
@@ -525,7 +525,7 @@
                 vv.eventName = events[value];
                 return true;
               }
-            }))
+            }));
           });
           this.monthDays = daysDeepCopy;
         } else if (type === 'disabled') {
@@ -536,7 +536,7 @@
                 vv.disabled = true;
                 return true;
               }
-            }))
+            }));
           });
         } else if (type === 'almanacs') {
           const almanacs = this.almanacs || {};
@@ -546,7 +546,7 @@
                 vv.lunar = almanacs[value];
                 return true;
               }
-            }))
+            }));
           });
         } else if (type === 'tileContent') {
           const tileContent = this.tileContent || [];
@@ -557,7 +557,7 @@
                 vv.content = value.content;
                 return true;
               }
-            }))
+            }));
           });
         }
         if (weekSwitch) {
@@ -570,7 +570,7 @@
         }
       },
       render(y, m, renderer, payload) {
-        const weekSwitch = this.weekSwitch;
+        const {weekSwitch} = this;
         const isCustomRender = renderer === 'CUSTOMRENDER';
         const isWatchRenderValue = renderer === '_WATCHRENDERVALUE_';
         this.year = y;
@@ -598,7 +598,7 @@
           }
           this.updateHeadMonth();
         }
-        let firstDayOfMonth = new Date(y, m, 1).getDay();
+        const firstDayOfMonth = new Date(y, m, 1).getDay();
         const lastDateOfMonth = new Date(y, m + 1, 0).getDate();
         let lastDayOfLastMonth = new Date(y, m, 0).getDate();
         this.year = y;
