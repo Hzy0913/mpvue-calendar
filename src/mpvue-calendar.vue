@@ -640,25 +640,25 @@
             nextMonthPushDays = k;
           }
         }
-        const completion = this.completion;
+        const {completion} = this;
         if (this.monFirst) {
           if (!firstDayOfMonth) {
             let lastMonthDay = lastDayOfLastMonth;
             const LastMonthItems = [];
-            for (let i = 1; i <= 7; i++) {
+            for (let d = 1; d <= 7; d++) {
               LastMonthItems.unshift(Object.assign(
                 this.renderOption(this.computedPrevYear(y, m), this.computedPrevMonth(false, m), lastMonthDay, 'prevMonth'),
                 {lastMonth: true}
               ));
-              lastMonthDay --;
+              lastMonthDay--;
             }
             temp.unshift(LastMonthItems);
           }
           temp.forEach((item, index) => {
             if (!index) {
               return item.splice(0, 1);
-            };
-            temp[index-1].length < 7 && temp[index-1].push(item.splice(0, 1)[0]);
+            }
+            temp[index - 1].length < 7 && temp[index - 1].push(item.splice(0, 1)[0]);
           });
           if (this.isMonthRange && temp[temp.length - 1][0].nextMonth) {
             temp.splice(temp.length - 1, 1); //if the first day of last line is nextMonth, delete this line
