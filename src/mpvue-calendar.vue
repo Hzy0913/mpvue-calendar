@@ -1069,7 +1069,8 @@
           this.thisTimeSelect = date;
           this.$emit('select', this.value, this.multiDaysData);
         } else {
-          const currentSelected = this.value.join('-');
+          const valueClone = this.value.splice();
+          const currentSelected = valueClone.join('-');
           this.monthRangeDays.some(value => value.some(v => !!v.find(vv => {
             if (vv.date === currentSelected) {
               vv.selected = false;
