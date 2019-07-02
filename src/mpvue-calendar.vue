@@ -457,9 +457,7 @@
                 options.disabled = true;
               }
             }
-            if (playload && !weekSwitch) {
-              options.disabled = true;
-            } else if (this.disabled.length && disabledFilter(this.disabled)) {
+            if (this.disabled.length && disabledFilter(this.disabled)) {
               options.disabled = true;
             }
           }
@@ -467,7 +465,10 @@
             this.multiDaysData.push(options);
           }
           this.isCurrentMonthToday(options) && (options.isToday = true);
-          (!weekSwitch && playload) && (options.selected = false);
+          if (playload && !weekSwitch) {
+            options.disabled = true;
+            options.selected = false;
+          }
           return options;
         } else {
           const options = {};
@@ -498,14 +499,15 @@
                 options.disabled = true;
               }
             }
-            if (playload && !weekSwitch) {
-              options.disabled = true;
-            } else if (this.disabled.length && disabledFilter(this.disabled)) {
+            if (this.disabled.length && disabledFilter(this.disabled)) {
               options.disabled = true;
             }
           }
           this.isCurrentMonthToday(options) && (options.isToday = true);
-          (!weekSwitch && playload) && (options.selected = false);
+          if (playload && !weekSwitch) {
+            options.disabled = true;
+            options.selected = false;
+          }
           return options;
         }
       },
