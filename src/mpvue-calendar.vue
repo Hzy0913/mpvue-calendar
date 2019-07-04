@@ -630,16 +630,16 @@
           if (day === 6 && i < lastDateOfMonth) {
             line++;
           } else if (i === lastDateOfMonth) {
-            let k = 1;
+            let nextDay = 1;
             const lastDateOfMonthLength = this.monFirst ? 7 : 6;
             for (let d = day; d < lastDateOfMonthLength; d++) { //generate next month surplus option
               temp[line].push(Object.assign(
-                this.renderOption(this.computedNextYear(y, m), this.computedNextMonth(false, m), k, 'nextMonth'),
+                this.renderOption(this.computedNextYear(y, m), this.computedNextMonth(false, m), nextDay, 'nextMonth'),
                 {nextMonth: true}
               ));
-              k++;
+              nextDay++;
             }
-            nextMonthPushDays = k;
+            nextMonthPushDays = nextDay;
           }
         }
         const {completion} = this;
@@ -673,12 +673,12 @@
           }
         }
         if (completion && !weekSwitch && temp.length <= 5 && nextMonthPushDays > 0) {
-          for (let i = temp.length; i<=5; i++) {
-            temp[i] = [];
-            let start = nextMonthPushDays + (i - line -1) * 7;
+          for (let completionIndex = temp.length; completionIndex <= 5; completionIndex++) {
+            temp[completionIndex] = [];
+            const start = nextMonthPushDays + (completionIndex - line - 1) * 7;
             for (let d = start; d <= start + 6; d++) {
-              temp[i].push(Object.assign(
-                {day: d, disabled: true,  nextMonth: true},
+              temp[completionIndex].push(Object.assign(
+                {day: d, disabled: true, nextMonth: true},
                 this.getLunarInfo(this.computedNextYear(), this.computedNextMonth(true), d),
                 this.getEvents(this.computedNextYear(), this.computedNextMonth(true), d)
               ));
@@ -687,7 +687,7 @@
         }
         if (this.tileContent.length) {
           temp.forEach((item, index) => {
-            item.forEach((v, i) => {
+            item.forEach(v => {
               const contents = this.tileContent.find(val => val.date === v.date);
               if (contents) {
                 const {className, content} = contents || {};
@@ -714,7 +714,7 @@
               if (this.thisTimeSelect) {
                 payloadDay = this.thisTimeSelect;
               } else {
-                payloadDay = this.multi ? this.value[this.value.length - 1].join('-') : this.value.join('-') ;
+                payloadDay = this.multi ? this.value[this.value.length - 1].join('-') : this.value.join('-');
               }
             }
             if (payload === 'SETTODAY') {
@@ -733,11 +733,11 @@
             }
             const positionDay = payloadDay || todayString;
             if (searchIndex) {
-              temp.some((v, i) => {
+              temp.some((v, index) => {
                 const isWeekNow = v.find(vv => vv.date === positionDay);
                 if (isWeekNow) {
-                  this.startWeekIndex = i;
-                  this.weekIndex = i;
+                  this.startWeekIndex = index;
+                  this.weekIndex = index;
                   return true;
                 }
               });
@@ -782,14 +782,14 @@
         }
         if (monthRange[0] === monthRange[1]) {
           const [y, m] = monthRange[0].split('-');
-          range.push([Number(y), Number(m), formatDateText(y, m)])
+          range.push([Number(y), Number(m), formatDateText(y, m)]);
         } else {
           const monthRangeOfStart = monthRange[0].split('-');
           const monthRangeOfEnd = monthRange[1].split('-');
           let startYear = +monthRangeOfStart[0];
           let startMonth = +monthRangeOfStart[1];
-          let endYear = +monthRangeOfEnd[0];
-          let endtMonth = +monthRangeOfEnd[1] > 12 ? 12 : +monthRangeOfEnd[1];
+          const endYear = +monthRangeOfEnd[0];
+          const endtMonth = +monthRangeOfEnd[1] > 12 ? 12 : +monthRangeOfEnd[1];
           while (startYear < endYear || startMonth <= endtMonth) {
             range.push([startYear, startMonth, formatDateText(startYear, startMonth)]);
             if (startMonth === 12 && startYear !== endYear) {
@@ -816,7 +816,7 @@
       },
       renderer(y, m, w) {
         const renderY = y || this.year;
-        const renderM = typeof parseInt(m) === 'number' ? (m - 1) : this.month;
+        const renderM = typeof parseInt(m, 10) === 'number' ? (m - 1) : this.month;
         this.initRender = true;
         this.render(renderY, renderM, 'CUSTOMRENDER', w);
         !this.weekSwitch && (this.monthsLoop = this.monthsLoopCopy.concat());
