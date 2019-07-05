@@ -891,11 +891,11 @@
         }
         return lunarInfoObj;
       },
-      getEvents(y, m, d){
-        if(Object.keys(this.events).length == 0) return false;
-        let eventName = this.events[y + "-" + m + "-" + d];
-        let data = {};
-        if(eventName!=undefined){
+      getEvents(y, m, d) {
+        if(!Object.keys(this.events).length) return;
+        const eventName = this.events[`${y}-${m}-${d}`];
+        const data = {};
+        if (eventName) {
           data.eventName = eventName;
         }
         return data;
