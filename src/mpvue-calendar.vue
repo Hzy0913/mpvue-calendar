@@ -823,64 +823,64 @@
       },
       computedPrevYear(year, month) {
         let value = year;
-        if((month - 1) < 0){
+        if ((month - 1) < 0) {
           value--;
         }
         return value;
       },
       computedPrevMonth(isString, month) {
         let value = month;
-        if((month - 1) < 0){
+        if ((month - 1) < 0) {
           value = 11;
         } else {
           value--;
         }
-        if(isString) {
+        if (isString) {
           return value + 1;
         }
         return value;
       },
       computedNextYear(year, month) {
         let value = year;
-        if((month + 1) > 11){
+        if ((month + 1) > 11) {
           value++;
         }
         return value;
       },
       computedNextMonth(isString, month) {
         let value = month;
-        if((month + 1) > 11){
+        if ((month + 1) > 11) {
           value = 0;
         } else {
           value++;
         }
-        if(isString) {
+        if (isString) {
           return value + 1;
         }
         return value;
       },
       getLunarInfo(y, m, d) {
-        let lunarInfo = calendar.solar2lunar(y, m, d);
+        const lunarInfo = calendar.solar2lunar(y, m, d);
+        const {Term} = lunarInfo;
         let yearEve = '';
         if (lunarInfo.lMonth === 12 && lunarInfo.lDay === calendar.monthDays(lunarInfo.lYear, 12)) {
           yearEve = '除夕';
         }
         let lunarValue = lunarInfo.IDayCn;
-        let Term = lunarInfo.Term;
         let isLunarFestival = false;
         let isGregorianFestival = false;
-        if(this.festival.lunar[lunarInfo.lMonth + "-" + lunarInfo.lDay]) {
-          lunarValue = this.festival.lunar[lunarInfo.lMonth + "-" + lunarInfo.lDay];
+        if (this.festival.lunar[lunarInfo.lMonth + '-' + lunarInfo.lDay]) {
+          lunarValue = this.festival.lunar[lunarInfo.lMonth + '-' + lunarInfo.lDay];
           isLunarFestival = true;
-        } else if(this.festival.gregorian[m + "-" + d]) {
-          lunarValue = this.festival.gregorian[m + "-" + d];
+        } else if(this.festival.gregorian[m + '-' + d]) {
+          lunarValue = this.festival.gregorian[m + '-' + d];
           isGregorianFestival = true;
         }
         const lunarInfoObj = {
           date: `${y}-${m}-${d}`,
           lunar: yearEve || Term || lunarValue,
-          isLunarFestival: isLunarFestival,
-          isGregorianFestival: isGregorianFestival,
+          isLunarFestival,
+          isGregorianFestival,
           isTerm: !!yearEve || lunarInfo.isTerm
         };
         if (Object.keys(this.almanacs).length) {
