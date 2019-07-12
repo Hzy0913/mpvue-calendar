@@ -929,7 +929,7 @@
           (typeof changed === 'function') && changed();
           const weekIndex = weekSwitch ? this.weekIndex : undefined;
           this.$emit('prev', this.year, this.month + 1, weekIndex);
-        }
+        };
         if (!this.weekSwitch) return changeMonth();
         const changeWeek = () => {
           this.weekIndex = this.weekIndex - 1;
@@ -937,16 +937,16 @@
           this.monthRangeDays = [this.days];
           this.setMonthRangeofWeekSwitch();
           this.$emit('prev', this.year, this.month + 1, this.weekIndex);
-        }
+        };
         const currentWeek = (this.days[0] || [])[0] || {};
         if (currentWeek.lastMonth || currentWeek.day === 1) {
           const monthChenged = () => {
             const lastMonthLength = this.monthDays.length;
-            const startWeekIndex = currentWeek.lastMonth ? lastMonthLength - 1: lastMonthLength;
+            const startWeekIndex = currentWeek.lastMonth ? lastMonthLength - 1 : lastMonthLength;
             this.startWeekIndex = startWeekIndex;
             this.weekIndex = startWeekIndex;
             changeWeek();
-          }
+          };
           changeMonth(monthChenged);
         } else {
           changeWeek();
@@ -960,12 +960,12 @@
           if (this.monthIndex === 12) {
             this.oversliding = false;
             this.month = 0;
-            this.year = parseInt(this.year) + 1;
+            this.year = parseInt(this.year, 10) + 1;
             this.monthIndex = this.monthIndex + 1;
           } else if (this.monthIndex === 0 && this.month === 11) {
             this.oversliding = false;
             this.month = 0;
-            this.year = parseInt(this.year) + 1;
+            this.year = parseInt(this.year, 10) + 1;
             this.monthIndex = this.monthIndex + 1;
           } else if (this.monthIndex === 13) {
             this.oversliding = true;
@@ -974,14 +974,14 @@
             return this.updateHeadMonth('custom');
           } else {
             this.oversliding = false;
-            this.month = parseInt(this.month) + 1;
+            this.month = parseInt(this.month, 10) + 1;
             this.monthIndex = this.monthIndex + 1;
           }
           this.updateHeadMonth('custom');
           this.render(this.year, this.month);
           const weekIndex = weekSwitch ? this.weekIndex : undefined;
           this.$emit('next', this.year, this.month + 1, weekIndex);
-        }
+        };
         if (!this.weekSwitch) return changeMonth();
         const changeWeek = () => {
           this.weekIndex = this.weekIndex + 1;
@@ -989,7 +989,7 @@
           this.monthRangeDays = [this.days];
           this.setMonthRangeofWeekSwitch();
           this.$emit('next', this.year, this.month + 1, this.weekIndex);
-        }
+        };
         const currentWeek = (this.days[0] || [])[6] || {};
         if (currentWeek.nextMonth || currentWeek.day === (new Date(this.year, this.month + 1, 0).getDate())) {
           const startWeekIndex = currentWeek.nextMonth ? 1 : 0;
@@ -1005,7 +1005,8 @@
         const weekSwitch = this.weekSwitch;
         if (data.lastMonth && !weekSwitch) {
           return this.prev(e);
-        } else if (data.nextMonth && !weekSwitch) {
+        }
+        if (data.nextMonth && !weekSwitch) {
           return this.next(e);
         }
         if (data.disabled) return;
@@ -1015,11 +1016,11 @@
         const selectYear = Number(selectedDates[0]);
         const selectMonth = selectedDates[1] - 1;
         const selectMonthHuman = Number(selectedDates[1]);
-        const selectDay = Number(selectedDates[2]);;
+        const selectDay = Number(selectedDates[2]);
         if (this.range) {
           this.isUserSelect = true;
-          const rangeDate = (date) => {
-            return date.map((v, k) =>{
+          const rangeDate = (dateArray) => {
+            return dateArray.map((v, k) =>{
               const value = k === 1 ? v + 1 : v;
               return this.zero ? this.zeroPad(value) : value;
             });
@@ -1044,8 +1045,8 @@
             }
             const begin = rangeDate(this.rangeBegin);
             const end = rangeDate(this.rangeEnd);
-            this.value.splice(0, 1, begin)
-            this.value.splice(1, 1, end)
+            this.value.splice(0, 1, begin);
+            this.value.splice(1, 1, end);
             this.$emit('select', begin, end);
           }
           this.rangeBgHide = !this.rangeEndTemp || (this.rangeBegin.join('-') === this.rangeEnd.join('-'));
@@ -1057,7 +1058,7 @@
           }
         } else if (this.multi) {
           const filterDayIndex = this.value.findIndex(v => v.join('-') === date);
-          if(~filterDayIndex) {
+          if (~filterDayIndex) {
             this.handleMultiDay = this.value.splice(filterDayIndex, 1);
           } else {
             this.value.push([Number(Number(selectedDates[0])), Number(selectedDates[1]), day]);
@@ -1090,7 +1091,7 @@
         }
       },
       changeYear() {
-        if(this.yearsShow) {
+        if (this.yearsShow) {
           this.yearsShow = false;
           return false;
         }
