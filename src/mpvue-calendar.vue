@@ -861,19 +861,19 @@
       },
       getLunarInfo(y, m, d) {
         const lunarInfo = calendar.solar2lunar(y, m, d);
-        const {Term} = lunarInfo;
+        const {Term, lMonth, lDay, lYear} = lunarInfo || {};
         let yearEve = '';
-        if (lunarInfo.lMonth === 12 && lunarInfo.lDay === calendar.monthDays(lunarInfo.lYear, 12)) {
+        if (lMonth === 12 && lDay === calendar.monthDays(lYear, 12)) {
           yearEve = '除夕';
         }
         let lunarValue = lunarInfo.IDayCn;
         let isLunarFestival = false;
         let isGregorianFestival = false;
-        if (this.festival.lunar[lunarInfo.lMonth + '-' + lunarInfo.lDay]) {
-          lunarValue = this.festival.lunar[lunarInfo.lMonth + '-' + lunarInfo.lDay];
+        if (this.festival.lunar[`${lunarInfo.lMonth}-${lunarInfo.lDay}`]) {
+          lunarValue = this.festival.lunar[`${lunarInfo.lMonth}-${lunarInfo.lDay}`];
           isLunarFestival = true;
-        } else if(this.festival.gregorian[m + '-' + d]) {
-          lunarValue = this.festival.gregorian[m + '-' + d];
+        } else if(this.festival.gregorian[`${m}-${d}`]) {
+          lunarValue = this.festival.gregorian[`${m}-${d}`];
           isGregorianFestival = true;
         }
         const lunarInfoObj = {
@@ -885,14 +885,14 @@
         };
         if (Object.keys(this.almanacs).length) {
           Object.assign(lunarInfoObj, {
-            almanac: this.almanacs[m + "-" + d] || '',
-            isAlmanac: !!this.almanacs[m + "-" + d]
+            almanac: this.almanacs[`${m}-${d}`] || '',
+            isAlmanac: !!this.almanacs[`${m}-${d}`]
           });
         }
         return lunarInfoObj;
       },
       getEvents(y, m, d) {
-        if(!Object.keys(this.events).length) return;
+        if (!Object.keys(this.events).length) return;
         const eventName = this.events[`${y}-${m}-${d}`];
         const data = {};
         if (eventName) {
@@ -908,7 +908,7 @@
           if (this.monthIndex === 1) {
             this.oversliding = false;
             this.month = 11;
-            this.year = parseInt(this.year) - 1;
+            this.year = parseInt(this.year, 10) - 1;
             this.monthIndex = this.monthIndex - 1;
           } else if (this.monthIndex === 0) {
             this.oversliding = true;
@@ -917,11 +917,11 @@
             return this.updateHeadMonth('custom');
           } else if (this.monthIndex === 13) {
             this.month = 11;
-            this.year = parseInt(this.year) - 1;
+            this.year = parseInt(this.year, 10) - 1;
             this.monthIndex = this.monthIndex - 1;
           } else {
             this.oversliding = false;
-            this.month = parseInt(this.month) - 1;
+            this.month = parseInt(this.month, 10) - 1;
             this.monthIndex = this.monthIndex - 1;
           }
           this.updateHeadMonth('custom');
