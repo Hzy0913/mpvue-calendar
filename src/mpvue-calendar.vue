@@ -1019,12 +1019,10 @@
         const selectDay = Number(selectedDates[2]);
         if (this.range) {
           this.isUserSelect = true;
-          const rangeDate = (dateArray) => {
-            return dateArray.map((v, k) =>{
-              const value = k === 1 ? v + 1 : v;
-              return this.zero ? this.zeroPad(value) : value;
-            });
-          };
+          const rangeDate = (dateArray) => dateArray.map((v, k) => {
+            const value = k === 1 ? v + 1 : v;
+            return this.zero ? this.zeroPad(value) : value;
+          });
           if (this.rangeBegin.length === 0 || this.rangeEndTemp !== 0) {
             this.rangeBegin = [selectYear, selectMonth, selectDay];
             this.rangeBeginTemp = this.rangeBegin;
