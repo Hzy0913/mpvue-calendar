@@ -1097,7 +1097,7 @@
         }
         this.yearsShow = true;
         this.years = [];
-        for (let i = this.year - 5; i < this.year + 7; i++){
+        for (let i = this.year - 5; i < this.year + 7; i++) {
           this.years.push(i);
         }
       },
@@ -1135,18 +1135,17 @@
           const currentMonth = ((current || {}).date || '').split('-')[1];
           if (prevMonth === currentMonth) {
             return current;
-          } else {
-            const prevMonthText = this.months[prevMonth - 1];
-            const currentMonthText = this.months[currentMonth - 1];
-            this.monthsLoop[this.monthIndex] = prevMonthText + '~' + currentMonthText;
           }
+          const prevMonthText = this.months[prevMonth - 1];
+          const currentMonthText = this.months[currentMonth - 1];
+          this.monthsLoop[this.monthIndex] = `${prevMonthText}~${currentMonthText}`;
         });
       },
       dateInfo(y, m, d) {
         return calendar.solar2lunar(y, m, d);
       },
       zeroPad(n) {
-        return String(n < 10 ? '0' + n : n)
+        return String(n < 10 ? '0' + n : n);
       },
       updateHeadMonth(type) {
         if (!type) this.monthIndex = this.month + 1;
@@ -1157,9 +1156,9 @@
         window.addEventListener('resize', this.resize);
       },
       resize() {
-        const calendar = this.$refs.calendar;
-        this.itemWidth = (calendar.clientWidth/7 - 4).toFixed(5);
+        const calendarRef = this.$refs.calendar;
+        this.itemWidth = (calendarRef.clientWidth/7 - 4).toFixed(5);
       }
     }
-  }
+  };
 </script>
