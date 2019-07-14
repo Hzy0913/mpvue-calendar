@@ -10,16 +10,16 @@
       @selectMonth="selectMonth"
       @selectYear="selectYear"
       lunar
-      range
+      multi
       responsive
       :tileContent="tileContent"
       :almanacs="almanacs"
-      :weekSwitch="false"
+      :weekSwitch="true"
       rangeMonthFormat="yyyy年MM月"
     />
     <p v-if="info" class="pp">{{info.cYear}}-{{info.cMonth}}-{{info.cDay}}，{{info.Animal}}年，农历{{info.IMonthCn}}{{info.IDayCn}}，{{info.astro}}</p>
     <p v-if="info" class="pp">备注：{{info.eve}}</p>
-    <button @click="setToday" class="today">返回今12日</button>
+    <button @click="setToday" class="today">返回今日</button>
     <!--<button @click="dateInfo">今日信息</button>-->
     <!--<button @click="settileContent">今日信息</button>-->
   </div>
