@@ -872,7 +872,7 @@
         if (this.festival.lunar[`${lunarInfo.lMonth}-${lunarInfo.lDay}`]) {
           lunarValue = this.festival.lunar[`${lunarInfo.lMonth}-${lunarInfo.lDay}`];
           isLunarFestival = true;
-        } else if(this.festival.gregorian[`${m}-${d}`]) {
+        } else if (this.festival.gregorian[`${m}-${d}`]) {
           lunarValue = this.festival.gregorian[`${m}-${d}`];
           isGregorianFestival = true;
         }
@@ -1143,7 +1143,7 @@
         return calendar.solar2lunar(y, m, d);
       },
       zeroPad(n) {
-        return String(n < 10 ? '0' + n : n);
+        return String(n < 10 ? `0${n}` : n);
       },
       updateHeadMonth(type) {
         if (!type) this.monthIndex = this.month + 1;

@@ -50,6 +50,8 @@
     "no-useless-concat": 0,
     "object-curly-newline": 0,
     "no-restricted-globals": 0,
+    "no-else-return": 0,
+    "space-infix-ops": 0,
     "prefer-destructuring": ["error", {
       "VariableDeclarator": {
         "array": false,
