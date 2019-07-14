@@ -19,8 +19,10 @@
     "start:my": "npm run dev:my",
     "build:my": "node build/build.js my",
     "dev": "node build/dev-server.js wx",
-    "start": "cp -r ../src/ ../mpvue/src/components && npm run dev",
-    "build": "node build/build.js wx"
+    "start": "npm run delete & npm run cp & npm run dev",
+    "build": "node build/build.js wx",
+    "delete": "rm -rf src/components",
+    "cp": "cp -r ../src src/components"
   },
   "dependencies": {
     "mpvue": "^2.0.0",
