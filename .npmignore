@@ -4,6 +4,7 @@ config
 example
 dist
 static
+mpvue
 .babelrc
 .editorconfig
 .postcssrc.js
