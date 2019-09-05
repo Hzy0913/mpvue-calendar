@@ -522,7 +522,7 @@ var calendar = {
   }
 };
 
-export const defaultLunar = {
+export var defaultLunar = {
   '1-1': '春节',
   '1-15': '元宵节',
   '2-2': '龙头节',
@@ -537,7 +537,7 @@ export const defaultLunar = {
   '12-23': '小年',
 };
 
-export const defaultGregorian = {
+export var defaultGregorian = {
   '1-1': '元旦',
   '2-14': '情人节',
   '3-8': '妇女节',
@@ -553,10 +553,10 @@ export const defaultGregorian = {
   '12-25': '圣诞节',
 };
 
-export const isBrowser = !!window;
+export var isBrowser = !!window;
 
-const now = new Date();
-export const todayString = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
+var now = new Date();
+export var todayString = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
 
 
-export default calendar
+export default calendar;
