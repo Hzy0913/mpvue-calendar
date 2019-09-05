@@ -1,13 +1,13 @@
 {
   "name": "mpvue-calendar",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "calendar mpvue-calendar vue-calendar",
   "main": "./src/mpvue-calendar.vue",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "node build/build.js",
-    "publish": "npm publish"
+    "publish": "npm publish --registry https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",

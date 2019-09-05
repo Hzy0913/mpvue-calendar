@@ -51,15 +51,15 @@
             <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
-            <div class="mc-dot" v-if="child.eventName && clean"></div>
+            <div class="mc-dot" v-if="child.eventName && clean" />
             <div
               class="mc-text"
-              :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival,'isGregorianFestival': child.isGregorianFestival,'isTerm': child.isTerm}"
+              :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival, 'isTerm': child.isTerm}"
               v-if="lunar && (!child.eventName || clean)"
             >
               {{child.almanac || child.lunar}}
             </div>
-            <div class="mc-range-bg" v-if="range && child.selected"/>
+            <div class="mc-range-bg" v-if="range && child.selected" />
           </td>
         </tr>
       </div>
