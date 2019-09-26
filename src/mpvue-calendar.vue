@@ -258,8 +258,8 @@
         let year = value[0];
         let month = value[1] - 1;
         if (this.multi) {
-          year = value[value.length - 1][0];
-          month = value[value.length - 1][1] - 1;
+          year = (value[value.length - 1] || [])[0] || this.year;
+          month = (value[value.length - 1]|| [])[1] - 1 || this.month;
         } else if (this.range) {
           if (this.isUserSelect) {
             year = this.year;
