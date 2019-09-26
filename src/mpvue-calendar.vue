@@ -1061,7 +1061,7 @@
           } else {
             this.value.push([Number(Number(selectedDates[0])), Number(selectedDates[1]), day]);
           }
-          this.days[k1][k2].selected = !selected;
+          this.monthRangeDays[monthIndex][k1][k2].selected = !selected;
           if (this.monthDays[k1][k2].selected) {
             this.multiDaysData.push(data);
           } else {
