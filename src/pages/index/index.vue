@@ -146,7 +146,7 @@
   import {holiday} from '@/utils/holiday'
   import 'mpvue-calendar/src/style.css'
   const timer = 1000 * 60 * 60 * 24 * 2;
-  const publishday = 1577150609128;
+  const publishday = 1578555593273;
   const showMark = new Date().getTime() - publishday > timer;
   export default {
     data () {
