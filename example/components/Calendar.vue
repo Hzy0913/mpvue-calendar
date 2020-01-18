@@ -115,7 +115,7 @@
       },
       handleToggleBegin() {
         if (!this.toggleBegin) {
-          this.begin = [year, month, 10];
+          this.begin = [...current, 10];
         } else {
           this.begin = undefined;
         }
