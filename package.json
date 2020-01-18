@@ -39,8 +39,6 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-vue": "^5.0.0",
-    "less": "^3.10.3",
-    "less-loader": "^5.0.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
