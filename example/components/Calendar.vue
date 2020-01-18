@@ -55,13 +55,15 @@
 </template>
 
 <script>
-  import Calendar from '../../src/mpvue-calendar'
-  import '../../src/browser-style.css'
-  import {holiday} from './holiday'
+  import Calendar from '../../src/mpvue-calendar';
+  import '../../src/browser-style.css';
+  import { holiday } from './holiday';
+
   const year = new Date().getFullYear();
   const month = new Date().getMonth() + 1;
+  const log = window.console.log;
   export default {
-    data () {
+    data() {
       return {
         value: [[year, month, 16], [year, month, 22]],
         isrange: true,
@@ -71,13 +73,13 @@
         monFirst: true,
         clean: false, //简洁模式
         lunar: true, //显示农历
-        events: {'2019-2-7':'今日备注', '2019-2-8':'一条很长的明日备注'},
+        events: {'2019-2-7': '今日备注', '2019-2-8': '一条很长的明日备注'},
         tileContent: holiday,
         renderValues: [],
-        disabledArray: ['2019-1-27','2019-2-25'],
+        disabledArray: ['2019-1-27', '2019-2-25'],
         almanacs: {'11-14': '学生日', '11-22': '感恩日'},
         monthRange: []
-      }
+      };
     },
     components: {
       Calendar
@@ -92,24 +94,24 @@
     },
     methods: {
       clickSomeThing(data) {
-        this.value = [[2019, 4, 1], [2019,4,8]];
+        this.value = [[2019, 4, 1], [2019, 4, 8]];
         this.events = {'2019-2-12': '啦啦啦啦啦啦'};
         this.disabledArray.push('2018-11-7');
         this.almanacs['11-4'] = '1231231231';
-        console.log(data);
+        log(data);
       },
       setMonthRange(data) {
-        this.monthRange = !!this.monthRange.length ? [] : ['2019-4', '2020-1'];
+        this.monthRange = this.monthRange.length ? [] : ['2019-4', '2020-1'];
       },
-      switchMode(data){
+      switchMode(data) {
         this.weekSwitch = !this.weekSwitch;
         setTimeout(() => {
           this.$refs.calendar.renderer(2019, 1); //渲染2018年8月份
-        }, 0)
+        }, 0);
       },
-      handelRenderValues(data){
+      handelRenderValues(data) {
         if (this.ismulti) {
-          this.renderValues = this.value.map(v => v.join('-'))
+          this.renderValues = this.value.map(v => v.join('-'));
         } else if (this.isrange) {
           const values = [];
           const valueData = data || this.value;
@@ -124,38 +126,38 @@
           this.renderValues = [this.value.join('-')];
         }
       },
-      multiMode(value){
+      multiMode(value) {
         this.ismulti = true;
         this.isrange = false;
         this.value = [[year, month, 16], [year, month, 18]];
         this.handelRenderValues();
         this.$refs.calendar.renderer(year, month);
       },
-      rangeMode(value){
+      rangeMode(value) {
         this.ismulti = false;
         this.isrange = true;
         this.value = [[year, month, 16], [year, month, 22]];
         this.handelRenderValues();
         this.$refs.calendar.renderer(year, month);
       },
-      valueMode(value){
+      valueMode(value) {
         this.ismulti = false;
         this.isrange = false;
         this.value = [year, month, 16];
         this.handelRenderValues();
         this.$refs.calendar.renderer(year, month);
       },
-      selectMonth(month,year){
-        console.log(year,month)
+      selectMonth(monthInfo, yearInfo) {
+        log(yearInfo, monthInfo);
       },
-      prev(y, m, w){
-        console.log(y, m, w)
+      prev(y, m, w) {
+        log(y, m, w);
       },
-      next(year, month, week){
-        console.log(year, month, week)
+      next(yearInfo, monthInfo, week) {
+        log(yearInfo, monthInfo, week);
       },
-      selectYear(year){
-        console.log(year)
+      selectYear(yearInfo) {
+        log(yearInfo);
       },
       setToday() {
         this.$refs.calendar.setToday();
@@ -163,7 +165,7 @@
       dateInfo() {
         const info = this.$refs.calendar.dateInfo(2018, 8, 23);
         this.dataInfo = info;
-        console.log(info);
+        log(info);
       },
       renderer() {
         if (this.monthRange.length) {
@@ -179,11 +181,11 @@
         } else {
           this.handelRenderValues([val]);
         }
-        console.log(val);
-        console.log(val2);
+        log(val);
+        log(val2);
       }
     }
-  }
+  };
 </script>
 
 <style>

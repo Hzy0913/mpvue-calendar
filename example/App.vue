@@ -12,10 +12,10 @@
     components: {
       Calendar
     }
-  }
+  };
 </script>
 
-<style lang="less">
+<style>
   body {
     background-color: #fbf9fe;
   }
