@@ -28,7 +28,7 @@
     "no-unused-expressions": ["off"],
 //    "max-len": ["warn", 100, 2, {"ignoreComments": true}], //暂时关闭
     "max-len": 0,
-    "object-curly-spacing": ["warn", "never"],
+    "object-curly-spacing": 0,
     /* 暂时关闭 */
     "arrow-parens": 0,
     "array-callback-return": 0,
