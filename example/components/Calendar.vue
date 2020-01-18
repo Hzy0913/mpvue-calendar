@@ -18,6 +18,7 @@
         :events="events"
         :monthRange="monthRange"
         rangeMonthFormat="yyyy年MM月"
+        :begin="begin"
         monFirst
         responsive
       />
@@ -34,6 +35,7 @@
       <div :class="[{'selectMode': !ismulti && !isrange}, 'mode-btn', 'mode-switch']" @click="switchMode">按{{weekSwitch ? '月' : '周'}}切换</div>
       <br/>
       <div :class="[{'selectMode': isrange}, 'mode-btn']" @click="setMonthRange">显示{{monthRangeText}}月份</div>
+      <div class="mode-btn" @click="handleToggleBegin">{{toggleBegin ? '启用所有日期' : '禁用本月10号之前所有日期'}}</div>
       <div class="data-info" >
         <p><span>选中日期:</span></p>
         <div class="content">
@@ -62,6 +64,8 @@
   const year = new Date().getFullYear();
   const month = new Date().getMonth() + 1;
   const log = window.console.log;
+  let current = [year, month];
+
   export default {
     data() {
       return {
@@ -73,12 +77,18 @@
         monFirst: true,
         clean: false, //简洁模式
         lunar: true, //显示农历
-        events: {'2019-2-7': '今日备注', '2019-2-8': '一条很长的明日备注'},
+        events: {
+          [`${year}-${month}-7`]: '$580',
+          [`${year}-${month}-8`]: '$510',
+          [`${year}-${month}-9`]: '$420',
+        },
         tileContent: holiday,
         renderValues: [],
         disabledArray: ['2019-1-27', '2019-2-25'],
         almanacs: {'11-14': '学生日', '11-22': '感恩日'},
-        monthRange: []
+        monthRange: [],
+        toggleBegin: false,
+        begin: undefined,
       };
     },
     components: {
@@ -102,6 +112,16 @@
       },
       setMonthRange(data) {
         this.monthRange = this.monthRange.length ? [] : ['2019-4', '2020-1'];
+      },
+      handleToggleBegin() {
+        if (!this.toggleBegin) {
+          this.begin = [year, month, 10];
+        } else {
+          this.begin = undefined;
+        }
+
+        this.toggleBegin = !this.toggleBegin;
+        setTimeout(() => this.$refs.calendar.renderer(...current));
       },
       switchMode(data) {
         this.weekSwitch = !this.weekSwitch;
@@ -150,11 +170,13 @@
       selectMonth(monthInfo, yearInfo) {
         log(yearInfo, monthInfo);
       },
-      prev(y, m, w) {
-        log(y, m, w);
+      prev(yearInfo, monthInfo, week) {
+        log(yearInfo, monthInfo, week);
+        current = [yearInfo, monthInfo];
       },
       next(yearInfo, monthInfo, week) {
         log(yearInfo, monthInfo, week);
+        current = [yearInfo, monthInfo];
       },
       selectYear(yearInfo) {
         log(yearInfo);

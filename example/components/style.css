@@ -19,6 +19,9 @@ body{
 .box{
   margin-top: 40px;
 }
+.box > div{
+  margin-right: 8px;
+}
 .setToday{
   padding: 4px 6px;
   background-color: #00a2d4;
@@ -122,6 +125,7 @@ body{
   color: #fff;
   font-size: 14px;
   cursor: pointer;
+  margin: 4px;
 }
 .box-mode .mode-switch{
   background-color: #E74C3C !important;
