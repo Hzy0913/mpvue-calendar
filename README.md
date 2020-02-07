@@ -147,7 +147,7 @@ export default {
     },
     dateInfo() {
       const info = this.$refs.calendar.dateInfo(2018, 8, 23)
-      console.log(info);
+      console.log(info)
     },
     renderer() {
       this.$refs.calendar.renderer(2018, 8); //渲染2018年8月份
