@@ -114,9 +114,9 @@ export default {
     return {
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       disabledArray: ['2018-6-27', '2018-6-25'],
-      value: [2018,6,7],
-      begin:[2016,1,1],
-      end:[2020,1,1],
+      value: [2018, 6, 7],
+      begin:[2016, 1, 1],
+      end:[2020, 1, 1],
       events: {'2018-6-7': '今日备注', '2018-6-8': '一条很长的明日备注'},
       almanacs: {'9-3': '抗战胜利日', '11-17': '学生日'},
       tileContent: [
