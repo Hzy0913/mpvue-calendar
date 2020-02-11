@@ -41,7 +41,6 @@ npm i mpvue-calendar
 | months  | Array  | 自定义月份显示，不传默认为中文一到十二月  |
 | weeks  | Array  | 自定义星期显示，不传默认为中文日到六  |
 | value  | Array  | 选中日期，具体用法见下  |
-| weekSwitch  | Boolean  | 按周切换日期模式，默认为false  |
 | begin  | Array  | 设置可用日期开始时间，在此之前的日期会被禁用，不传则不限制。例如想禁用2018-6-21日之前的所有日期，设为`[2018, 6, 21]`  |
 | end  | Array  | 设置可用日期结束时间，在此之后的日期会被禁用，不传则不限制。例如想禁用2022-10-8日之后的所有日期，设为`[2022, 10, 8]`   |
 | disabled  | Array  | 禁用指定日期，如禁用2018-6-21日为`['2018-6-21']`  |
@@ -55,9 +54,10 @@ npm i mpvue-calendar
 | tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   |
 | range  | Boolean  | 是否为范围模式，默认为false   |
 | multi  | Boolean  | 是否为多选模式，默认为false   |
+| weekSwitch  | Boolean  | 是否为按周切换日期模式，默认为false  |
 | select(val, val2)  | function  | 日期选中事件的回调方法,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期，val2为日期信息   |
 | setToday()  | function  | 组件实例中的方法，可以返回今日   |
-| renderer(year, month, palyload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，palyload传数字(0-5)时，根据周的索引渲染该周。如果传入字符串'1'-'31'，则会查找出该年月日所在的周进行渲染|
+| renderer(year, month, payload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，payload传数字(0-5)时，根据周的索引渲染该周。如果传入字符串'1'-'31'，则会查找出该年月日所在的周进行渲染|
 | dateInfo(y, m, d)  | function  | 组件实例中的方法，传入年、月、日三个参数会返回当天的信息(农历、节气、星座、星期、天干地支等)   |
 | responsive  | Boolean  | 是否启用样式自适应(只支持浏览器端)，会自动调整日历内部元素到合适大小   |
 | monthRange  | Array  | 会根据传入的开始年月到结束年月，显示多个在范围内的月份，如['2019-2', '2020-3']会显示从2019年2月-2020年3月的13个月份日期   |
