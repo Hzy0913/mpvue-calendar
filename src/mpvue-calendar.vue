@@ -372,7 +372,7 @@
       },
       renderOption(year, month, i, playload) {
         const weekSwitch = this.monthRange.length ? false : this.weekSwitch;
-        const {value: seletSplit} = this;
+        const {value: selectSplit} = this;
         const isMonthModeCurrentMonth = !weekSwitch && !playload;
         const disabledFilter = (disabled) => disabled.find(v => {
           const dayArr = v.split('-');
@@ -473,7 +473,7 @@
         } else {
           const options = {};
           const monthHuman = month + 1;
-          if (seletSplit[0] === year && seletSplit[1] === monthHuman && seletSplit[2] === i) {
+          if (selectSplit[0] === year && selectSplit[1] === monthHuman && selectSplit[2] === i) {
             Object.assign(
               options,
               {day: i, selected: true},
