@@ -255,8 +255,9 @@
       value() {
         if (this.isRendeRangeMode('_WATCHRENDERVALUE_')) return;
         const {value} = this;
-        let year = value[0];
-        let month = value[1] - 1;
+        let year = value[0] || this.year;
+        let month = value[1] - 1 || this.month;
+        let day;
         if (this.multi) {
           year = (value[value.length - 1] || [])[0] || this.year;
           month = (value[value.length - 1]|| [])[1] - 1 || this.month;
@@ -266,9 +267,11 @@
             month = this.month;
             this.isUserSelect = false;
           } else {
-            year = value[0][0];
-            month = value[0][1] - 1;
-            const day = value[0][2];
+            if (value.length) {
+              year = value[0][0];
+              month = value[0][1] - 1;
+              day = value[0][2];
+            }
             return this.render(year, month, '_WATCHRENDERVALUE_', [year, month, day]);
           }
         }
