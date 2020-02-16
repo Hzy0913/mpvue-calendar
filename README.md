@@ -38,23 +38,23 @@ npm i mpvue-calendar
 ## 参数及方法
 | 参数or方法  | 类型  | 说明  | 默认值  |
 | ------------ | ------------ | ------------ |------------ |
-| months  | Array  | 自定义月份显示，不传默认为中文一到十二月  ||
-| weeks  | Array  | 自定义星期显示，不传默认为中文日到六  ||
-| value  | Array  | 选中日期，具体用法见下  ||
-| begin  | Array  | 设置可用日期开始时间，在此之前的日期会被禁用，不传则不限制。例如想禁用2018-6-21日之前的所有日期，设为`[2018, 6, 21]`  ||
-| end  | Array  | 设置可用日期结束时间，在此之后的日期会被禁用，不传则不限制。例如想禁用2022-10-8日之后的所有日期，设为`[2022, 10, 8]`   ||
-| disabled  | Array  | 禁用指定日期，如禁用2018-6-21日为`['2018-6-21']`  ||
-| events  | Object  | 自定义事件备注  ||
-| lunar  | Boolean  | 是否显示农历，默认为false  ||
-| monFirst   | Boolean  | 是否日期以星期一作为开始，默认为false(默认为星期日开头)  ||
-| completion   | Boolean  | 是否补全日期，设为true时会以每月6行展示，不足6行的会用下月日期补全，默认为false  ||
-| clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点，默认为false   ||
-| now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字，默认为true   ||
-| almanacs   | Object  | 自定义节日，如{'11-14': '学生日', '11-22': '感恩日'}, 自定义节日会覆盖组件的默认节日信息  ||
-| tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   ||
-| range  | Boolean  | 是否为范围模式，默认为false   ||
-| multi  | Boolean  | 是否为多选模式，默认为false   ||
-| weekSwitch  | Boolean  | 是否为按周切换日期模式，默认为false  ||
+| months  | Array  | 自定义月份显示，不传默认为中文一到十二月  |['一月', '二月', ... , '十二月']|
+| weeks  | Array  | 自定义星期显示，不传默认为中文日到六  |['日', '一', '二', '三', '四', '五', '六']|
+| value  | Array  | 选中日期，具体用法见下  |-|
+| begin  | Array  | 设置可用日期开始时间，在此之前的日期会被禁用，不传则不限制。例如想禁用2018-6-21日之前的所有日期，设为`[2018, 6, 21]`  |-|
+| end  | Array  | 设置可用日期结束时间，在此之后的日期会被禁用，不传则不限制。例如想禁用2022-10-8日之后的所有日期，设为`[2022, 10, 8]`   |-|
+| disabled  | Array  | 禁用指定日期，如禁用2018-6-21日为`['2018-6-21']`  |-|
+| events  | Object  | 自定义事件备注  |-|
+| lunar  | Boolean  | 是否显示农历，默认为false  |`false`|
+| monFirst   | Boolean  | 是否日期以星期一作为开始，默认为false(默认为星期日开头)  |`false`|
+| completion   | Boolean  | 是否补全日期，设为true时会以每月6行展示，不足6行的会用下月日期补全，默认为false  |`false`|
+| clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点，默认为false   |`false`|
+| now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字，默认为true   |`true`|
+| almanacs   | Object  | 自定义节日，如{'11-14': '学生日', '11-22': '感恩日'}, 自定义节日会覆盖组件的默认节日信息  |-|
+| tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   |-|
+| range  | Boolean  | 是否为范围模式，默认为false   |`false`|
+| multi  | Boolean  | 是否为多选模式，默认为false   |`false`|
+| weekSwitch  | Boolean  | 是否为按周切换日期模式，默认为false  |`false`|
 | select(val, val2)  | function  | 日期选中事件的回调方法,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期，val2为日期信息   ||
 | setToday()  | function  | 组件实例中的方法，可以返回今日   ||
 | renderer(year, month, payload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，payload传数字(0-5)时，根据周的索引渲染该周。如果传入字符串'1'-'31'，则会查找出该年月日所在的周进行渲染||
@@ -66,8 +66,8 @@ npm i mpvue-calendar
 | selectMonth(month, year)  | function  | 选择月份事件的回调方法，month为选中的月份，year为选中的年份   ||
 | prev(year, month, weekIndex)  | function  | 选择上一月事件的回调方法，参数year为年、month为月份，在weekSwitch模式下，weekIndex为周的索引   ||
 | next(year, month, weekIndex)  | function  | 选择下一月事件的回调方法，参数同prev方法一致   ||
-| arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认字体图标   ||
-| arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认字体图标   ||
+| arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认字体图标   |-|
+| arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认字体图标   |-|
 
 - `value` 参数<br>
 在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如multi模式选中2018年6月21和6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`(⚠️从开始日期到结束日期)。若需要清空选中value时，将value参数设置为`[]`(空数组)即可
