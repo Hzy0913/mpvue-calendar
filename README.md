@@ -38,23 +38,23 @@ npm i mpvue-calendar
 ## 参数及方法
 | 参数or方法  | 类型  | 说明  | 默认值  |
 | ------------ | ------------ | ------------ |------------ |
-| months  | Array  | 自定义月份显示，不传默认为中文一到十二月  |['一月', '二月', ... , '十二月']|
-| weeks  | Array  | 自定义星期显示，不传默认为中文日到六  |['日', '一', '二', '三', '四', '五', '六']|
+| months  | Array  | 自定义月份显示  |['一月', '二月', ... , '十二月']|
+| weeks  | Array  | 自定义星期显示  |['日', '一', '二', '三', '四', '五', '六']|
 | value  | Array  | 选中日期，具体用法见下  |-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
 | begin  | Array  | 设置可用日期开始时间，在此之前的日期会被禁用，不传则不限制。例如想禁用2018-6-21日之前的所有日期，设为`[2018, 6, 21]`  |-|
 | end  | Array  | 设置可用日期结束时间，在此之后的日期会被禁用，不传则不限制。例如想禁用2022-10-8日之后的所有日期，设为`[2022, 10, 8]`   |-|
 | disabled  | Array  | 禁用指定日期，如禁用2018-6-21日为`['2018-6-21']`  |-|
 | events  | Object  | 自定义事件备注  |-|
-| lunar  | Boolean  | 是否显示农历，默认为false  |`false`|
-| monFirst   | Boolean  | 是否日期以星期一作为开始，默认为false(默认为星期日开头)  |`false`|
-| completion   | Boolean  | 是否补全日期，设为true时会以每月6行展示，不足6行的会用下月日期补全，默认为false  |`false`|
-| clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点，默认为false   |`false`|
-| now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字，默认为true   |`true`|
+| lunar  | Boolean  | 是否显示农历  |`false`|
+| monFirst   | Boolean  | 是否日期以星期一作为开始  |`false` (默认为星期日开头)|
+| completion   | Boolean  | 是否补全日期，设为true时会以每月6行展示，不足6行的会用下月日期补全  |`false`|
+| clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点   |`false`|
+| now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字   |`true`|
 | almanacs   | Object  | 自定义节日，如{'11-14': '学生日', '11-22': '感恩日'}, 自定义节日会覆盖组件的默认节日信息  |-|
 | tileContent  | Array  | 为每个具体日期自定义class和插入文本内容，具体用法见下   |-|
-| range  | Boolean  | 是否为范围模式，默认为false   |`false`|
-| multi  | Boolean  | 是否为多选模式，默认为false   |`false`|
-| weekSwitch  | Boolean  | 是否为按周切换日期模式，默认为false  |`false`|
+| range  | Boolean  | 是否为范围模式   |`false`|
+| multi  | Boolean  | 是否为多选模式   |`false`|
+| weekSwitch  | Boolean  | 是否为按周切换日期模式  |`false`|
 | select(val, val2)  | function  | 日期选中事件的回调方法,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期，val2为日期信息   ||
 | setToday()  | function  | 组件实例中的方法，可以返回今日   ||
 | renderer(year, month, payload)  | function  | 组件实例中的方法，可以重新渲染指定日期(参数中传入渲染的年份(year)和月份(month)，需要为数字类型) 。在weekSwitch模式下，payload传数字(0-5)时，根据周的索引渲染该周。如果传入字符串'1'-'31'，则会查找出该年月日所在的周进行渲染||
