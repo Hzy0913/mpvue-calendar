@@ -40,7 +40,7 @@ npm i mpvue-calendar
 | ------------ | ------------ | ------------ |------------ |
 | months  | Array  | 自定义月份显示，不传默认为中文一到十二月  |['一月', '二月', ... , '十二月']|
 | weeks  | Array  | 自定义星期显示，不传默认为中文日到六  |['日', '一', '二', '三', '四', '五', '六']|
-| value  | Array  | 选中日期，具体用法见下  |-|
+| value  | Array  | 选中日期，具体用法见下  |-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
 | begin  | Array  | 设置可用日期开始时间，在此之前的日期会被禁用，不传则不限制。例如想禁用2018-6-21日之前的所有日期，设为`[2018, 6, 21]`  |-|
 | end  | Array  | 设置可用日期结束时间，在此之后的日期会被禁用，不传则不限制。例如想禁用2022-10-8日之后的所有日期，设为`[2022, 10, 8]`   |-|
 | disabled  | Array  | 禁用指定日期，如禁用2018-6-21日为`['2018-6-21']`  |-|
