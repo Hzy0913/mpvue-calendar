@@ -69,7 +69,7 @@ npm i mpvue-calendar -S
 | prev(year, month, weekIndex)  | function  | 选择上一月事件的回调方法，参数year为年、month为月份，在weekSwitch模式下，weekIndex为周的索引   ||
 | next(year, month, weekIndex)  | function  | 选择下一月事件的回调方法，参数同prev方法一致   ||
 
-
+#### 参数说明
 - `value` 参数<br>
 在普通模式下value为一维数组如2018年6月21为`[2018,6,21]`<br>在range和multi模式下value为二维数组，如multi模式选中2018年6月21和6月28为`[[2018,6,21], [2018,6,28]]`<br> 在range模式下如果定义value参数必须定义开始日期和结束日期，如`[[2018,6,21], [2018,6,28]]`(⚠️从开始日期到结束日期)。若需要清空选中value时，将value参数设置为`[]`(空数组)即可
 - `events` 参数<br>
