@@ -47,7 +47,7 @@ npm i mpvue-calendar -S
 | events  | Object  | 自定义事件备注  |-|
 | lunar  | Boolean  | 是否显示农历  |`false`|
 | monFirst   | Boolean  | 是否日期以星期一作为开始  |`false` (默认为星期日开头)|
-| completion   | Boolean  | 是否补全日期，设为true时会以每月6行展示，不足6行的会用下月日期补全  |`false`|
+| completion   | Boolean  | 是否补全日期，设为`true`时会以每月6行展示，不足6行的会用下月日期补全  |`false`|
 | clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点   |`false`|
 | now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字   |`true`|
 | almanacs   | Object  | 自定义节日，如{'11-14': '学生日', '11-22': '感恩日'}, 自定义节日会覆盖组件的默认节日信息  |-|
@@ -57,7 +57,7 @@ npm i mpvue-calendar -S
 | weekSwitch  | Boolean  | 是否为按周切换日期模式  |`false`|
 | arrowLeft  | String  | 自定义左箭头图片，填写图片路径，不填则使用默认字体图标   |-|
 | arrowRight  | String  | 自定义右箭头图片，填写图片路径，不填则使用默认字体图标   |-|
-| responsive  | Boolean  | 是否启用样式自适应(只支持浏览器端)，会自动调整日历内部元素到合适大小   ||
+| responsive  | Boolean  | 是否启用样式自适应(只支持浏览器端)，会自动调整日历内部元素到合适大小   |`false`|
 | monthRange  | Array  | 会根据传入的开始年月到结束年月，显示多个在范围内的月份，如['2019-2', '2020-3']会显示从2019年2月-2020年3月的13个月份日期   ||
 | rangeMonthFormat  | String  | 在monthRange传入情况下，用来格式化年月份标题，如'yyyy-MM'则会显示2019-12、'yy年MM月'则会显示19年12月   ||
 | select(val, val2)  | function  | 日期选中事件的回调方法,在range模式下val为开始日期、val2为结束日期，非range模式下val为选中日期，val2为日期信息   ||
