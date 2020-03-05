@@ -259,8 +259,14 @@
         let month = value[1] - 1 || this.month;
         let day;
         if (this.multi) {
-          year = (value[value.length - 1] || [])[0] || this.year;
-          month = (value[value.length - 1]|| [])[1] - 1 || this.month;
+          if (this.isUserSelect) {
+            year = this.year;
+            month = this.month;
+            this.isUserSelect = false;
+          } else {
+            year = (value[value.length - 1] || [])[0] || this.year;
+            month = (value[value.length - 1]|| [])[1] - 1 || this.month;
+          }
         } else if (this.range) {
           if (this.isUserSelect) {
             year = this.year;
@@ -1058,6 +1064,7 @@
             this.render(this.year, this.month, undefined, this.thisTimeSelect);
           }
         } else if (this.multi) {
+          this.isUserSelect = true;
           const filterDayIndex = this.value.findIndex(v => v.join('-') === date);
           if (~filterDayIndex) {
             this.handleMultiDay = this.value.splice(filterDayIndex, 1);
