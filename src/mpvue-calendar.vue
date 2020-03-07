@@ -1070,12 +1070,12 @@
           }
           this.monthRangeDays[monthIndex][k1][k2].selected = !selected;
 
-          this.multiDaysData = this.value.map(date => {
-            const [year, month, day] = date;
+          this.multiDaysData = this.value.map(dateItem => {
+            const [year, month, d] = dateItem;
             return Object.assign(
-              {day, selected: true},
-              this.getLunarInfo(year, month, day),
-              this.getEvents(year, month, day)
+              {day: d, selected: true},
+              this.getLunarInfo(year, month, d),
+              this.getEvents(year, month, d)
             );
           });
 
