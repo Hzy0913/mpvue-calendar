@@ -470,9 +470,6 @@
               options.disabled = true;
             }
           }
-          if (options.selected && this.multiDaysData.length !== this.value.length) {
-            this.multiDaysData.push(options);
-          }
           this.isCurrentMonthToday(options) && (options.isToday = true);
           if (playload && !weekSwitch) {
             options.disabled = true;
@@ -1072,11 +1069,16 @@
             this.value.push([Number(Number(selectedDates[0])), Number(selectedDates[1]), day]);
           }
           this.monthRangeDays[monthIndex][k1][k2].selected = !selected;
-          if (this.monthDays[k1][k2].selected) {
-            this.multiDaysData.push(data);
-          } else {
-            this.multiDaysData = this.multiDaysData.filter(item => item.date !== date);
-          }
+
+          this.multiDaysData = this.value.map(date => {
+            const [year, month, day] = date;
+            return Object.assign(
+              {day, selected: true},
+              this.getLunarInfo(year, month, day),
+              this.getEvents(year, month, day)
+            );
+          });
+
           this.thisTimeSelect = date;
           this.$emit('select', this.value, this.multiDaysData);
         } else {
