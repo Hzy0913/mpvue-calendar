@@ -685,8 +685,8 @@
             for (let d = start; d <= start + 6; d++) {
               temp[completionIndex].push(Object.assign(
                 {day: d, disabled: true, nextMonth: true},
-                this.getLunarInfo(this.computedNextYear(), this.computedNextMonth(true), d),
-                this.getEvents(this.computedNextYear(), this.computedNextMonth(true), d)
+                this.getLunarInfo(this.computedNextYear(y, m), this.computedNextMonth(true, m), d),
+                this.getEvents(this.computedNextYear(y, m), this.computedNextMonth(true, m), d)
               ));
             }
           }
