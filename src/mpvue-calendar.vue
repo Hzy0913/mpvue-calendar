@@ -535,7 +535,6 @@
               }
             }));
           });
-          this.monthDays = daysDeepCopy;
         } else if (type === 'disabled') {
           const disabled = this.disabled || [];
           disabled.forEach(value => {
@@ -568,8 +567,9 @@
             }));
           });
         }
+
+        this.monthDays = daysDeepCopy;
         if (weekSwitch) {
-          this.monthDays = daysDeepCopy;
           this.days = [daysDeepCopy[this.weekIndex]];
           this.monthRangeDays = [this.days];
         } else {
