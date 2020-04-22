@@ -550,7 +550,9 @@
           Object.keys(almanacs).forEach(value => {
             daysDeepCopy.some(v => v.some(vv => {
               if (vv.date.slice(5, 20) === value) {
-                vv.lunar = almanacs[value];
+                const [y, m, d] = vv.date.split('-');
+                Object.assign(vv, this.getLunarInfo(y, m, d));
+
                 return true;
               }
             }));
