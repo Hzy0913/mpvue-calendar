@@ -1,5 +1,5 @@
 <template>
-  <div class="calendar-tools" v-if="!isMonthRange">
+  <div class="vc-calendar-tools" v-if="!isMonthRange">
     <div class="calendar-prev" @click="prev">
       <img :src="arrowLeft" v-if="arrowLeft">
       <i class="iconfont icon-arrow-left" v-else></i>
@@ -11,8 +11,8 @@
     <div class="calendar-info" @click.stop="changeYear">
       <div class="mc-month">
         <div
-          :class="['mc-month-inner', oversliding ? '' : 'month-transition']"
-          :style="{'top': monthPosition + unit}"
+          :class="['mc-month-inner', stopTransition ? 'stop-transition' : '', oversliding ? '' : 'month-transition']"
+          :style="{'top': -translate + unit}"
           v-if="isIos"
         >
           <span
@@ -58,43 +58,74 @@
     },
     setup(props) {
       const { months } = props;
+      const height = 42
+
       const unit = true ? 'px' : 'rpx';
 
-      const count = ref(0)
+      const current = ref(1)
+      const translate = ref(current.value * height)
+      const stopTransition = ref(false)
 
       const monthTransition = [];
-      const height = 41
-      for (let i = 0; i < 12; i++) {
-        monthTransition.push({
+
+      const monthItem = (i, height) => {
+        return {
           text: months[i],
           height: height + unit,
-          top: -(height * i) + unit,
-        });
+        }
+      }
+      for (let i = 0; i < 12; i++) {
+        monthTransition.push(monthItem(i, height));
+        if (i===11) {
+          monthTransition.unshift(monthItem(11, height))
+          monthTransition.push(monthItem(0, height))
+        }
       }
 
 
       // cruec
-      const setPosition = (current, height) => {
-        const next = current + 1;
-        const prev = current - 1;
+      const setPosition = (direction, month, isReset) => {
+
+        console.log(month, 12132312)
+        stopTransition.value = false;
 
 
-        for (let i = 0; i < 12; i++) {
-          if (current === i) {
-            monthTransition[current].translate = 0;
-          } else if (next === i) {
-            monthTransition[current].translate = height;
-          } else if (prev === i) {
-            monthTransition[current].translate = -height;
-          } else if (next > 12) {
-            monthTransition[0].translate = height;
-          } else if (prev < 0) {
-            monthTransition[11].translate = -height;
+        if (direction === 'next') {
+          translate.value = height * month;
+
+          if (month === 1 && !isReset) {
+            stopTransition.value = true;
+            translate.value = 0;
+            setPosition(direction, month, true);
           }
+
         }
 
-        monthTransitions.
 
+          //
+          // if (current === i) {
+          //   monthTransition[current].translate = 0;
+          // } else if (next === i) {
+          //   monthTransition[current].translate = height;
+          // } else if (prev === i) {
+          //   monthTransition[current].translate = -height;
+          // } else if (next > 12) {
+          //   monthTransition[0].translate = height;
+          // } else if (prev < 0) {
+          //   monthTransition[11].translate = -height;
+          // }
+
+        // monthTransitions.
+
+      }
+
+
+      const next = () => {
+        const { value } = current;
+        const nextMonth = value + 1;
+        current.value = nextMonth === 13 ? 1 : nextMonth;
+
+        setPosition('next', current.value)
       }
 
       // /
@@ -104,7 +135,10 @@
 
       // expose to template
       return {
-        count,
+        unit,
+        next,
+        translate,
+        stopTransition,
         monthTransitions
       }
     }
