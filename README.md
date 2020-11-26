@@ -151,7 +151,7 @@ export default {
       console.log(info)
     },
     renderer() {
-      this.$refs.calendar.renderer(2018, 8); //渲染2018年8月份
+      this.$refs.calendar.renderer(2018, 8) //渲染2018年8月份
     },
     select(val, val2) {
       console.log(val)
