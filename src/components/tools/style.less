@@ -1,0 +1,104 @@
+.vc-calendar-tools {
+  margin: auto;
+  width: 100%;
+  min-width: 350px;
+  background: #fff;
+  user-select: none;
+  position: relative;
+  .vc-calendar-tools-container {
+    height: 40px;
+    font-size: 20px;
+    line-height: 40px;
+    color: #5e7a88;
+    -webkit-box-shadow: 0 4px 8px rgba(25, 47, 89, .1);
+    box-shadow: 0 4px 8px rgba(25, 47, 89, .1);
+    margin-bottom: 20px;
+    border-top: 1px solid hsla(0, 0%, 78.4%, .1);
+  }
+  .vc-calendar-prev, .vc-calendar-next {
+    cursor: pointer;
+    img {
+      width: 34px;
+      height: 34px;
+    }
+  }
+  .vc-calendar-prev {
+    width: 14.28571429%;
+    float: left;
+    text-align: center;
+  }
+  .vc-calendar-next {
+    width: 14.28571429%;
+    float: right;
+    text-align: center;
+  }
+  .vc-calendar-info {
+    font-size: 16px;
+    width: 220px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .vc-calendar-month {
+      color: #5e7a88;
+    }
+    .vc-calendar-year {
+      color: #5e7a88;
+    }
+  }
+  .vc-calendar-picker{
+    color: #5e7a88;
+    opacity: 0;
+    &.vc-picker-show{
+      animation-name: mymove;
+      animation-duration: .3s;
+      animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+      animation-fill-mode: both;
+      @keyframes mymove {
+        from {
+          height: 0px;
+          opacity: 0;
+        }
+        to {
+          height: 300px;
+          opacity: 1;
+        }
+      }
+    }
+    .vc-calendar-months{
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px 5px;
+      position: relative;
+      box-sizing: border-box;
+      &:after {
+        content: '';
+        display: block;
+        width: 94%;
+        height: 1px;
+        background-color: #eee;
+        position: absolute;
+        bottom: 0;
+        left: 3%;
+      }
+      span{
+        flex-basis: 25%;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+    }
+    .vc-calendar-years{
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px 5px;
+      span{
+        flex-basis: 20%;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+    }
+  }
+}
