@@ -68,7 +68,6 @@
         element = container.children[0];
         // cache slides
         slides = element.children;
-        console.log(element, 1212)
         length = slides.length;
 
         // set continuous to false if only one slide
@@ -90,10 +89,9 @@
         element.style.width = (slides.length * width) + 'px';
 
         // stack elements
-        var pos = slides.length;
+        let pos = slides.length;
         while(pos--) {
-
-          var slide = slides[pos];
+          const slide = slides[pos];
 
           slide.style.width = width + 'px';
           slide.setAttribute('data-index', pos);
@@ -102,7 +100,6 @@
             slide.style.left = (pos * -width) + 'px';
             move(pos, index > pos ? -width : (index < pos ? width : 0), 0);
           }
-
         }
 
         // reposition elements before and after index
@@ -111,11 +108,11 @@
           move(circle(index+1), width, 0);
         }
 
-        if (!browser.transitions) element.style.left = (index * -width) + 'px';
+        if (!browser.transitions) {
+          element.style.left = (index * -width) + 'px';
+        }
 
         container.style.visibility = 'visible';
-
-        console.log(slides, 123123)
       }
 
       function prev() {
