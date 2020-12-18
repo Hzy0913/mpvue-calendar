@@ -16,7 +16,7 @@
 <script lang="ts">
   import { ref, reactive, onMounted } from 'vue'
   import { noop, offloadFn } from '../utils'
-  import { SwipeInterface } from './declare'
+  import { SwipeInterface, startType, deltaType } from './declare'
   import './style.less'
 
   export default {
@@ -39,14 +39,14 @@
         continuous: true,
         disableScroll: true,
         stopPropagation: true,
-        callback(index: number, element: any) {},
-        transitionEnd(index: number, element: any) {},
+        callback(index: number, element: HTMLElement) {},
+        transitionEnd(index: number, element: HTMLElement) {},
       };
       const swipeRef = ref(null);
       const browser = {
         addEventListener: !!window.addEventListener,
         touch: ('ontouchstart' in window) || (<any>window).DocumentTouch && document instanceof (<any>window).DocumentTouch,
-        transitions: (function(temp) {
+        transitions: (function(temp: HTMLElement) {
           const property = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
 
           for (let value of property) {
@@ -59,9 +59,8 @@
       const speed: number = options.speed || 300;
 
       let index: number = options.initialSlide || 0;
-      let container: any, element: any, slides: any, slidePos: any, width: number, length;
+      let container: HTMLElement, element: any, slides: any, slidePos: any, width: number, length;
       options.continuous = options.continuous ?? true;
-
 
       function setup() {
         if (!container) return;
@@ -228,8 +227,8 @@
       }
 
       // setup initial vars
-      let start: any = {};
-      let delta: any = {};
+      let start = {} as startType;
+      let delta = {} as deltaType;
       let isScrolling: boolean | undefined;
 
       // setup event capturing
@@ -276,7 +275,10 @@
           isScrolling = undefined;
 
           // reset delta and end measurements
-          delta = {};
+          delta = {
+            x: 0,
+            y: 0,
+          };
 
           // attach touchmove and touchend listeners
           element.addEventListener('touchmove', this, false);
@@ -311,11 +313,9 @@
 
             // increase resistance if first or last slide
             if (options.continuous) { // we don't add resistance at the end
-
               translate(circle(index-1), delta.x + slidePos[circle(index-1)], 0);
               translate(index, delta.x + slidePos[index], 0);
               translate(circle(index+1), delta.x + slidePos[circle(index+1)], 0);
-
             } else {
               delta.x =
                 delta.x /
@@ -369,7 +369,6 @@
                 move(index, slidePos[index]-width, speed);
                 move(circle(index+1), slidePos[circle(index+1)]-width, speed);
                 index = circle(index+1);
-
               } else {
                 if (options.continuous) { // we need to get the next in this direction in place
                   move(circle(index+1), width, 0);
@@ -400,7 +399,6 @@
           // kill touchmove and touchend event listeners until touchstart called again
           element.removeEventListener('touchmove', events, false)
           element.removeEventListener('touchend', events, false)
-
         },
         transitionEnd(event: any) {
           if (parseInt(event.target.getAttribute('data-index'), 10) === index) {
@@ -410,7 +408,7 @@
       }
 
       onMounted(() => {
-        container = swipeRef.value;
+        container = <any>swipeRef.value;
         setup();
 
         if (browser.addEventListener) {
@@ -429,13 +427,9 @@
 
           // set resize event on window
           window.addEventListener('resize', events, false);
-        } else {
-          window.onresize = function () {  // to play nice with old IE
-            setup()
-          };
         }
         console.dir(swipeRef);
-      })
+      });
 
       return {
         swipeRef,
