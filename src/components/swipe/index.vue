@@ -15,6 +15,7 @@
 
 <script>
   import { ref, reactive, onMounted } from 'vue'
+  import { noop, offloadFn } from '../utils'
   import './style.less'
 
   export default {
@@ -29,46 +30,41 @@
       }
     },
     setup(props) {
-      const { months, year, month, weekSwitch } = props;
-      const swipeRef = ref(null);
-      let container;
-      var browser = {
-        addEventListener: !!window.addEventListener,
-        touch: ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch,
-        transitions: (function(temp) {
-          var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
-          for ( var i in props ) if (temp.style[ props[i] ] !== undefined) return true;
-          return false;
-        })(document.createElement('swipe'))
-      };
-
-      var noop = function() {}; // simple no operation function
-      var offloadFn = function(fn) { setTimeout(fn || noop, 0) }; // offload a functions execution
-
-
-      var options = {
+      const { } = props;
+      const options = {
         startSlide: 0,
         auto: 3000,
+        speed: 300,
         continuous: true,
         disableScroll: true,
         stopPropagation: true,
-        callback: function(index, element) {},
-        transitionEnd: function(index, element) {}
+        callback(index, element) {},
+        transitionEnd(index, element) {}
       }
+      const swipeRef = ref(null);
+      const browser = {
+        addEventListener: !!window.addEventListener,
+        touch: ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch,
+        transitions: (function(temp) {
+          const property = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
 
-      var element, slides, slidePos, width, length;
-      var index = parseInt(options.startSlide, 10) || 0;
-      var speed = options.speed || 300;
-      options.continuous = options.continuous !== undefined ? options.continuous : true;
+          for (let i in property) {
+            if (temp.style[property[i]] !== undefined) return true;
+          }
+
+          return false;
+        })(document.createElement('swipe'))
+      };
+      const speed = options.speed || 300;
+
+      let index = parseInt(options.startSlide, 10) || 0;
+      let container, element, slides, slidePos, width, length;
+      options.continuous = options.continuous ?? true;
 
 
       function setup() {
-
-
-
-
-
         if (!container) return;
+
         element = container.children[0];
         // cache slides
         slides = element.children;
@@ -123,53 +119,56 @@
       }
 
       function prev() {
-
-        if (options.continuous) slide(index-1);
-        else if (index) slide(index-1);
-
+        if (options.continuous) {
+          slide(index - 1);
+        } else if (index) {
+          slide(index - 1);
+        }
       }
 
       function next() {
-
-        if (options.continuous) slide(index+1);
-        else if (index < slides.length - 1) slide(index+1);
-
+        if (options.continuous) {
+          slide(index + 1);
+        } else if (index < slides.length - 1) {
+          slide(index + 1);
+        }
       }
 
       function slide(to, slideSpeed) {
-
         // do nothing if already on requested slide
-        if (index == to) return;
+        if (index === to) return;
 
         if (browser.transitions) {
-
-          var direction = Math.abs(index-to) / (index-to); // 1: backward, -1: forward
+          let direction = Math.abs(index - to) / (index - to); // 1: backward, -1: forward
 
           // get the actual position of the slide
           if (options.continuous) {
-            var natural_direction = direction;
+            const natural_direction = direction;
             direction = -slidePos[circle(to)] / width;
 
             // if going forward but to < index, use to = slides.length + to
             // if going backward but to > index, use to = -slides.length + to
-            if (direction !== natural_direction) to =  -direction * slides.length + to;
-
+            if (direction !== natural_direction) {
+              to = -direction * slides.length + to;
+            }
           }
 
-          var diff = Math.abs(index-to) - 1;
+          let diff = Math.abs(index - to) - 1;
 
           // move all the slides between index and to in the right direction
-          while (diff--) move( circle((to > index ? to : index) - diff - 1), width * direction, 0);
+          while (diff--) {
+            move(circle((to > index ? to : index) - diff - 1), width * direction, 0);
+          }
 
           to = circle(to);
 
           move(index, width * direction, slideSpeed || speed);
           move(to, 0, slideSpeed || speed);
 
-          if (options.continuous) move(circle(to - direction), -(width * direction), 0); // we need to get the next in place
-
+          if (options.continuous) { // we need to get the next in place
+            move(circle(to - direction), -(width * direction), 0);
+          }
         } else {
-
           to = circle(to);
           animate(index * -width, to * -width, slideSpeed || speed);
           //no fallback for a circular continuous if the browser does not accept transitions
@@ -180,23 +179,18 @@
       }
 
       function circle(index) {
-
         // a simple positive modulo using slides.length
         return (slides.length + (index % slides.length)) % slides.length;
-
       }
 
       function move(index, dist, speed) {
-
         translate(index, dist, speed);
         slidePos[index] = dist;
-
       }
 
       function translate(index, dist, speed) {
-
-        var slide = slides[index];
-        var style = slide && slide.style;
+        const slide = slides[index];
+        const style = slide && slide.style;
 
         if (!style) return;
 
@@ -210,35 +204,24 @@
         style.msTransform =
           style.MozTransform =
             style.OTransform = 'translateX(' + dist + 'px)';
-
       }
 
       function animate(from, to, speed) {
-
         // if not an animation, just reposition
         if (!speed) {
-
           element.style.left = to + 'px';
           return;
-
         }
 
-        var start = +new Date;
-
-        var timer = setInterval(function() {
-
-          var timeElap = +new Date - start;
+        const start = +new Date;
+        const timer = setInterval(function() {
+          const timeElap = +new Date - start;
 
           if (timeElap > speed) {
-
             element.style.left = to + 'px';
-
-
             options.transitionEnd && options.transitionEnd.call(event, index, slides[index]);
-
             clearInterval(timer);
             return;
-
           }
 
           element.style.left = (( (to - from) * (Math.floor((timeElap / speed) * 100) / 100) ) + from) + 'px';
