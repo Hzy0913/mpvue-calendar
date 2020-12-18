@@ -13,9 +13,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
   import { ref, reactive, onMounted } from 'vue'
   import { noop, offloadFn } from '../utils'
+  import { SwipeInterface } from './declare'
   import './style.less'
 
   export default {
@@ -29,36 +30,36 @@
         default: '1'
       }
     },
-    setup(props) {
+    setup(props: SwipeInterface) {
       const { } = props;
       const options = {
-        startSlide: 0,
+        initialSlide: 0,
         auto: 3000,
         speed: 300,
         continuous: true,
         disableScroll: true,
         stopPropagation: true,
-        callback(index, element) {},
-        transitionEnd(index, element) {}
-      }
+        callback(index: number, element: any) {},
+        transitionEnd(index: number, element: any) {},
+      };
       const swipeRef = ref(null);
       const browser = {
         addEventListener: !!window.addEventListener,
-        touch: ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch,
+        touch: ('ontouchstart' in window) || (<any>window).DocumentTouch && document instanceof (<any>window).DocumentTouch,
         transitions: (function(temp) {
           const property = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
 
-          for (let i in property) {
-            if (temp.style[property[i]] !== undefined) return true;
+          for (let value of property) {
+            if ((<any>temp.style)[value] !== undefined) return true;
           }
 
           return false;
         })(document.createElement('swipe'))
       };
-      const speed = options.speed || 300;
+      const speed: number = options.speed || 300;
 
-      let index = parseInt(options.startSlide, 10) || 0;
-      let container, element, slides, slidePos, width, length;
+      let index: number = options.initialSlide || 0;
+      let container: any, element: any, slides: any, slidePos: any, width: number, length;
       options.continuous = options.continuous ?? true;
 
 
@@ -131,7 +132,7 @@
         }
       }
 
-      function slide(to, slideSpeed) {
+      function slide(to: number, slideSpeed?: number) {
         // do nothing if already on requested slide
         if (index === to) return;
 
@@ -175,17 +176,17 @@
         offloadFn(options.callback && options.callback(index, slides[index]));
       }
 
-      function circle(index) {
+      function circle(index: number) {
         // a simple positive modulo using slides.length
         return (slides.length + (index % slides.length)) % slides.length;
       }
 
-      function move(index, dist, speed) {
+      function move(index: number, dist: any, speed: number) {
         translate(index, dist, speed);
         slidePos[index] = dist;
       }
 
-      function translate(index, dist, speed) {
+      function translate(index: number, dist: any, speed: number) {
         const slide = slides[index];
         const style = slide && slide.style;
 
@@ -203,7 +204,8 @@
             style.OTransform = 'translateX(' + dist + 'px)';
       }
 
-      function animate(from, to, speed) {
+      function animate(from: any, to: any, speed: number) {
+        console.log(from, 'from', to, 'to')
         // if not an animation, just reposition
         if (!speed) {
           element.style.left = to + 'px';
@@ -226,13 +228,13 @@
       }
 
       // setup initial vars
-      let start = {};
-      let delta = {};
-      let isScrolling;
+      let start: any = {};
+      let delta: any = {};
+      let isScrolling: boolean | undefined;
 
       // setup event capturing
       const events = {
-        handleEvent(event) {
+        handleEvent(event: any) {
           switch (event.type) {
             case 'touchstart':
               this.start(event);
@@ -260,7 +262,7 @@
             event.preventDefault();
           }
         },
-        start(event) {
+        start(event: any) {
           const touches = event.touches[0];
           // measure start values
           start = {
@@ -280,7 +282,7 @@
           element.addEventListener('touchmove', this, false);
           element.addEventListener('touchend', this, false);
         },
-        move(event) {
+        move(event: any) {
           // ensure swiping with one touch and not pinching
           if (event.touches.length > 1 || event.scale && event.scale !== 1) return
 
@@ -331,7 +333,7 @@
             }
           }
         },
-        end(event) {
+        end(event: any) {
           // measure duration
           const duration = +new Date - start.time;
 
@@ -400,7 +402,7 @@
           element.removeEventListener('touchend', events, false)
 
         },
-        transitionEnd(event) {
+        transitionEnd(event: any) {
           if (parseInt(event.target.getAttribute('data-index'), 10) === index) {
             options.transitionEnd && options.transitionEnd.call(event, index, slides[index]);
           }
