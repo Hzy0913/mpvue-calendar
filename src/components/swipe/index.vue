@@ -21,13 +21,17 @@
 
   export default {
     props: {
-      year: {
+      initialSlide: {
         type: Number,
-        default: 2020
+        default: 0
       },
-      month: {
-        type: String,
-        default: '1'
+      auto: {
+        type: Number,
+        default: 3000
+      },
+      speed: {
+        type: Number,
+        default: 300
       }
     },
     setup(props: SwipeInterface) {
@@ -36,7 +40,7 @@
         initialSlide: 0,
         auto: 3000,
         speed: 300,
-        continuous: true,
+        loop: true,
         disableScroll: true,
         stopPropagation: true,
         callback(index: number, element: HTMLElement) {},
@@ -60,7 +64,7 @@
 
       let index: number = options.initialSlide || 0;
       let container: HTMLElement, element: any, slides: any, slidePos: any, width: number, length;
-      options.continuous = options.continuous ?? true;
+      options.loop = options.loop ?? true;
 
       function setup() {
         if (!container) return;
@@ -70,11 +74,11 @@
         slides = element.children;
         length = slides.length;
 
-        // set continuous to false if only one slide
-        if (slides.length < 2) options.continuous = false;
+        // set loop to false if only one slide
+        if (slides.length < 2) options.loop = false;
 
         //special case if two slides
-        if (browser.transitions && options.continuous && slides.length < 3) {
+        if (browser.transitions && options.loop && slides.length < 3) {
           element.appendChild(slides[0].cloneNode(true));
           element.appendChild(element.children[1].cloneNode(true));
           slides = element.children;
@@ -103,7 +107,7 @@
         }
 
         // reposition elements before and after index
-        if (options.continuous && browser.transitions) {
+        if (options.loop && browser.transitions) {
           move(circle(index-1), -width, 0);
           move(circle(index+1), width, 0);
         }
@@ -116,7 +120,7 @@
       }
 
       function prev() {
-        if (options.continuous) {
+        if (options.loop) {
           slide(index - 1);
         } else if (index) {
           slide(index - 1);
@@ -124,7 +128,7 @@
       }
 
       function next() {
-        if (options.continuous) {
+        if (options.loop) {
           slide(index + 1);
         } else if (index < slides.length - 1) {
           slide(index + 1);
@@ -139,7 +143,7 @@
           let direction = Math.abs(index - to) / (index - to); // 1: backward, -1: forward
 
           // get the actual position of the slide
-          if (options.continuous) {
+          if (options.loop) {
             const natural_direction = direction;
             direction = -slidePos[circle(to)] / width;
 
@@ -162,13 +166,13 @@
           move(index, width * direction, slideSpeed || speed);
           move(to, 0, slideSpeed || speed);
 
-          if (options.continuous) { // we need to get the next in place
+          if (options.loop) { // we need to get the next in place
             move(circle(to - direction), -(width * direction), 0);
           }
         } else {
           to = circle(to);
           animate(index * -width, to * -width, slideSpeed || speed);
-          //no fallback for a circular continuous if the browser does not accept transitions
+          //no fallback for a circular loop if the browser does not accept transitions
         }
 
         index = to;
@@ -312,7 +316,7 @@
             stop();
 
             // increase resistance if first or last slide
-            if (options.continuous) { // we don't add resistance at the end
+            if (options.loop) { // we don't add resistance at the end
               translate(circle(index-1), delta.x + slidePos[circle(index-1)], 0);
               translate(index, delta.x + slidePos[index], 0);
               translate(circle(index+1), delta.x + slidePos[circle(index+1)], 0);
@@ -348,7 +352,7 @@
             !index && delta.x > 0                            // if first slide and slide amt is greater than 0
             || index == slides.length - 1 && delta.x < 0;    // or if last slide and slide amt is less than 0
 
-          if (options.continuous) {
+          if (options.loop) {
             isPastBounds = false;
           }
 
@@ -359,7 +363,7 @@
           if (!isScrolling) {
             if (isValidSlide && !isPastBounds) {
               if (direction) {
-                if (options.continuous) { // we need to get the next in this direction in place
+                if (options.loop) { // we need to get the next in this direction in place
                   move(circle(index-1), -width, 0);
                   move(circle(index+2), width, 0);
                 } else {
@@ -370,7 +374,7 @@
                 move(circle(index+1), slidePos[circle(index+1)]-width, speed);
                 index = circle(index+1);
               } else {
-                if (options.continuous) { // we need to get the next in this direction in place
+                if (options.loop) { // we need to get the next in this direction in place
                   move(circle(index+1), width, 0);
                   move(circle(index-2), -width, 0);
                 } else {
@@ -384,7 +388,7 @@
 
               options.callback && options.callback(index, slides[index]);
             } else {
-              if (options.continuous) {
+              if (options.loop) {
                 move(circle(index-1), -width, speed);
                 move(index, 0, speed);
                 move(circle(index+1), width, speed);
