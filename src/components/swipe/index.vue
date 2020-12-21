@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, reactive, onMounted } from 'vue'
+  import { defineComponent, ref, reactive, onMounted } from 'vue'
   import { noop, offloadFn } from '../utils'
   import { SwipeInterface, startType, deltaType } from './declare'
   import './style.less'
@@ -32,16 +32,21 @@
       speed: {
         type: Number,
         default: 300
-      }
+      },
+      loop: {
+        type: Boolean,
+        default: true
+      },
     },
     setup(props: SwipeInterface) {
-      const { } = props;
+      console.log(props, 'aaaaa')
+      const { initialSlide, auto, speed, loop } = props;
       const options = {
-        initialSlide: 0,
-        auto: 3000,
-        speed: 300,
-        loop: true,
-        disableScroll: true,
+        initialSlide,
+        auto,
+        speed,
+        loop,
+        disableScroll: false,
         stopPropagation: true,
         callback(index: number, element: HTMLElement) {},
         transitionEnd(index: number, element: HTMLElement) {},
@@ -60,7 +65,6 @@
           return false;
         })(document.createElement('swipe'))
       };
-      const speed: number = options.speed || 300;
 
       let index: number = options.initialSlide || 0;
       let container: HTMLElement, element: any, slides: any, slidePos: any, width: number, length;
@@ -171,7 +175,7 @@
           }
         } else {
           to = circle(to);
-          animate(index * -width, to * -width, slideSpeed || speed);
+          animate(index * -width, to * -width, slideSpeed || speed as number);
           //no fallback for a circular loop if the browser does not accept transitions
         }
 
@@ -317,9 +321,9 @@
 
             // increase resistance if first or last slide
             if (options.loop) { // we don't add resistance at the end
-              translate(circle(index-1), delta.x + slidePos[circle(index-1)], 0);
+              translate(circle(index - 1), delta.x + slidePos[circle(index - 1)], 0);
               translate(index, delta.x + slidePos[index], 0);
-              translate(circle(index+1), delta.x + slidePos[circle(index+1)], 0);
+              translate(circle(index + 1), delta.x + slidePos[circle(index + 1)], 0);
             } else {
               delta.x =
                 delta.x /
@@ -331,9 +335,9 @@
                   : 1 );                                 // no resistance if false
 
               // translate 1:1
-              translate(index-1, delta.x + slidePos[index-1], 0);
+              translate(index - 1, delta.x + slidePos[index - 1], 0);
               translate(index, delta.x + slidePos[index], 0);
-              translate(index+1, delta.x + slidePos[index+1], 0);
+              translate(index + 1, delta.x + slidePos[index + 1], 0);
             }
           }
         },
@@ -345,7 +349,7 @@
           const isValidSlide =
             Number(duration) < 250               // if slide duration is less than 250ms
             && Math.abs(delta.x) > 20            // and if slide amt is greater than 20px
-            || Math.abs(delta.x) > width/2;      // or if slide amt is greater than half the width
+            || Math.abs(delta.x) > width / 2;      // or if slide amt is greater than half the width
 
           // determine if slide attempt is past start and end
           let isPastBounds =
@@ -364,38 +368,38 @@
             if (isValidSlide && !isPastBounds) {
               if (direction) {
                 if (options.loop) { // we need to get the next in this direction in place
-                  move(circle(index-1), -width, 0);
-                  move(circle(index+2), width, 0);
+                  move(circle(index - 1), -width, 0);
+                  move(circle(index + 2), width, 0);
                 } else {
-                  move(index-1, -width, 0);
+                  move(index - 1, -width, 0);
                 }
 
-                move(index, slidePos[index]-width, speed);
-                move(circle(index+1), slidePos[circle(index+1)]-width, speed);
-                index = circle(index+1);
+                move(index, slidePos[index] - width, speed);
+                move(circle(index + 1), slidePos[circle(index + 1)]-width, speed);
+                index = circle(index + 1);
               } else {
                 if (options.loop) { // we need to get the next in this direction in place
-                  move(circle(index+1), width, 0);
-                  move(circle(index-2), -width, 0);
+                  move(circle(index + 1), width, 0);
+                  move(circle(index - 2), -width, 0);
                 } else {
-                  move(index+1, width, 0);
+                  move(index + 1, width, 0);
                 }
 
                 move(index, slidePos[index]+width, speed);
-                move(circle(index-1), slidePos[circle(index-1)]+width, speed);
-                index = circle(index-1);
+                move(circle(index - 1), slidePos[circle(index - 1)]+width, speed);
+                index = circle(index - 1);
               }
 
               options.callback && options.callback(index, slides[index]);
             } else {
               if (options.loop) {
-                move(circle(index-1), -width, speed);
+                move(circle(index - 1), -width, speed);
                 move(index, 0, speed);
-                move(circle(index+1), width, speed);
+                move(circle(index + 1), width, speed);
               } else {
-                move(index-1, -width, speed);
+                move(index - 1, -width, speed);
                 move(index, 0, speed);
-                move(index+1, width, speed);
+                move(index + 1, width, speed);
               }
             }
           }
