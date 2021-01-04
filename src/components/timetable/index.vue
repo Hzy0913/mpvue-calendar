@@ -51,12 +51,13 @@
 
 <script lang="ts">
   import { defineComponent, ref, reactive, onMounted } from 'vue'
+  import { disabledDate, selectOption, getToday, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth} from './computed'
   // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
   import { isZh, enWeeks, zhWeeks } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
   import './style.less'
 
-  // const disabledDateHandle = disabledDate();
+  const disabledDateHandle = disabledDate();
 
   export default {
     props: {
@@ -67,8 +68,8 @@
         // }
       },
       monFirst: {
-        type: Number,
-        default: 3000
+        type: Boolean,
+        default: false
       },
       speed: {
         type: Number,
@@ -78,11 +79,15 @@
         type: Boolean,
         default: true
       },
+      completion: {
+        type: Boolean,
+        default: false
+      },
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { mode = 'select', monFirst, weeks, month, monthRange = [], weekMode, value, disabled = [] } = props;
-      // disabledDateHandle.update(disabled)
+      const { mode = 'select', monFirst, completion, weeks, month, monthRange = [], weekMode, value, disabled = [] } = props;
+      disabledDateHandle.update(disabled)
 
 
 
@@ -115,13 +120,6 @@
         return weeksArray;
       }
 
-      function isCurrentMonthToday(date: string) {
-        // const todayString = getToday();
-        // const isToday = todayString === date;
-        // if (!isToday) return false;
-        // return weekMode ? isToday : (Number(todayString.split('-')[1]) === month + 1);
-      }
-
       function renderOption({year, month, i, playload, date}: any) {
         const isWeekMode = monthRange.length ? false : weekMode;
         const isMonthModeCurrentMonth = !weekMode && !playload;
@@ -132,10 +130,13 @@
           case 'multi':
             // return multiOption({date, isCurrentMonthToday} as any);
           case 'select':
-            // return selectOption({date, isCurrentMonthToday} as any);
+            return selectOption({year, month, i, disabledDateHandle, completion} as any);
         }
       }
-      render({year: 2020, month: 11})
+
+      const monthRender = render({year: 2021, month: 2})
+      console.log(monthRender, 111111)
+
       function render({year, month, renderer, payload}: any) {
         const isCustomRender = renderer === 'CUSTOMRENDER';
         const isWatchRenderValue = renderer === '_WATCHRENDERVALUE_';
@@ -165,57 +166,96 @@
         // }
 
 
-        const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
-        const lastDateOfMonth = new Date(year, month, 0).getDate();
-        const lastDayOfLastMonth = new Date(year, month - 1, 0).getDate();
+        const firstDayOfMonth = new Date(year, month - 1, 1).getDay(); //what day is the first day of the month
+        const lastDateOfCurrentMonth = new Date(year, month, 0).getDate(); //last date of current month
+        const lastDateOfLastMonth = new Date(year, month - 1, 0).getDate(); // last day Of last month
 
-        console.log(firstDayOfMonth, lastDateOfMonth, lastDayOfLastMonth, 'aaalastDayOfLastMonth')
+        console.log('本月第一天周几',firstDayOfMonth, '本月最后一天', lastDateOfCurrentMonth, '上月最后一天',lastDateOfLastMonth, 'aaalastDayOfLastMonth')
 
-        if (monFirst) {
-          firstDayOfMonth
-        }
+        const firstWeekDayCount = 7 - firstDayOfMonth + (monFirst ? 1: 0)
 
+        console.log(firstWeekDayCount, 'firstWeekDayCount')
 
-        let i = 1;
         let line = 0;
         let nextMonthPushDays = 1;
-        const temp = [];
-        for (i; i <= lastDateOfMonth; i++) {
+        const temp: any[] = [];
+        for (let i = 1; i <= lastDateOfCurrentMonth; i++) {
           const day = new Date(year, month - 1, i).getDay();
-          console.log(day, 'day')
-          let k;
-          if (day === 0) {
-            temp[line] = [];
-          } else if (i === 1) {
-            temp[line] = [];
-            k = lastDayOfLastMonth - firstDayOfMonth + 1;
-            for (let j = 0; j < firstDayOfMonth; j++) { //generate prev month surplus option
-              temp[line].push(
-                // this.renderOption(computedPrevYear(year, month), computedPrevMonth(false, month), k, 'prevMonth'),
-                // {lastMonth: true}
-              );
-              k++;
+
+          if (!Array.isArray(temp[line])) temp[line] = [];
+
+          if (line === 0) {
+            temp[line].push(renderOption({year, month, i}));
+            if (temp[line].length === firstWeekDayCount) {
+              line += 1;
             }
+          } else {
+            temp[line].push(renderOption({year, month, i}));
+            if (temp[line].length === 7) line += 1;
           }
 
-          // renderOption(year, month, i)
-          temp[line].push(); //generate current month option
+          // let k;
+          // if (day === 0) {
+          //   temp[line] = [];
+          // } else if (i === 1) {
+          //   temp[line] = [];
+          //   k = lastDayOfLastMonth - firstDayOfMonth + 1;
+          //   for (let j = 0; j < firstDayOfMonth; j++) { //generate prev month surplus option
+          //     temp[line].push(
+          //       // this.renderOption(computedPrevYear(year, month), computedPrevMonth(false, month), k, 'prevMonth'),
+          //       // {lastMonth: true}
+          //     );
+          //     k++;
+          //   }
+          // }
+          //
+          // // renderOption(year, month, i)
+          // temp[line].push(); //generate current month option
+          //
+          // if (day === 6 && i < lastDateOfMonth) {
+          //   line++;
+          // } else if (i === lastDateOfMonth) {
+          //   let nextDay = 1;
+          //   const lastDateOfMonthLength = monFirst ? 7 : 6;
+          //   for (let d = day; d < lastDateOfMonthLength; d++) { //generate next month surplus option
+          //     temp[line].push(
+          //       // this.renderOption(this.computedNextYear(y, m), this.computedNextMonth(false, m), nextDay, 'nextMonth'),
+          //       // {nextMonth: true}
+          //     );
+          //     nextDay++;
+          //   }
+          //   nextMonthPushDays = nextDay;
+          // }
+        }
 
-          if (day === 6 && i < lastDateOfMonth) {
-            line++;
-          } else if (i === lastDateOfMonth) {
-            let nextDay = 1;
-            const lastDateOfMonthLength = monFirst ? 7 : 6;
-            for (let d = day; d < lastDateOfMonthLength; d++) { //generate next month surplus option
-              temp[line].push(
-                // this.renderOption(this.computedNextYear(y, m), this.computedNextMonth(false, m), nextDay, 'nextMonth'),
-                // {nextMonth: true}
-              );
-              nextDay++;
+        if (completion) {
+          let firstWeekDayCompletionCount = 7 - firstWeekDayCount;
+          let completionCounting = 0;
+          const [prevYear, prevMonth] = [computedPrevYear(year, month), computedPrevMonth(month)];
+          while (firstWeekDayCompletionCount !== completionCounting) {
+            temp[0].unshift(renderOption({year: prevYear, month: prevMonth, i: lastDateOfLastMonth - completionCounting}));
+            completionCounting += 1;
+          }
+
+          const completionWeeksCount = (6 - line) > 0 ? 7 : 0
+          const [nextYear, nextMonth] = [computedNextYear(year, month), computedNextMonth(month)];
+          console.log(line,temp[line], 'temp[line]temp[line]')
+          if (!Array.isArray(temp[line])) temp[line] = [];
+          const lastWeekDayCompletionCount = 7 - temp[line].length + completionWeeksCount;
+          let completionCountingNext = 0;
+
+          while (lastWeekDayCompletionCount !== completionCountingNext) {
+            if (temp[line].length === 7) {
+              line += 1;
+              temp[line] = [];
+              continue;
             }
-            nextMonthPushDays = nextDay;
+            completionCountingNext += 1;
+            temp[line].push(renderOption({year: nextYear, month: nextMonth, i: completionCountingNext}));
           }
         }
+        return temp;
+
         // const {completion} = this;
         // if (this.monFirst) {
         //   if (!firstDayOfMonth) {
