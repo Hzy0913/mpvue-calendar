@@ -42,6 +42,23 @@ function getLunarInfo(y: string, m: string, d: string) {
   return lunarInfoObj;
 }
 
+const setRemark = (function() {
+  let remarksInfo: any = {};
+
+  return function() {
+    return {
+      update(remarks: any) {
+        remarksInfo = remarks;
+      },
+      getRemark(date: string) {
+        if (remarksInfo) return {
+          remark: remarksInfo[date]
+        };
+      }
+    }
+  }
+})()
+
 function computedPrevYear(year: string, month: string): number {
   if ((Number(month) - 1) < 0) {
     return Number(year) - 1;
@@ -199,30 +216,36 @@ type selectOptionType = {
   getLunarInfo: (year: number, month: number, day: number) => any;
   getEvents: (year: number, month: number, day: number) => any;
 }
-function selectOption({year, month, i, selectDate, date, isWeekMode, playload, weekSwitch, getEvents, disabledDateHandle}: any) {
+function selectOption({year, month, i, selectDate, isWeekMode, playload, begin,end, weekSwitch, getRemark, getTileContent, disabledDateHandle}: any) {
+  const date = `${year}-${month}-${i}`;
+  const dateTimestamp = +new Date(year, month - 1, i);
+
   const options: any = Object.assign(
-    {day: i, selected: selectDate === `${year}-${month}-${i}`},
+    {day: i, selected: selectDate === date},
     getLunarInfo(year, month, i),
-    // getEvents(year, month, i)
+    getRemark(date),
+    getTileContent(date),
   );
 
-  // if (this.begin.length) {
-  //   const beginTime = +new Date(parseInt(this.begin[0], 10), parseInt(this.begin[1], 10) - 1, parseInt(this.begin[2], 10));
-  //   if (beginTime > Number(new Date(year, month, i))) {
-  //     options.disabled = true;
-  //   }
-  // }
-  // if (this.end.length) {
-  //   const endTime = +new Date(parseInt(this.end[0], 10), parseInt(this.end[1], 10) - 1, parseInt(this.end[2], 10));
-  //   if (endTime < +(new Date(year, month, i))) {
-  //     options.disabled = true;
-  //   }
-  // }
-
-
-    if (disabledDateHandle.isDisabled(date)) {
+  if (begin) {
+    const [beginY, beginM, beginD] = begin.split('-');
+    const beginTimestamp = +new Date(beginY, beginM - 1, beginD);
+    if (beginTimestamp > dateTimestamp) {
       options.disabled = true;
     }
+  }
+
+  if (end) {
+    const [endY, endM, endD] = end.split('-');
+    const endTimestamp = +new Date(endY, endM - 1, endD);
+    if (endTimestamp < dateTimestamp) {
+      options.disabled = true;
+    }
+  }
+
+  if (disabledDateHandle.isDisabled(date)) {
+    options.disabled = true;
+  }
 
     isCurrentMonthToday(options) && (options.isToday = true);
     //
@@ -252,12 +275,31 @@ const disabledDate = (function() {
   }
 })();
 
+const setTileContent = (function() {
+  let tileContentInfo: any = {};
+
+  return function() {
+    return {
+      update(tileContent: any[]) {
+        tileContentInfo = tileContent
+      },
+      getTileContent(date: string) {
+        return {
+          tileContent: (tileContentInfo || {})[date]
+        };
+      }
+    }
+  }
+})();
+
 export {
   getToday,
   rangeOption,
   multiOption,
   selectOption,
   disabledDate,
+  setRemark,
+  setTileContent,
   computedPrevYear,
   computedPrevMonth,
   computedNextYear,
