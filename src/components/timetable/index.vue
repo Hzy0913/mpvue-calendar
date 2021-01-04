@@ -12,7 +12,7 @@
         </div>
         <div
           :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]"
-          v-for="(days, index) in monthRangeDays"
+          v-for="(days, index) in monthRender"
           :key='index'
         >
           <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
@@ -28,8 +28,8 @@
               class="mc-day"
               :style="itemStyle"
             >
-              <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
-              <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
+<!--              <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>-->
+              <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" >{{child.day}}</span>
               <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
               <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
               <div class="mc-dot" v-if="child.eventName && clean" />
@@ -134,7 +134,7 @@
         }
       }
 
-      const monthRender = render({year: 2021, month: 2})
+      const monthRender = [render({year: 2021, month: 2})]
       console.log(monthRender, 111111)
 
       function render({year, month, renderer, payload}: any) {
@@ -193,39 +193,6 @@
             temp[line].push(renderOption({year, month, i}));
             if (temp[line].length === 7) line += 1;
           }
-
-          // let k;
-          // if (day === 0) {
-          //   temp[line] = [];
-          // } else if (i === 1) {
-          //   temp[line] = [];
-          //   k = lastDayOfLastMonth - firstDayOfMonth + 1;
-          //   for (let j = 0; j < firstDayOfMonth; j++) { //generate prev month surplus option
-          //     temp[line].push(
-          //       // this.renderOption(computedPrevYear(year, month), computedPrevMonth(false, month), k, 'prevMonth'),
-          //       // {lastMonth: true}
-          //     );
-          //     k++;
-          //   }
-          // }
-          //
-          // // renderOption(year, month, i)
-          // temp[line].push(); //generate current month option
-          //
-          // if (day === 6 && i < lastDateOfMonth) {
-          //   line++;
-          // } else if (i === lastDateOfMonth) {
-          //   let nextDay = 1;
-          //   const lastDateOfMonthLength = monFirst ? 7 : 6;
-          //   for (let d = day; d < lastDateOfMonthLength; d++) { //generate next month surplus option
-          //     temp[line].push(
-          //       // this.renderOption(this.computedNextYear(y, m), this.computedNextMonth(false, m), nextDay, 'nextMonth'),
-          //       // {nextMonth: true}
-          //     );
-          //     nextDay++;
-          //   }
-          //   nextMonthPushDays = nextDay;
-          // }
         }
 
         if (completion) {
@@ -252,6 +219,11 @@
             }
             completionCountingNext += 1;
             temp[line].push(renderOption({year: nextYear, month: nextMonth, i: completionCountingNext}));
+          }
+        } else {
+          const firstWeekDayCompletionCount = 7 - firstWeekDayCount;
+          if (firstWeekDayCompletionCount) {
+            temp[0].unshift(...Array.from({length: firstWeekDayCompletionCount}).fill('PLACEHOLDER'));
           }
         }
         return temp;
@@ -388,7 +360,8 @@
 
 
       return {
-        week: computedWeek()
+        week: computedWeek(),
+        monthRender,
       }
     }
   }
