@@ -1,4 +1,4 @@
-/* eslint-disable */
+// @ts-nocheck
 /**
  * @1900-2100区间内的公历、农历互转
  * @charset UTF-8
