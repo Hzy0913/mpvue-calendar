@@ -51,13 +51,15 @@
 
 <script lang="ts">
   import { defineComponent, ref, reactive, onMounted } from 'vue'
-  import { disabledDate, selectOption, getToday, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth} from './computed'
+  import { disabledDate, selectOption, getLunarInfo, isCurrentMonthToday, getToday,setTileContent, setRemark, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth} from './computed'
   // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
   import { isZh, enWeeks, zhWeeks } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
   import './style.less'
 
   const disabledDateHandle = disabledDate();
+  const setRemarkHandle = setRemark();
+  const setTileContentHandle = setTileContent();
 
   export default {
     props: {
@@ -83,11 +85,36 @@
         type: Boolean,
         default: false
       },
+      almanacs: {
+        type: Object,
+        default() {
+          return {};
+        }
+      },
+      remarks: {
+        type: Object,
+        default() {
+          return {};
+        }
+      },
+      tileContent: {
+        type: Object,
+        default() {
+          return {
+            '2021-2-1': {
+              className: 'aasdas',
+              content: '啦啦啦啦啦啦',
+            }
+          };
+        }
+      },
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { mode = 'select', monFirst, completion, weeks, month, monthRange = [], weekMode, value, disabled = [] } = props;
+      const { mode = 'select', monFirst,begin,end, completion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
       disabledDateHandle.update(disabled)
+      setRemarkHandle.update(remarks)
+      setTileContentHandle.update(tileContent)
 
 
 
@@ -120,9 +147,52 @@
         return weeksArray;
       }
 
-      function renderOption({year, month, i, playload, date}: any) {
+      function disabledDate({year, month, i, date}: { year: string, month: string, i: string, date: string }) {
+        const dateTimestamp = +new Date(Number(year), Number(month) - 1, Number(i));
+        const disabledOptions = {} as { disabled: Boolean};
+        if (begin) {
+          const [beginY, beginM, beginD] = begin.split('-');
+          const beginTimestamp = +new Date(beginY, beginM - 1, beginD);
+          if (beginTimestamp > dateTimestamp) {
+            disabledOptions.disabled = true;
+          }
+        }
+
+        if (end) {
+          const [endY, endM, endD] = end.split('-');
+          const endTimestamp = +new Date(endY, endM - 1, endD);
+          if (endTimestamp < dateTimestamp) {
+            disabledOptions.disabled = true;
+          }
+        }
+
+        if (disabledDateHandle.isDisabled(date)) {
+          disabledOptions.disabled = true;
+        }
+
+        return disabledOptions;
+      }
+
+      function getToday(date: string) {
+        return {
+          isToday: isCurrentMonthToday(date)
+        }
+      }
+
+      function renderOption({year, month, i, playload}: any) {
         const isWeekMode = monthRange.length ? false : weekMode;
         const isMonthModeCurrentMonth = !weekMode && !playload;
+        const date = `${year}-${month}-${i}`;
+        let modeOptions;
+        const options = {
+          day: i,
+          almanacs: almanacs[`${month}-${i}`],
+          ...getLunarInfo(year, month, i),
+          ...setRemarkHandle.getRemark(date),
+          ...setTileContentHandle.getTileContent(date),
+          ...disabledDate({year, month, i, date}),
+          ...getToday(date),
+        }
 
         switch (mode) {
           case 'range':
@@ -130,8 +200,10 @@
           case 'multi':
             // return multiOption({date, isCurrentMonthToday} as any);
           case 'select':
-            return selectOption({year, month, i, disabledDateHandle, completion} as any);
+            modeOptions = selectOption({year, month, i,date, disabledDateHandle, completion, getTileContent: setTileContentHandle.getTileContent, getRemark: setRemarkHandle.getRemark} as any);
         }
+
+        return Object.assign(options, modeOptions);
       }
 
       const monthRender = [render({year: 2021, month: 2})]
