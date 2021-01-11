@@ -1,5 +1,12 @@
 interface SwipeInterface {
+  initialSlide?: number;
+  auto?: number;
+  speed: number;
+  loop?: boolean;
+}
 
+interface SlideInterface {
+  className?: string;
 }
 
 type startType = {
@@ -15,6 +22,7 @@ type deltaType = {
 
 export {
   SwipeInterface,
+  SlideInterface,
   startType,
   deltaType,
 }
