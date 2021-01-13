@@ -15,13 +15,11 @@
         </div>
         <div
           :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]"
-          v-for="(days, index) in monthRender.value"
-          :key='index'
         >
           <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
-          <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
+          <tr v-for="(days,k1) in monthRender.value" :key="k1" :class="{'gregorianStyle': !lunar}">
             <td
-              v-for="(child,k2) in day"
+              v-for="(child,k2) in days"
               :key="k2"
               :class="[{
                 'mc-today-element': child.isToday,
@@ -57,7 +55,25 @@
 
 <script lang="ts">
   import { defineComponent, ref, reactive, onMounted, watchEffect } from 'vue'
-  import { disabledDate, selectOption,multiOption, rangeOption, getLunarInfo, isCurrentMonthToday, getToday,setTileContent, setRemark, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth, date2timeStamp} from './computed'
+  import {
+    disabledDate,
+    computedPrevDay,
+    date2ymd,
+    selectOption,
+    multiOption,
+    rangeOption,
+    getLunarInfo,
+    isCurrentMonthToday,
+    getToday,
+    setTileContent,
+    setRemark,
+    computedPrevYear,
+    computedPrevMonth,
+    computedNextYear,
+    computedNextMonth,
+    date2timeStamp,
+    computedNextDay
+  } from './computed'
   // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
   import { isZh, enWeeks, zhWeeks } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
@@ -77,7 +93,7 @@
       },
       monFirst: {
         type: Boolean,
-        default: false
+        default: true
       },
       speed: {
         type: Number,
@@ -125,7 +141,7 @@
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { mode = 'range', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
+      const { mode = 'range', tableMode: propsTableMode = 'week', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
       const initSelectValue = ({
         select: '',
         multi: [],
@@ -133,7 +149,7 @@
       } as any)[mode]
       const selectDate = reactive({select: initSelectValue})
       const tableMode = ref(propsTableMode)
-      const completion = ref(propsCompletion)
+      const completion = ref(propsTableMode === 'week' || propsCompletion)
       const begin = ref(propsBegin)
       const end = ref(propsEnd)
       disabledDateHandle.update(disabled)
@@ -271,10 +287,10 @@
         return Object.assign(options, modeOptions);
       }
 
-      const monthRender = reactive({value: [render({year: 2021, month: 2})]})
+      const monthRender = reactive({value: render({year: 2021, month: 2})})
       console.log(monthRender, 111111)
 
-      function render({year, month, renderer, payload}: any) {
+      function render({year, month, day, renderer, payload}: any) {
         const isCustomRender = renderer === 'CUSTOMRENDER';
         const isWatchRenderValue = renderer === '_WATCHRENDERVALUE_';
 
@@ -311,11 +327,39 @@
 
         const firstWeekDayCount = 7 - firstDayOfMonth + (monFirst ? 1: 0)
 
+        const temp: any[] = [];
+
+        if (true) {
+          const dayOfCurrentWeek = new Date(year, month - 1, day).getDay() - (monFirst ? 1: 0); // what day is the current week
+          temp.push(`${year}-${month}-${day}`)
+          let countDate = [year, month, day]
+          for (let i = 0; i < dayOfCurrentWeek; i ++) {
+            const [y, m , d] = countDate;
+            const prevDate = computedPrevDay(y, m , d);
+            temp.unshift(prevDate)
+            countDate = date2ymd(prevDate);
+          }
+
+          countDate = [year, month, day]
+          for (let i = dayOfCurrentWeek; i < 6; i ++) {
+            const [y, m, d] = countDate;
+            const nextDate = computedNextDay(y, m, d);
+            temp.push(nextDate)
+            countDate = date2ymd(nextDate);
+          }
+
+          console.log(temp, 'temptemptemp')
+          return
+        }
+
+
+
+
+
         console.log(firstWeekDayCount, 'firstWeekDayCount')
 
         let line = 0;
         let nextMonthPushDays = 1;
-        const temp: any[] = [];
         for (let i = 1; i <= lastDateOfCurrentMonth; i++) {
           const day = new Date(year, month - 1, i).getDay();
 
@@ -365,6 +409,8 @@
             temp[0].unshift(...Array.from({length: firstWeekDayCompletionCount}).fill('PLACEHOLDER'));
           }
         }
+
+
         return temp;
 
         // const {completion} = this;
@@ -499,13 +545,13 @@
 
       watchEffect(() => {
         console.log(11111111)
-        monthRender.value = [render({year: 2021, month: 2})]
+        monthRender.value = render({year: 2021, month: 1, day: 1})
       })
       function disabledDateClick() {
         // begin.value = '2021-2-11'
         completion.value = true
       }
-      console.log(monthRender, 11111)
+      console.log(monthRender, 11111333312)
 
       return {
         week: computedWeek(),
