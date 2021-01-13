@@ -64,7 +64,7 @@ const setRemark = (function() {
   }
 })()
 
-function computedPrevYear(year: string, month: string): number {
+function computedPrevYear(year: string | number, month: string): number {
   if ((Number(month) - 1) < 0) {
     return Number(year) - 1;
   }
@@ -77,6 +77,41 @@ function computedPrevMonth(month: string): number {
     return 12;
   } else {
    return Number(month) - 1;
+  }
+}
+
+function computedPrevDay(year: string, month: string, day: string | number): string {
+  if ((Number(day) - 1) === 0) {
+    const prevMonth = computedPrevMonth(month);
+    if (prevMonth === 12) { //prev year
+      const prevYear = Number(year) - 1;
+      const prevDay = new Date(prevYear, prevMonth - 2, 0).getDate()
+      console.log(prevYear, prevMonth , 'aaasdasdasd')
+      return `${prevYear}-${prevMonth}-${prevDay}`
+    } else { //current year and prev month
+      const prevDay = new Date(Number(year), prevMonth - 1, 0).getDate()
+      return `${year}-${prevMonth}-${prevDay}`
+    }
+  } else {
+    return `${year}-${month}-${Number(day) - 1}`;
+  }
+}
+
+function computedNextDay(year: string, month: string, day: string): string {
+  const lastDateOfCurrentMonth = new Date(Number(year), Number(month), 0).getDate(); //last date of current month
+
+  if ((Number(day) + 1) > lastDateOfCurrentMonth) {
+    const nextMonth = computedNextMonth(month);
+    if (nextMonth === 1) { //next year
+      const nextYear = computedNextYear(year, month);
+      const nextDay = new Date(nextYear, 0, 1).getDate()
+      return `${nextYear}-1-${nextDay}`;
+    } else { //current year and next month
+      const nextDay = new Date(Number(year), nextMonth - 1, 1).getDate()
+      return `${year}-${nextMonth}-${nextDay}`
+    }
+  } else {
+    return `${year}-${month}-${Number(day) + 1}`;
   }
 }
 
@@ -238,4 +273,7 @@ export {
   computedNextMonth,
   isCurrentMonthToday,
   date2timeStamp,
+  computedNextDay,
+  computedPrevDay,
+  date2ymd,
 }
