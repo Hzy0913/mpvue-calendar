@@ -4,7 +4,9 @@
     class="vc-calendar-timetable"
   >
     <div class="vc-calendar-timetable-wrap">
-      <h1>{{selectDate.select}}</h1>
+      <h1
+        @click="disabledDateClick"
+      >{{selectDate.select}}{{begin}}</h1>
       <table cellpadding="5">
         <div class="mc-head" :class="['mc-head', {'mc-month-range-mode-head': isMonthRange}]">
           <div class="mc-head-box">
@@ -13,7 +15,7 @@
         </div>
         <div
           :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]"
-          v-for="(days, index) in monthRender"
+          v-for="(days, index) in monthRender.value"
           :key='index'
         >
           <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
@@ -54,7 +56,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted } from 'vue'
+  import { defineComponent, ref, reactive, onMounted, watchEffect } from 'vue'
   import { disabledDate, selectOption,multiOption, rangeOption, getLunarInfo, isCurrentMonthToday, getToday,setTileContent, setRemark, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth, date2timeStamp} from './computed'
   // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
   import { isZh, enWeeks, zhWeeks } from '../utils'
@@ -84,6 +86,14 @@
       loop: {
         type: Boolean,
         default: true
+      },
+      begin: {
+        type: String,
+        // default: '2021-2-11'
+      },
+      end: {
+        type: String,
+        // default: '2021-2-21'
       },
       completion: {
         type: Boolean,
@@ -115,13 +125,17 @@
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { mode = 'range', monFirst,begin,end, completion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
+      const { mode = 'range', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
       const initSelectValue = ({
         select: '',
         multi: [],
         range: { start: '', end: '' },
       } as any)[mode]
       const selectDate = reactive({select: initSelectValue})
+      const tableMode = ref(propsTableMode)
+      const completion = ref(propsCompletion)
+      const begin = ref(propsBegin)
+      const end = ref(propsEnd)
       disabledDateHandle.update(disabled)
       setRemarkHandle.update(remarks)
       setTileContentHandle.update(tileContent)
@@ -129,7 +143,6 @@
 
 
       function selectComputed(date: string) {
-        console.log(date, 111123123)
         switch (mode) {
           case 'range':
             return rangeOption({selectDate: selectDate.select, date} as any);
@@ -200,17 +213,17 @@
 
       function disabledDate({year, month, i, date}: { year: string, month: string, i: string, date: string }) {
         const dateTimestamp = +new Date(Number(year), Number(month) - 1, Number(i));
-        const disabledOptions = {} as { disabled: Boolean};
-        if (begin) {
-          const [beginY, beginM, beginD] = begin.split('-');
+        const disabledOptions = {} as {disabled: Boolean};
+        if (begin.value) {
+          const [beginY, beginM, beginD] = begin.value.split('-');
           const beginTimestamp = +new Date(beginY, beginM - 1, beginD);
           if (beginTimestamp > dateTimestamp) {
             disabledOptions.disabled = true;
           }
         }
 
-        if (end) {
-          const [endY, endM, endD] = end.split('-');
+        if (end.value) {
+          const [endY, endM, endD] = end.value.split('-');
           const endTimestamp = +new Date(endY, endM - 1, endD);
           if (endTimestamp < dateTimestamp) {
             disabledOptions.disabled = true;
@@ -258,7 +271,7 @@
         return Object.assign(options, modeOptions);
       }
 
-      const monthRender = reactive([render({year: 2021, month: 2})])
+      const monthRender = reactive({value: [render({year: 2021, month: 2})]})
       console.log(monthRender, 111111)
 
       function render({year, month, renderer, payload}: any) {
@@ -319,7 +332,7 @@
           }
         }
 
-        if (completion) {
+        if (completion.value) {
           //completion prev month
           let firstWeekDayCompletionCount = 7 - firstWeekDayCount;
           let completionCounting = 0;
@@ -484,6 +497,14 @@
       }
 
 
+      watchEffect(() => {
+        console.log(11111111)
+        monthRender.value = [render({year: 2021, month: 2})]
+      })
+      function disabledDateClick() {
+        // begin.value = '2021-2-11'
+        completion.value = true
+      }
       console.log(monthRender, 11111)
 
       return {
@@ -492,6 +513,8 @@
         select,
         selectDate,
         selectComputed,
+        disabledDateClick,
+        begin,
       }
     }
   }
