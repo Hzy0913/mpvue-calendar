@@ -4,6 +4,7 @@
     class="vc-calendar-timetable"
   >
     <div class="vc-calendar-timetable-wrap">
+      <h1>{{selectDate.select}}</h1>
       <table cellpadding="5">
         <div class="mc-head" :class="['mc-head', {'mc-month-range-mode-head': isMonthRange}]">
           <div class="mc-head-box">
@@ -20,10 +21,13 @@
             <td
               v-for="(child,k2) in day"
               :key="k2"
-              :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled,
+              :class="[{
+                'mc-today-element': child.isToday,
+                 'disabled': child.disabled,
+
              'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected,
               'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected,
-               'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, child.rangeClassName]"
+               'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, selectComputed(child.date), child.rangeClassName]"
               @click="select(k1, k2, child, $event, index)"
               class="mc-day"
               :style="itemStyle"
@@ -51,7 +55,7 @@
 
 <script lang="ts">
   import { defineComponent, ref, reactive, onMounted } from 'vue'
-  import { disabledDate, selectOption, getLunarInfo, isCurrentMonthToday, getToday,setTileContent, setRemark, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth} from './computed'
+  import { disabledDate, selectOption,multiOption, rangeOption, getLunarInfo, isCurrentMonthToday, getToday,setTileContent, setRemark, computedPrevYear, computedPrevMonth, computedNextYear, computedNextMonth, date2timeStamp} from './computed'
   // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
   import { isZh, enWeeks, zhWeeks } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
@@ -111,13 +115,60 @@
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { mode = 'select', monFirst,begin,end, completion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
+      const { mode = 'range', monFirst,begin,end, completion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
+      const initSelectValue = ({
+        select: '',
+        multi: [],
+        range: { start: '', end: '' },
+      } as any)[mode]
+      const selectDate = reactive({select: initSelectValue})
       disabledDateHandle.update(disabled)
       setRemarkHandle.update(remarks)
       setTileContentHandle.update(tileContent)
 
 
 
+      function selectComputed(date: string) {
+        console.log(date, 111123123)
+        switch (mode) {
+          case 'range':
+            return rangeOption({selectDate: selectDate.select, date} as any);
+          case 'multi':
+          return multiOption({selectDate: selectDate.select, date} as any);
+          case 'select':
+            return selectOption({selectDate: selectDate.select, date});
+        }
+      }
+
+      function select(k1: any, k2: any, child: any, $event: any, index: any) {
+        const { date } = child;
+        switch (mode) {
+          case 'range':
+            const { start, end } = selectDate.select
+            if (start && end) {
+              selectDate.select.start = date;
+              return selectDate.select.end = '';
+            }
+            if (start) {
+              if (date2timeStamp(start) > date2timeStamp(date)) {
+                selectDate.select.start = date;
+                return selectDate.select.end = start;
+              }
+
+              return selectDate.select.end = date;
+            }
+            return selectDate.select.start = date;
+          case 'multi':
+            if (selectDate.select.includes(date)) {
+              return selectDate.select = selectDate.select.filter((v: any) => v !== date)
+            }
+            return selectDate.select.push(date)
+          case 'select':
+            return selectDate.select = date;
+        }
+
+
+      }
       function computedWeek() {
         if (Array.isArray(weeks)) return weeks;
 
@@ -194,19 +245,20 @@
           ...getToday(date),
         }
 
-        switch (mode) {
-          case 'range':
-            // return rangeOption({date, isCurrentMonthToday} as any);
-          case 'multi':
-            // return multiOption({date, isCurrentMonthToday} as any);
-          case 'select':
-            modeOptions = selectOption({year, month, i,date, disabledDateHandle, completion, getTileContent: setTileContentHandle.getTileContent, getRemark: setRemarkHandle.getRemark} as any);
-        }
+        // switch (mode) {
+        //   case 'range':
+        //     // return rangeOption({date, isCurrentMonthToday} as any);
+        //   case 'multi':
+        //     // return multiOption({date, isCurrentMonthToday} as any);
+        //   case 'select':
+        //     console.log(selectDate.select, 333331)
+        //     modeOptions = selectOption({selectDate: selectDate.select, year, month, i,date, disabledDateHandle, completion, getTileContent: setTileContentHandle.getTileContent, getRemark: setRemarkHandle.getRemark} as any);
+        // }
 
         return Object.assign(options, modeOptions);
       }
 
-      const monthRender = [render({year: 2021, month: 2})]
+      const monthRender = reactive([render({year: 2021, month: 2})])
       console.log(monthRender, 111111)
 
       function render({year, month, renderer, payload}: any) {
@@ -268,6 +320,7 @@
         }
 
         if (completion) {
+          //completion prev month
           let firstWeekDayCompletionCount = 7 - firstWeekDayCount;
           let completionCounting = 0;
           const [prevYear, prevMonth] = [computedPrevYear(year, month), computedPrevMonth(month)];
@@ -276,6 +329,7 @@
             completionCounting += 1;
           }
 
+          //completion next month
           const completionWeeksCount = (6 - line) > 0 ? 7 : 0
           const [nextYear, nextMonth] = [computedNextYear(year, month), computedNextMonth(month)];
           console.log(line,temp[line], 'temp[line]temp[line]')
@@ -430,10 +484,14 @@
       }
 
 
+      console.log(monthRender, 11111)
 
       return {
         week: computedWeek(),
         monthRender,
+        select,
+        selectDate,
+        selectComputed,
       }
     }
   }
