@@ -329,27 +329,28 @@
 
         const temp: any[] = [];
 
-        if (true) {
+        if (tableMode.value === 'week') {
           const dayOfCurrentWeek = new Date(year, month - 1, day).getDay() - (monFirst ? 1: 0); // what day is the current week
-          temp.push(`${year}-${month}-${day}`)
-          let countDate = [year, month, day]
+          temp.push(renderOption({year, month, i: day}));
+
+          let countDate = [year, month, day];
           for (let i = 0; i < dayOfCurrentWeek; i ++) {
             const [y, m , d] = countDate;
             const prevDate = computedPrevDay(y, m , d);
-            temp.unshift(prevDate)
             countDate = date2ymd(prevDate);
+            temp.unshift(renderOption({year: countDate[0], month: countDate[1], i: countDate[2]}));
           }
 
-          countDate = [year, month, day]
+          countDate = [year, month, day];
           for (let i = dayOfCurrentWeek; i < 6; i ++) {
             const [y, m, d] = countDate;
             const nextDate = computedNextDay(y, m, d);
-            temp.push(nextDate)
             countDate = date2ymd(nextDate);
+            temp.push(renderOption({year: countDate[0], month: countDate[1], i: countDate[2]}));
           }
 
           console.log(temp, 'temptemptemp')
-          return
+          return [temp];
         }
 
 
