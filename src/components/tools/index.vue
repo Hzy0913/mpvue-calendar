@@ -10,8 +10,8 @@
         <i class="iconfont icon-arrow-right" v-else />
       </div>
       <div class="vc-calendar-info" @click.stop="switchDate">
-        <div class="vc-calendar-year">{{year}}</div>
         <div class="vc-calendar-month">{{month}}</div>
+        <div class="vc-calendar-year">{{year}}</div>
       </div>
     </div>
     <div
@@ -30,17 +30,23 @@
         <span
           v-for="y in years"
           :key="y"
-          @click.stop="selectYear(y)"
+          @click.stop="selectYearHandle(y)"
           :class="{'active': y === year}"
         >{{y}}</span>
+      </div>
+    </div>
+    <div class="mc-head" :class="['mc-head', {'mc-month-range-mode-head': isMonthRange}]">
+      <div class="mc-head-box">
+        <div v-for="(weekItem, index) in week" :key="index" class="mc-week">{{weekItem}}</div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
   import { ref, reactive } from 'vue'
   import './style.less'
+  import { isZh, enWeeks, zhWeeks } from '../utils'
 
   export default {
     props: {
@@ -54,7 +60,14 @@
         type: Boolean,
         default: false
       },
+      weeks: {
+        type: Array,
+      },
       weekSwitch: {
+        type: Boolean,
+        default: false
+      },
+      monFirst: {
         type: Boolean,
         default: false
       },
@@ -76,7 +89,7 @@
       }
     },
     setup(props) {
-      const { months, year, month, weekSwitch } = props;
+      const { months, year, month, weekSwitch, monFirst, weeks, prev: prevProps,selectYear, next: nextProps, selectMonth: selectMonthProps, } = props;
       const pickerVisible = ref(false);
 
       const height = 42
@@ -103,50 +116,52 @@
         }
       }
 
+      function computedWeek() {
+        if (Array.isArray(weeks)) return weeks;
 
-      // cruec
-      const setPosition = (direction, month, isReset) => {
+        const language = isZh() ? 'zh': 'en';
+        const weeksArray = {
+          en: enWeeks,
+          zh: zhWeeks,
+        }[language]
 
-        console.log(month, 12132312)
-        stopTransition.value = false;
+        if (monFirst) {
+          return weeksArray.reduce((previousValue, currentValue, index) => {
+            if (!index) {
+              previousValue.first = currentValue;
+              return previousValue;
+            }
 
+            previousValue.week.push(currentValue);
 
-        if (direction === 'next') {
-          translate.value = height * month;
+            if (index === weeksArray.length - 1) {
+              return [...previousValue.week, previousValue.first];
+            }
 
-          if (month === 1 && !isReset) {
-            stopTransition.value = true;
-            translate.value = 0;
-            setPosition(direction, month, true);
-          }
-
+            return previousValue;
+          }, {first: undefined, week: []} as any)
         }
 
-
-          //
-          // if (current === i) {
-          //   monthTransition[current].translate = 0;
-          // } else if (next === i) {
-          //   monthTransition[current].translate = height;
-          // } else if (prev === i) {
-          //   monthTransition[current].translate = -height;
-          // } else if (next > 12) {
-          //   monthTransition[0].translate = height;
-          // } else if (prev < 0) {
-          //   monthTransition[11].translate = -height;
-          // }
-
-        // monthTransitions.
-
+        return weeksArray;
       }
 
 
-      const next = () => {
-        const { value } = current;
-        const nextMonth = value + 1;
-        current.value = nextMonth === 13 ? 1 : nextMonth;
+      function selectMonth(month: number) {
+        pickerVisible.value = false;
+        selectMonthProps && selectMonthProps(month)
+      }
 
-        setPosition('next', current.value)
+      function selectYearHandle(year: number) {
+        pickerVisible.value = false;
+        selectYear && selectYear(month)
+      }
+
+      function next() {
+        nextProps && nextProps(month)
+      }
+
+      function prev() {
+        prevProps && prevProps(month)
       }
 
       const switchDate = () => {
@@ -160,12 +175,6 @@
         }
         return yearRange;
       }
-      // /
-
-      const monthTransitions = reactive(monthTransition)
-
-
-      // expose to template
 
       console.log(year, month, 112312312)
       return {
@@ -173,12 +182,14 @@
         month,
         unit,
         next,
+        week: computedWeek(),
         years: years(),
         weekSwitch,
+        selectMonth,
+        selectYearHandle,
         translate,
         stopTransition,
         pickerVisible,
-        monthTransitions,
         switchDate,
       }
     }
