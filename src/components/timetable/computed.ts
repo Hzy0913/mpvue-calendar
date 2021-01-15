@@ -1,4 +1,5 @@
 import calendar from '../../calendarinit'
+import {computedNextMonth, computedPrevMonth} from '../utils'
 function getToday() {
   const now = new Date();
   return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
@@ -72,14 +73,6 @@ function computedPrevYear(year: string | number, month: string): number {
   return +year;
 }
 
-function computedPrevMonth(month: string): number {
-  if ((Number(month) - 1) === 0) {
-    return 12;
-  } else {
-   return Number(month) - 1;
-  }
-}
-
 function computedPrevDay(year: string, month: string, day: string | number): string {
   if ((Number(day) - 1) === 0) {
     const prevMonth = computedPrevMonth(month);
@@ -120,15 +113,6 @@ function computedNextYear(year: string, month: string): number {
     return Number(year) + 1;
   }
   return Number(year);
-}
-
-function computedNextMonth(month: string) {
-  let value = month;
-  if ((Number(month) + 1) > 12) {
-    return 1;
-  } else {
-    return Number(month) + 1;
-  }
 }
 
 type rangeOptionType = {
@@ -270,7 +254,6 @@ export {
   computedPrevYear,
   computedPrevMonth,
   computedNextYear,
-  computedNextMonth,
   isCurrentMonthToday,
   date2timeStamp,
   computedNextDay,
