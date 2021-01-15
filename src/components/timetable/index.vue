@@ -4,57 +4,44 @@
     class="vc-calendar-timetable"
   >
     <div class="vc-calendar-timetable-wrap">
-      <h1
-        @click="disabledDateClick"
-      >{{selectDate.select}}{{begin}}</h1>
-      <table cellpadding="5">
-        <div class="mc-head" :class="['mc-head', {'mc-month-range-mode-head': isMonthRange}]">
-          <div class="mc-head-box">
-            <div v-for="(weekItem, index) in week" :key="index" class="mc-week">{{weekItem}}</div>
-          </div>
-        </div>
         <div
-          :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]"
+          :class="['vc-calendar-body', `mc-range-mode-${tableMode}`]"
         >
-          <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
-          <tr v-for="(days,k1) in monthRender.value" :key="k1" :class="{'gregorianStyle': !lunar}">
-            <td
+<!--          <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>-->
+          <div v-for="(days,k1) in monthRender.value" :key="k1" class="vc-calendar-row" >
+            <div
               v-for="(child,k2) in days"
               :key="k2"
               :class="[{
                 'mc-today-element': child.isToday,
+                'vc-calendar-dayoff': k2 === (monFirst ? 5 : 0) || k2 === 6,
                  'disabled': child.disabled,
-
-             'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected,
+             'mc-range-row-first': k2 === 0 && child.selected,
               'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected,
                'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, selectComputed(child.date), child.rangeClassName]"
               @click="select(k1, k2, child, $event, index)"
-              class="mc-day"
-              :style="itemStyle"
+              class="vc-calendar-day"
             >
 <!--              <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>-->
-              <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" >{{child.day}}</span>
-              <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
-              <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
+              <span :class="['vc-calendar-date']" >{{child.day}}</span>
+              <div :class="['vc-calendar-slot-element', child.tileContent.className]" v-if="child.tileContent">{{child.tileContent.content}}</div>
+              <div class="mc-text remark-text" v-if="child.remark">{{child.remark}}</div>
               <div class="mc-dot" v-if="child.eventName && clean" />
               <div
-                class="mc-text"
+                class="vc-calendar-text"
                 :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival, 'isTerm': child.isTerm}"
-                v-if="lunar && (!child.eventName || clean)"
               >
                 {{child.almanac || child.lunar}}
               </div>
-              <div class="mc-range-bg" v-if="range && child.selected" />
-            </td>
-          </tr>
-        </div>
-      </table>
+            </div>
+          </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted, watchEffect } from 'vue'
+  import { defineComponent, ref, reactive, onMounted, watchEffect, watch } from 'vue'
   import {
     disabledDate,
     computedPrevDay,
@@ -70,12 +57,11 @@
     computedPrevYear,
     computedPrevMonth,
     computedNextYear,
-    computedNextMonth,
     date2timeStamp,
     computedNextDay
   } from './computed'
   // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
-  import { isZh, enWeeks, zhWeeks } from '../utils'
+  import { computedNextMonth } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
   import './style.less'
 
@@ -85,12 +71,6 @@
 
   export default {
     props: {
-      weeks: {
-        type: Array,
-        // default() {
-        //   return monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六'];
-        // }
-      },
       monFirst: {
         type: Boolean,
         default: true
@@ -98,6 +78,12 @@
       speed: {
         type: Number,
         default: 300
+      },
+      month: {
+        type: Object,
+      },
+      year: {
+        type: Object,
       },
       loop: {
         type: Boolean,
@@ -121,27 +107,22 @@
           return {};
         }
       },
+      tileContent: {
+        type: Object,
+        default() {
+          return {};
+        }
+      },
       remarks: {
         type: Object,
         default() {
           return {};
         }
       },
-      tileContent: {
-        type: Object,
-        default() {
-          return {
-            '2021-2-1': {
-              className: 'aasdas',
-              content: '啦啦啦啦啦啦',
-            }
-          };
-        }
-      },
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { mode = 'range', tableMode: propsTableMode = 'week', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
+      const { year, mode = 'range', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
       const initSelectValue = ({
         select: '',
         multi: [],
@@ -198,34 +179,6 @@
 
 
       }
-      function computedWeek() {
-        if (Array.isArray(weeks)) return weeks;
-
-        const language = isZh() ? 'zh': 'en';
-        const weeksArray = {
-          en: enWeeks,
-          zh: zhWeeks,
-        }[language]
-
-        if (monFirst) {
-          return weeksArray.reduce((previousValue, currentValue, index) => {
-            if (!index) {
-              previousValue.first = currentValue;
-              return previousValue;
-            }
-
-            previousValue.week.push(currentValue);
-
-            if (index === weeksArray.length - 1) {
-              return [...previousValue.week, previousValue.first];
-            }
-
-            return previousValue;
-          }, {first: undefined, week: []} as any)
-        }
-
-        return weeksArray;
-      }
 
       function disabledDate({year, month, i, date}: { year: string, month: string, i: string, date: string }) {
         const dateTimestamp = +new Date(Number(year), Number(month) - 1, Number(i));
@@ -264,9 +217,10 @@
         const isMonthModeCurrentMonth = !weekMode && !playload;
         const date = `${year}-${month}-${i}`;
         let modeOptions;
+        console.log(almanacs, 111222345)
         const options = {
           day: i,
-          almanacs: almanacs[`${month}-${i}`],
+          almanac: almanacs[`${month}-${i}`],
           ...getLunarInfo(year, month, i),
           ...setRemarkHandle.getRemark(date),
           ...setTileContentHandle.getTileContent(date),
@@ -544,9 +498,17 @@
       }
 
 
+      watch(remarks, (count, prevCount) => {
+        // setRemarkHandle.update(remarks)
+        console.log(count,prevCount,remarks, 11344411)
+
+        /* ... */
+      })
+
       watchEffect(() => {
-        console.log(11111111)
-        monthRender.value = render({year: 2021, month: 1, day: 1})
+
+        console.log(month.value, 111111113)
+        monthRender.value = render({year: year.value, month: month.value, day: 1})
       })
       function disabledDateClick() {
         // begin.value = '2021-2-11'
@@ -555,13 +517,14 @@
       console.log(monthRender, 11111333312)
 
       return {
-        week: computedWeek(),
         monthRender,
         select,
         selectDate,
         selectComputed,
         disabledDateClick,
         begin,
+        tableMode,
+        month,
       }
     }
   }
