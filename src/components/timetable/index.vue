@@ -16,22 +16,23 @@
                 'mc-today-element': child.isToday,
                 'vc-calendar-dayoff': k2 === (monFirst ? 5 : 0) || k2 === 6,
                  'disabled': child.disabled,
-             'mc-range-row-first': k2 === 0 && child.selected,
-              'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected,
+             'vc-calendar-row-first': k2 === 0,
+             'vc-calendar-row-last': k2 === 6,
+              'month-last-date': child.lastDay, 'month-first-date': 1 === child.day,
                'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, selectComputed(child.date), child.rangeClassName]"
               @click="select(k1, k2, child, $event, index)"
               class="vc-calendar-day"
             >
-<!--              <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>-->
-              <span :class="['vc-calendar-date']" >{{child.day}}</span>
-              <div :class="['vc-calendar-slot-element', child.tileContent.className]" v-if="child.tileContent">{{child.tileContent.content}}</div>
-              <div class="mc-text remark-text" v-if="child.remark">{{child.remark}}</div>
-              <div class="mc-dot" v-if="child.eventName && clean" />
-              <div
-                class="vc-calendar-text"
-                :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival, 'isTerm': child.isTerm}"
-              >
-                {{child.almanac || child.lunar}}
+              <div class="vc-calendar-day-container">
+                <span :class="['vc-calendar-date']" >{{child.day}}</span>
+                <div :class="['vc-calendar-slot-element', child.tileContent.className]" v-if="child.tileContent">{{child.tileContent.content}}</div>
+                <div class="vc-calendar-remark-text" v-if="child.remark">{{child.remark}}</div>
+                <div
+                  class="vc-calendar-almanac"
+                  :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival, 'isTerm': child.isTerm}"
+                >
+                  {{child.almanac || child.lunar}}
+                </div>
               </div>
             </div>
           </div>
@@ -41,7 +42,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted, watchEffect, watch } from 'vue'
+  import { defineComponent, ref, reactive, onMounted, watchEffect, watch, toRefs } from 'vue'
   import {
     disabledDate,
     computedPrevDay,
@@ -122,7 +123,7 @@
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { year, mode = 'range', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = props;
+      const { year, mode = 'range', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
       const initSelectValue = ({
         select: '',
         multi: [],
@@ -130,7 +131,7 @@
       } as any)[mode]
       const selectDate = reactive({select: initSelectValue})
       const tableMode = ref(propsTableMode)
-      const completion = ref(propsTableMode === 'week' || propsCompletion)
+      const completion = propsTableMode === 'week' || propsCompletion
       const begin = ref(propsBegin)
       const end = ref(propsEnd)
       disabledDateHandle.update(disabled)
@@ -277,9 +278,16 @@
         const lastDateOfCurrentMonth = new Date(year, month, 0).getDate(); //last date of current month
         const lastDateOfLastMonth = new Date(year, month - 1, 0).getDate(); // last day Of last month
 
-        console.log('本月第一天周几',firstDayOfMonth, '本月最后一天', lastDateOfCurrentMonth, '上月最后一天',lastDateOfLastMonth, 'aaalastDayOfLastMonth')
+        console.log(monFirst.value,'本月第一天周几',firstDayOfMonth, '本月最后一天', lastDateOfCurrentMonth, '上月最后一天',lastDateOfLastMonth, 'aaalastDayOfLastMonth')
 
-        const firstWeekDayCount = 7 - firstDayOfMonth + (monFirst ? 1: 0)
+        let firstWeekDayCompletionCount;
+          if (monFirst.value) {
+            firstWeekDayCompletionCount = (firstDayOfMonth === 0 ? 7 : firstDayOfMonth) - 1
+          } else {
+            firstWeekDayCompletionCount = firstDayOfMonth === 0 ? 0 : firstDayOfMonth
+          }
+
+        const firstWeekDayCount = 7 - firstWeekDayCompletionCount
 
         const temp: any[] = [];
 
@@ -332,21 +340,23 @@
         }
 
         if (completion.value) {
+          console.log(temp, 'temptemptemp')
           //completion prev month
-          let firstWeekDayCompletionCount = 7 - firstWeekDayCount;
           let completionCounting = 0;
           const [prevYear, prevMonth] = [computedPrevYear(year, month), computedPrevMonth(month)];
+          console.log(firstWeekDayCompletionCount, completionCounting, 'firstWeekDayCompletionCountfirstWeekDayCompletionCount')
           while (firstWeekDayCompletionCount !== completionCounting) {
             temp[0].unshift(renderOption({year: prevYear, month: prevMonth, i: lastDateOfLastMonth - completionCounting}));
             completionCounting += 1;
           }
 
           //completion next month
-          const completionWeeksCount = (6 - line) > 0 ? 7 : 0
+          const completionWeeksCount = (5 - line) > 0 ? 5 - line : 0
           const [nextYear, nextMonth] = [computedNextYear(year, month), computedNextMonth(month)];
-          console.log(line,temp[line], 'temp[line]temp[line]')
           if (!Array.isArray(temp[line])) temp[line] = [];
-          const lastWeekDayCompletionCount = 7 - temp[line].length + completionWeeksCount;
+          const lastWeekDayCompletionCount = 7 - temp[line].length + (7 * completionWeeksCount);
+          console.log(line,completionWeeksCount,lastWeekDayCompletionCount, 'temp[line]temp[line]')
+
           let completionCountingNext = 0;
 
           while (lastWeekDayCompletionCount !== completionCountingNext) {
@@ -359,7 +369,6 @@
             temp[line].push(renderOption({year: nextYear, month: nextMonth, i: completionCountingNext}));
           }
         } else {
-          const firstWeekDayCompletionCount = 7 - firstWeekDayCount;
           if (firstWeekDayCompletionCount) {
             temp[0].unshift(...Array.from({length: firstWeekDayCompletionCount}).fill('PLACEHOLDER'));
           }
@@ -507,12 +516,12 @@
 
       watchEffect(() => {
 
-        console.log(month.value, 111111113)
+        console.log(month.value, completion,111111113)
         monthRender.value = render({year: year.value, month: month.value, day: 1})
       })
       function disabledDateClick() {
         // begin.value = '2021-2-11'
-        completion.value = true
+        // completion.value = true
       }
       console.log(monthRender, 11111333312)
 
