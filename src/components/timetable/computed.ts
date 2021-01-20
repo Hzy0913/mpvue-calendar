@@ -12,7 +12,7 @@ function date2ymd(date: string): number[] {
 
 function date2timeStamp(date: string): number {
   const [y, m, d] = date2ymd(date);
-  return +new Date(y, m, d);
+  return +new Date(y, m - 1, d);
 }
 
 function getLunarInfo(y: string, m: string, d: string) {
@@ -131,18 +131,21 @@ function isCurrentMonthToday(date: string) {
 const rangeOption = function({selectDate, date}: any) {
   const { start, end } = selectDate;
   if (start === date) {
-    return 'selected selected-range-start'
+    const notCompleteClassName = end ? '' : ' selected-range-not-complete';
+    return 'vc-day-selected selected-range-start' + notCompleteClassName;
   }
   if (end === date) {
-    return 'selected selected-range-end'
+    return 'vc-day-selected selected-range-end'
   }
 
   if (start && end && date) {
     const startTimeStamp: number = date2timeStamp(start);
     const endTimeStamp: number = date2timeStamp(end);
     const currentTimeStamp: number = date2timeStamp(date);
+    console.log( currentTimeStamp , endTimeStamp, date,end,'endTimeStampendTimeStamp' )
+
     if (startTimeStamp < currentTimeStamp && currentTimeStamp < endTimeStamp) {
-      return 'selected selected-range-includes'
+      return 'vc-day-selected selected-range-includes'
     }
   }
 }
