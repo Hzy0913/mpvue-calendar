@@ -12,16 +12,18 @@
             <div
               v-for="(child,k2) in days"
               :key="k2"
+              class="vc-calendar-day"
               :class="[{
                 'mc-today-element': child.isToday,
                 'vc-calendar-dayoff': k2 === (monFirst ? 5 : 0) || k2 === 6,
-                 'disabled': child.disabled,
+                 'vc-calendar-disabled': child.disabled,
+             'vc-calendar-prev-month-day': child.prevMonthDay,
+             'vc-calendar-next-month-day': child.nextMonthDay,
              'vc-calendar-row-first': k2 === 0,
              'vc-calendar-row-last': k2 === 6,
               'month-last-date': child.lastDay, 'month-first-date': 1 === child.day,
                'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, selectComputed(child.date), child.rangeClassName]"
               @click="select(k1, k2, child, $event, index)"
-              class="vc-calendar-day"
             >
               <div class="vc-calendar-day-container">
                 <span :class="['vc-calendar-date']" >{{child.day}}</span>
@@ -346,7 +348,10 @@
           const [prevYear, prevMonth] = [computedPrevYear(year, month), computedPrevMonth(month)];
           console.log(firstWeekDayCompletionCount, completionCounting, 'firstWeekDayCompletionCountfirstWeekDayCompletionCount')
           while (firstWeekDayCompletionCount !== completionCounting) {
-            temp[0].unshift(renderOption({year: prevYear, month: prevMonth, i: lastDateOfLastMonth - completionCounting}));
+            temp[0].unshift(Object.assign(
+              renderOption({year: prevYear, month: prevMonth, i: lastDateOfLastMonth - completionCounting}),
+              {prevMonthDay: true, disabled: true},
+            ));
             completionCounting += 1;
           }
 
@@ -366,7 +371,10 @@
               continue;
             }
             completionCountingNext += 1;
-            temp[line].push(renderOption({year: nextYear, month: nextMonth, i: completionCountingNext}));
+            temp[line].push(Object.assign(
+              renderOption({year: nextYear, month: nextMonth, i: completionCountingNext}),
+              {nextMonthDay: false, disabled: true},
+            ));
           }
         } else {
           if (firstWeekDayCompletionCount) {
