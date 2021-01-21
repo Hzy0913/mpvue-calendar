@@ -64,7 +64,7 @@
     date2timeStamp,
     computedNextDay
   } from './computed'
-  // import { disabledDate, rangeOption, multiOption, selectOption, getToday } from './computed'
+  import { rangeSelect, singleSelect, multiSelect, multiRange } from './controller';
   import { computedNextMonth } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
   import './style.less'
@@ -75,6 +75,13 @@
 
   export default {
     props: {
+      tableMode: {
+        type: String,
+        default: 'month'
+      },
+      day: {
+        type: Object,
+      },
       monFirst: {
         type: Boolean,
         default: true
@@ -124,9 +131,10 @@
         }
       },
     },
-    setup(props: any) {
+    emits: ['onSelect', 'monthChange'],
+    setup(props: any, { emit } : any) {
       console.log(props, 'aaaaa')
-      const { year, mode = 'multiRange', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
+      const { year, mode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month,day, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
       const initSelectValue = ({
         select: '',
         multi: [],
@@ -158,95 +166,28 @@
       }
 
       function select(k1: any, k2: any, child: any, $event: any, index: any) {
-        const { date } = child;
-        switch (mode) {
-          case 'range':
-            const { start, end } = selectDate.select
-            if (start && end) {
-              selectDate.select.start = date;
-              return selectDate.select.end = '';
-            }
-            if (start) {
-              if (date2timeStamp(start) > date2timeStamp(date)) {
-                selectDate.select.start = date;
-                return selectDate.select.end = start;
-              }
-              return selectDate.select.end = date;
-            }
-            return selectDate.select.start = date;
-          case 'multiRange':
-            const selects = selectDate.select
-            if (!selects.length) {
-              return selects.push({start: date});
-            }
+        const { date, prevMonthDay, nextMonthDay } = child;
 
-            let deleteIndex;
-            const searchResult = selects.some((selectItem: any, index: number) => {
-              const {start, end} = selectItem;
-              if (start && end) {
-                if (date2timeStamp(start) < date2timeStamp(date) && date2timeStamp(date) < date2timeStamp(end)) {
-                  return true;
-                }
-
-                if (start === date || end === date) {
-                  deleteIndex = index
-                  return true;
-                }
-              } else {
-                if (start) {
-                  const selectItemDate: any = {};
-                  if (start === date) {
-                    deleteIndex = index;
-                    return true;
-                  }
-                  if (date2timeStamp(start) > date2timeStamp(date)) {
-                    selectItemDate.start = date;
-                    selectItemDate.end = start;
-                  } else {
-                    selectItemDate.start = start;
-                    selectItemDate.end = date;
-                  }
-
-                  let isIncludeOtherRange;
-                  if (selects.length > 1) {
-                    isIncludeOtherRange = selects.some((item: any, index: number) => {
-                      if (index === selects.length - 1) return;
-                      const { start: prevItemDate } = item;
-
-                      if (date2timeStamp(selectItemDate.start) < date2timeStamp(prevItemDate) && date2timeStamp(prevItemDate) < date2timeStamp(selectItemDate.end)) {
-                        return true;
-                      }
-                    });
-                  }
-
-                  console.log(selectItemDate, 'selects.length')
-
-                  if (!isIncludeOtherRange) {
-                    selectItem.start = selectItemDate.start;
-                    selectItem.end = selectItemDate.end;
-                  }
-
-                  return true;
-                }
-              }
-            });
-
-            if (typeof deleteIndex === 'number') {
-              selects.splice(deleteIndex, 1)
-            } else if (!searchResult) {
-              selects.push({start: date});
-            }
-            return;
-          case 'multi':
-            if (selectDate.select.includes(date)) {
-              return selectDate.select = selectDate.select.filter((v: any) => v !== date)
-            }
-            return selectDate.select.push(date)
-          case 'select':
-            return selectDate.select = date;
+        if (prevMonthDay || nextMonthDay) {
+          return emit('monthChange', {prevMonthDay, nextMonthDay});
         }
 
+        switch (mode) {
+          case 'select':
+            singleSelect(selectDate.select, date);
+            break;
+          case 'multi':
+            multiSelect(selectDate.select, date);
+            break;
+          case 'range':
+            rangeSelect(selectDate.select, date);
+            break;
+          case 'multiRange':
+            multiRange(selectDate.select, date);
+            break;
+        }
 
+        emit('onSelect', selectDate.select);
       }
 
       function disabledDate({year, month, i, date}: { year: string, month: string, i: string, date: string }) {
@@ -439,7 +380,7 @@
             completionCountingNext += 1;
             temp[line].push(Object.assign(
               renderOption({year: nextYear, month: nextMonth, i: completionCountingNext}),
-              {nextMonthDay: false, disabled: true},
+              {nextMonthDay: true, disabled: true},
             ));
           }
         } else {
@@ -591,7 +532,7 @@
       watchEffect(() => {
 
         console.log(month.value, completion,111111113)
-        monthRender.value = render({year: year.value, month: month.value, day: 1})
+        monthRender.value = render({year: year.value, month: month.value, day: day.value})
       })
       function disabledDateClick() {
         // begin.value = '2021-2-11'
