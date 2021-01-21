@@ -52,6 +52,7 @@
     selectOption,
     multiOption,
     rangeOption,
+    multiRangeOption,
     getLunarInfo,
     isCurrentMonthToday,
     getToday,
@@ -125,10 +126,11 @@
     },
     setup(props: any) {
       console.log(props, 'aaaaa')
-      const { year, mode = 'range', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
+      const { year, mode = 'multiRange', tableMode: propsTableMode = 'month', monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
       const initSelectValue = ({
         select: '',
         multi: [],
+        multiRange: [],
         range: { start: '', end: '' },
       } as any)[mode]
       const selectDate = reactive({select: initSelectValue})
@@ -146,6 +148,8 @@
         switch (mode) {
           case 'range':
             return rangeOption({selectDate: selectDate.select, date} as any);
+          case 'multiRange':
+            return multiRangeOption({selectDate: selectDate.select, date} as any);
           case 'multi':
           return multiOption({selectDate: selectDate.select, date} as any);
           case 'select':
@@ -167,10 +171,72 @@
                 selectDate.select.start = date;
                 return selectDate.select.end = start;
               }
-
               return selectDate.select.end = date;
             }
             return selectDate.select.start = date;
+          case 'multiRange':
+            const selects = selectDate.select
+            if (!selects.length) {
+              return selects.push({start: date});
+            }
+
+            let deleteIndex;
+            const searchResult = selects.some((selectItem: any, index: number) => {
+              const {start, end} = selectItem;
+              if (start && end) {
+                if (date2timeStamp(start) < date2timeStamp(date) && date2timeStamp(date) < date2timeStamp(end)) {
+                  return true;
+                }
+
+                if (start === date || end === date) {
+                  deleteIndex = index
+                  return true;
+                }
+              } else {
+                if (start) {
+                  const selectItemDate: any = {};
+                  if (start === date) {
+                    deleteIndex = index;
+                    return true;
+                  }
+                  if (date2timeStamp(start) > date2timeStamp(date)) {
+                    selectItemDate.start = date;
+                    selectItemDate.end = start;
+                  } else {
+                    selectItemDate.start = start;
+                    selectItemDate.end = date;
+                  }
+
+                  let isIncludeOtherRange;
+                  if (selects.length > 1) {
+                    isIncludeOtherRange = selects.some((item: any, index: number) => {
+                      if (index === selects.length - 1) return;
+                      const { start: prevItemDate } = item;
+
+                      if (date2timeStamp(selectItemDate.start) < date2timeStamp(prevItemDate) && date2timeStamp(prevItemDate) < date2timeStamp(selectItemDate.end)) {
+                        return true;
+                      }
+                    });
+                  }
+
+                  console.log(selectItemDate, 'selects.length')
+
+                  if (!isIncludeOtherRange) {
+                    selectItem.start = selectItemDate.start;
+                    selectItem.end = selectItemDate.end;
+                  }
+
+                  return true;
+                }
+              }
+            });
+
+            if (typeof deleteIndex === 'number') {
+              selects.splice(deleteIndex, 1)
+            } else if (!searchResult) {
+              selects.push({start: date});
+            }
+            return;
           case 'multi':
             if (selectDate.select.includes(date)) {
               return selectDate.select = selectDate.select.filter((v: any) => v !== date)
