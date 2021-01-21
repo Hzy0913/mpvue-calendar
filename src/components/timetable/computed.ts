@@ -150,6 +150,36 @@ const rangeOption = function({selectDate, date}: any) {
   }
 }
 
+const multiRangeOption = function({selectDate, date}: any) {
+  console.log(selectDate, 'selectDateselectDate')
+  let className;
+  selectDate.some((selectItem: any) => {
+    const { start, end } = selectItem;
+    if (start === date) {
+      const notCompleteClassName = end ? '' : ' selected-range-not-complete';
+      className = 'vc-day-selected selected-range-start' + notCompleteClassName;
+      return true;
+    }
+    if (end === date) {
+      className = 'vc-day-selected selected-range-end'
+      return true;
+    }
+
+    if (start && end && date) {
+      const startTimeStamp: number = date2timeStamp(start);
+      const endTimeStamp: number = date2timeStamp(end);
+      const currentTimeStamp: number = date2timeStamp(date);
+      console.log( currentTimeStamp , endTimeStamp, date,end,'endTimeStampendTimeStamp' )
+
+      if (startTimeStamp < currentTimeStamp && currentTimeStamp < endTimeStamp) {
+        className = 'vc-day-selected selected-range-includes';
+        return true;
+      }
+    }
+  });
+  return className;
+}
+
 const multiOption = function({selectDate, date, begin, end, isWeekMode, rangeDate, playload, weekSwitch, getEvents, getLunarInfo, disabledDateHandle}: any) {
   console.log(selectDate,date, 111 )
 
@@ -249,6 +279,7 @@ export {
   getToday,
   rangeOption,
   multiOption,
+  multiRangeOption,
   selectOption,
   disabledDate,
   setRemark,
