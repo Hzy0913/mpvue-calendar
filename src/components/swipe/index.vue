@@ -5,10 +5,7 @@
     ref="swipeRef"
   >
     <div class="swipe-wrap">
-      <div class="swipe-slide"><b>0</b></div>
-      <div class="swipe-slide"><b>1</b></div>
-      <div class="swipe-slide"><b>2</b></div>
-      <div class="swipe-slide"><b>3</b></div>
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -35,11 +32,13 @@
       },
       loop: {
         type: Boolean,
-        default: true
+        default: false
       },
     },
-    setup(props: SwipeInterface) {
+    emits: ['swiperChange', 'swiperChangeEnd', 'start'],
+    setup(props: SwipeInterface, { emit } : any) {
       console.log(props, 'aaaaa')
+      let isTransitionEnd = true
       const { initialSlide, auto, speed, loop } = props;
       const options = {
         initialSlide,
@@ -48,8 +47,16 @@
         loop,
         disableScroll: false,
         stopPropagation: true,
-        callback(index: number, element: HTMLElement) {},
-        transitionEnd(index: number, element: HTMLElement) {},
+        callback(index: number, element: HTMLElement) {
+          emit('swiperChange', index, element);
+        },
+        transitionEnd(index: number, element: HTMLElement) {
+          emit('swiperChangeEnd', index, element);
+
+          setTimeout(() => {
+            isTransitionEnd = true;
+          });
+        },
       };
       const swipeRef = ref(null);
       const browser = {
@@ -167,8 +174,8 @@
 
           to = circle(to);
 
-          move(index, width * direction, slideSpeed || speed);
-          move(to, 0, slideSpeed || speed);
+          move(index, width * direction, slideSpeed ?? speed);
+          move(to, 0, slideSpeed ?? speed);
 
           if (options.loop) { // we need to get the next in place
             move(circle(to - direction), -(width * direction), 0);
@@ -212,7 +219,6 @@
       }
 
       function animate(from: any, to: any, speed: number) {
-        console.log(from, 'from', to, 'to')
         // if not an animation, just reposition
         if (!speed) {
           element.style.left = to + 'px';
@@ -270,6 +276,14 @@
           }
         },
         start(event: any) {
+          emit('start');
+
+          if (!isTransitionEnd) {
+            return setTimeout(() => {
+              isTransitionEnd = true;
+            });
+          };
+
           const touches = event.touches[0];
           // measure start values
           start = {
@@ -342,6 +356,7 @@
           }
         },
         end(event: any) {
+          isTransitionEnd = false;
           // measure duration
           const duration = +new Date - start.time;
 
@@ -441,6 +456,7 @@
 
       return {
         swipeRef,
+        slide,
       }
     }
   }
