@@ -9,33 +9,39 @@
       :month="month"
       :year="year"
       :monFirst="monFirst"
+      :timetableHeight="timetableHeight"
     />
-    <Swipe
-      :initialSlide="1"
-      @swiperChangeEnd="swiperChangeEnd"
-      ref="swipeRef"
+    <div
+      :style="{height: timetableHeight + 'px'}"
     >
-      <Slide
-        class-name="asdasdsd"
-        v-for="(item, k1) in timetableList.list"
+      <Swipe
+        :initialSlide="1"
+        @swiperChangeEnd="swiperChangeEnd"
+        @containerChange="containerChange"
+        ref="swipeRef"
       >
-        <Timetable
-          :key="item.id"
-          :month="item.month"
-          :year="item.year"
-          :day="item.day"
-          :remarks="remarks"
-          :almanacs="almanacs"
-          :tileContent="tileContent"
-          :completion="completion"
-          :monFirst="monFirst"
-          :tableMode="tableMode"
-          @onSelect="onSelect"
-          @monthChange="monthChange"
-        />
-      </Slide>
-    </Swipe>
-
+        <Slide
+          class-name="asdasdsd"
+          v-for="(item, k1) in timetableList.list"
+        >
+          <Timetable
+            :month="item.month"
+            :year="item.year"
+            :day="item.day"
+            :remarks="remarks"
+            :almanacs="almanacs"
+            :tileContent="tileContent"
+            :completion="completion"
+            :monFirst="monFirst"
+            :tableMode="tableMode"
+            :selectMode="selectMode"
+            :selectDate="selectDate"
+            @onSelect="onSelect"
+            @monthChange="monthChange"
+          />
+        </Slide>
+      </Swipe>
+    </div>
     <button
       @click="test()"
     >test</button>
@@ -46,16 +52,24 @@
 
 <script lang="ts">
   import { defineComponent, ref, reactive, watchEffect, watch, toRefs } from 'vue'
+  import { CalendarInterface } from './declare'
   import Tools from './components/tools/index.vue'
   import Swipe from './components/swipe/index.vue'
   import Slide from './components/swipe/slide.vue'
   import Timetable from './components/timetable/index.vue'
   import { computedNextMonth, computedPrevMonth, getDateByCount, date2ymd, getPrevDate, getNextDate,  } from './components/utils'
   import './icon.css'
+  import './style.css'
 
   export default {
     props: {
       almanacs: {
+        type: Object,
+        default() {
+          return {};
+        }
+      },
+      remarks: {
         type: Object,
         default() {
           return {};
@@ -82,6 +96,13 @@
         type: String,
         default: 'month'
       },
+      selectMode: {
+        type: String,
+        default: 'select'
+      },
+      selectDate: {
+        type: Object,
+      },
     },
     components: {
       Tools,
@@ -90,20 +111,27 @@
       Timetable,
     },
     setup(props: any) {
-      const { almanacs, tileContent, completion, monFirst, monthRange, mode: tableMode } = toRefs(props)
+      const { almanacs, tileContent, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks } = toRefs(props)
       const month = ref(1)
       const year = ref(2021)
       const day = ref(5)
+      const timetableHeight = ref(undefined);
       const timetableList = reactive({list: getTimetableList()})
-      const remarks: any = reactive({
-        '2021-2-1': '啦啦啦',
-        '2021-2-11': '啦啦啦3333',
-      });
       const swipeRef = ref();
-      const count = ref(0)
+      const count = ref(0);
+      const initSelectValue = propSelectDate.value || ({
+        select: '',
+        multi: [],
+        multiRange: [],
+        range: { start: '', end: '' },
+      } as any)[selectMode.value]
+      console.log(propSelectDate,initSelectValue, selectMode.value, 'initSelectValue')
+
+      const selectDate = reactive({select: initSelectValue})
+
+      const isWeekMode = tableMode.value === 'week';
 
       function swiperChangeEnd(index: any, b: any) {
-        const isWeekMode = tableMode.value === 'week';
         if (index === 2) {
           const [nextYear, nextMonth, nextDay] = getNextDate(year.value, month.value,  isWeekMode ? day.value : undefined);
           year.value = nextYear;
@@ -145,14 +173,26 @@
 
 
         console.log(month, 'monthRangemonthRange')
-        const [prevYear, prevMonth, prevDay] = getPrevDate(year.value, month.value, day.value);
-        const [nextYear, nextMonth, nextDay] = getNextDate(year.value, month.value, day.value);
-        // const [next2Year, next2Month] = getNextDate(nextYear, nextMonth);
+        if (isWeekMode) {
+          const [prevYear, prevMonth, prevDay] = getPrevDate(year.value, month.value, day.value);
+          const [nextYear, nextMonth, nextDay] = getNextDate(year.value, month.value, day.value);
+          return [
+            {year: prevYear, month: prevMonth, day: prevDay, id: `${prevYear}-${prevMonth}-${prevDay}`},
+            {year: year.value, month: month.value, day: day.value, id: `${year.value}-${month.value}-${day.value}`},
+            {year: nextYear, month: nextMonth, day: nextDay, id: `${nextYear}-${nextMonth}-${nextDay}`},
+          ];
+        }
+        const [prevYear, prevMonth] = getPrevDate(year.value, month.value);
+        const [nextYear, nextMonth] = getNextDate(year.value, month.value);
+        console.log([
+          `${prevYear}-${prevMonth}`,
+          `${year.value}-${month.value}`,
+          `${nextYear}-${nextMonth}`,
+        ], 776666333111)
         return [
-          {year: prevYear, month: prevMonth, day: prevDay, id: `${prevYear}-${prevMonth}`},
-          {year: year.value, month: month.value, day: day.value, id: `${year.value}-${month.value}`},
-          {year: nextYear, month: nextMonth, day: nextDay, id: `${nextYear}-${nextMonth}`},
-          // {year: next2Year, month: next2Month, id: `${next2Year}-${next2Month}`},
+          {year: prevYear, month: prevMonth, id: `${prevYear}-${prevMonth}`},
+          {year: year.value, month: month.value, id: `${year.value}-${month.value}`},
+          {year: nextYear, month: nextMonth, id: `${nextYear}-${nextMonth}`},
         ];
       }
 
@@ -198,11 +238,16 @@
       }
 
       function test() {
-        remarks['2021-1-3'] = '按理说大流口水的'
+        // remarks['2021-1-3'] = '按理说大流口水的'
+      }
+
+      function containerChange(element: any) {
+        timetableHeight.value = element?.clientHeight;
+        console.log(element, element?.clientHeight, 'paramparamparam')
       }
 
       function onSelect(param: any) {
-        console.log(param, 'paramparamparam')
+        console.log(param, 'parampa222ramparamparam')
       }
 
       function monthChange(param: any) {
@@ -225,12 +270,23 @@
         timetableList.list = getTimetableList();
 
       })
+
+      watch(() => props.selectDate, (current, prev) => {
+        selectDate.select = props.selectDate;
+      });
+
+      // watch(remarks, (current, prev) => {
+      //   remarks.value = props.remarks;
+      // });
+
+      watch(propSelectDate, (count, prevCount) => {
+        timetableList.list = getTimetableList();
+      })
       watch(day, (count, prevCount) => {
         timetableList.list = getTimetableList();
       })
 
       watch(completion, () => {
-
           })
 
       return {
@@ -251,9 +307,14 @@
         onSelect,
         monthChange,
         tableMode,
+        selectMode,
         timetableList,
         swiperChangeEnd,
+        containerChange,
+        timetableHeight,
         swipeRef,
+        selectDate,
+        propSelectDate,
       }
     }
   }
