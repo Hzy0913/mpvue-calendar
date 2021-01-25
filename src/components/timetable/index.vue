@@ -1,6 +1,6 @@
 <template>
   <div
-    style='max-width:500px; margin:0 auto'
+    style='margin:0 auto'
     class="vc-calendar-timetable"
   >
     <div class="vc-calendar-timetable-wrap">
@@ -22,7 +22,12 @@
              'vc-calendar-row-first': k2 === 0,
              'vc-calendar-row-last': k2 === 6,
               'month-last-date': child.lastDay, 'month-first-date': 1 === child.day,
-               'mc-last-month': child.lastMonth, 'mc-next-month': child.nextMonth}, child.className, selectComputed(child.date), child.rangeClassName]"
+               'mc-last-month': child.lastMonth,
+                'mc-next-month': child.nextMonth},
+                 child.className,
+                 child.selectedClassName,
+                  // selectComputed(child.date),
+                   child.rangeClassName]"
               @click="select(k1, k2, child, $event, index)"
             >
               <div class="vc-calendar-day-container">
@@ -130,18 +135,22 @@
           return {};
         }
       },
+      selectDate: {
+        type: Object,
+      },
     },
     emits: ['onSelect', 'monthChange'],
     setup(props: any, { emit } : any) {
       console.log(props, 'aaaaa')
       const { year, mode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month,day, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
-      const initSelectValue = ({
-        select: '',
-        multi: [],
-        multiRange: [],
-        range: { start: '', end: '' },
-      } as any)[mode]
-      const selectDate = reactive({select: initSelectValue})
+      const { selectDate } = props;
+      // const initSelectValue = ({
+      //   select: '',
+      //   multi: [],
+      //   multiRange: [],
+      //   range: { start: '', end: '' },
+      // } as any)[mode]
+      // const selectDate = reactive({select: initSelectValue})
       const tableMode = ref(propsTableMode)
       const completion = propsTableMode === 'week' || propsCompletion
       const begin = ref(propsBegin)
@@ -153,6 +162,7 @@
 
 
       function selectComputed(date: string) {
+        console.log(selectDate, date, 'selectDate.select, date')
         switch (mode) {
           case 'range':
             return rangeOption({selectDate: selectDate.select, date} as any);
@@ -226,8 +236,10 @@
         const isWeekMode = monthRange.length ? false : weekMode;
         const isMonthModeCurrentMonth = !weekMode && !playload;
         const date = `${year}-${month}-${i}`;
-        let modeOptions;
-        console.log(almanacs, 111222345)
+        const modeOptions = {
+          selectedClassName: selectComputed(date)
+        };
+        console.log(date, modeOptions, 111222345)
         const options = {
           day: i,
           almanac: almanacs[`${month}-${i}`],
