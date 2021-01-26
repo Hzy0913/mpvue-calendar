@@ -65,8 +65,8 @@ const setRemark = (function() {
   }
 })()
 
-function computedPrevYear(year: string | number, month: string): number {
-  if ((Number(month) - 1) < 0) {
+function computedPrevYear(year: string | number, month: string | number): number {
+  if ((Number(month) - 1 - 1) < 0) {
     return Number(year) - 1;
   }
 
@@ -79,7 +79,6 @@ function computedPrevDay(year: string, month: string, day: string | number): str
     if (prevMonth === 12) { //prev year
       const prevYear = Number(year) - 1;
       const prevDay = new Date(prevYear, prevMonth - 2, 0).getDate()
-      console.log(prevYear, prevMonth , 'aaasdasdasd')
       return `${prevYear}-${prevMonth}-${prevDay}`
     } else { //current year and prev month
       const prevDay = new Date(Number(year), prevMonth - 1, 0).getDate()
@@ -108,7 +107,7 @@ function computedNextDay(year: string, month: string, day: string): string {
   }
 }
 
-function computedNextYear(year: string, month: string): number {
+function computedNextYear(year: string | number, month: string | number): number {
   if ((Number(month) + 1) > 12) {
     return Number(year) + 1;
   }
@@ -142,7 +141,6 @@ const rangeOption = function({selectDate, date}: any) {
     const startTimeStamp: number = date2timeStamp(start);
     const endTimeStamp: number = date2timeStamp(end);
     const currentTimeStamp: number = date2timeStamp(date);
-    console.log( currentTimeStamp , endTimeStamp, date,end,'endTimeStampendTimeStamp' )
 
     if (startTimeStamp < currentTimeStamp && currentTimeStamp < endTimeStamp) {
       return 'vc-day-selected selected-range-includes'
@@ -151,7 +149,6 @@ const rangeOption = function({selectDate, date}: any) {
 }
 
 const multiRangeOption = function({selectDate, date}: any) {
-  console.log(selectDate, 'selectDateselectDate')
   let className;
   selectDate.some((selectItem: any) => {
     const { start, end } = selectItem;
@@ -169,7 +166,6 @@ const multiRangeOption = function({selectDate, date}: any) {
       const startTimeStamp: number = date2timeStamp(start);
       const endTimeStamp: number = date2timeStamp(end);
       const currentTimeStamp: number = date2timeStamp(date);
-      console.log( currentTimeStamp , endTimeStamp, date,end,'endTimeStampendTimeStamp' )
 
       if (startTimeStamp < currentTimeStamp && currentTimeStamp < endTimeStamp) {
         className = 'vc-day-selected selected-range-includes';
@@ -181,52 +177,11 @@ const multiRangeOption = function({selectDate, date}: any) {
 }
 
 const multiOption = function({selectDate, date, begin, end, isWeekMode, rangeDate, playload, weekSwitch, getEvents, getLunarInfo, disabledDateHandle}: any) {
-  console.log(selectDate,date, 111 )
-
-  return selectDate.includes(date) ? 'selected' : undefined;
-
-  // const [year, month, day] = date2ymd(date);
-  // const [beginY, beginM, beginD] = begin.split('-').map(Number);
-  // const [endY, endM, endD] = end.split('-').map(Number);
-  //
-  // const isSelected = value.includes(date);
-  // let options = Object.assign(
-  //   {day, selected: isSelected},
-  //   getLunarInfo(year, month, day),
-  //   getEvents(year, month, day),
-  // );
-  //
-  // if (isSelected) {
-  //   if (begin) {
-  //     const beginStamp = +new Date(beginY, beginM - 1, beginD);
-  //     if (beginStamp > +new Date(year, month - 1, day)) {
-  //       options.disabled = true;
-  //     }
-  //   }
-  //
-  //   if (end) {
-  //     const endStamp = +new Date(endY, endM - 1, endD);
-  //     if (endStamp < +new Date(year, month, day)) {
-  //       options.disabled = true;
-  //     }
-  //   }
-  //
-  //   if (disabledDateHandle.isDisabled(date)) {
-  //     options.disabled = true;
-  //   }
-  // }
-  //
-  // isCurrentMonthToday(options) && (options.isToday = true);
-  //
-  // if (playload && !weekSwitch) {
-  //   options.disabled = true;
-  //   options.selected = false;
-  // }
-  //
-  // return options;
+  console.log(selectDate.includes(date), 'selectDateselectDate11222')
+  return selectDate.includes(date) ? 'vc-day-selected' : undefined;
 }
 function selectOption({date, selectDate}: any) {
-  return selectDate === date ? 'selected' : undefined;
+  return selectDate === date ? 'vc-day-selected' : undefined;
 }
 type selectOptionType = {
   date: string;
@@ -249,9 +204,12 @@ const disabledDate = (function() {
           return previousValue;
         }, {});
 
+
         return disabledDate;
       },
       isDisabled(date: string) {
+        console.log(disabledDate, date,'disabledDatedisabledDate')
+
         return !!disabledDate[date];
       }
     }
