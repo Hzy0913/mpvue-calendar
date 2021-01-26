@@ -360,7 +360,6 @@
         }
 
         if (completion.value) {
-          console.log(temp, 'temptemptemp')
           //completion prev month
           let completionCounting = 0;
           const [prevYear, prevMonth] = [computedPrevYear(year, month), computedPrevMonth(month)];
@@ -402,134 +401,6 @@
 
 
         return temp;
-
-        // const {completion} = this;
-        // if (this.monFirst) {
-        //   if (!firstDayOfMonth) {
-        //     let lastMonthDay = lastDayOfLastMonth;
-        //     const LastMonthItems = [];
-        //     for (let d = 1; d <= 7; d++) {
-        //       LastMonthItems.unshift(Object.assign(
-        //         this.renderOption(this.computedPrevYear(y, m), this.computedPrevMonth(false, m), lastMonthDay, 'prevMonth'),
-        //         {lastMonth: true}
-        //       ));
-        //       lastMonthDay--;
-        //     }
-        //     temp.unshift(LastMonthItems);
-        //   }
-        //   temp.forEach((item, index) => {
-        //     if (!index) {
-        //       return item.splice(0, 1);
-        //     }
-        //     temp[index - 1].length < 7 && temp[index - 1].push(item.splice(0, 1)[0]);
-        //   });
-        //   if (this.isMonthRange && temp[temp.length - 1][0].nextMonth) {
-        //     temp.splice(temp.length - 1, 1); //if the first day of last line is nextMonth, delete this line
-        //   }
-        //   if (!completion && !weekSwitch) {
-        //     const lastIndex = temp.length - 1;
-        //     const secondToLastIndex = lastIndex - 1;
-        //     const differentMonth = temp[lastIndex][0].date.split('-')[1] !== temp[secondToLastIndex][6].date.split('-')[1];
-        //     differentMonth && temp.splice(lastIndex, 1);
-        //   }
-        // }
-        // if (completion && !weekSwitch && temp.length <= 5 && nextMonthPushDays > 0) {
-        //   for (let completionIndex = temp.length; completionIndex <= 5; completionIndex++) {
-        //     temp[completionIndex] = [];
-        //     const start = nextMonthPushDays + (completionIndex - line - 1) * 7;
-        //     for (let d = start; d <= start + 6; d++) {
-        //       temp[completionIndex].push(Object.assign(
-        //         {day: d, disabled: true, nextMonth: true},
-        //         this.getLunarInfo(this.computedNextYear(y, m), this.computedNextMonth(true, m), d),
-        //         this.getEvents(this.computedNextYear(y, m), this.computedNextMonth(true, m), d)
-        //       ));
-        //     }
-        //   }
-        // }
-        // if (this.tileContent.length) {
-        //   temp.forEach((item, index) => {
-        //     item.forEach(v => {
-        //       const contents = this.tileContent.find(val => val.date === v.date);
-        //       if (contents) {
-        //         const {className, content} = contents || {};
-        //         v.className = className;
-        //         v.content = content;
-        //       }
-        //     });
-        //   });
-        // }
-        // if (weekSwitch) {
-        //   const tempLength = temp.length;
-        //   const lastLineMonth = temp[tempLength - 1][0].date.split('-')[1]; // last line month
-        //   const secondLastMonth = temp[tempLength - 2][0].date.split('-')[1]; // second-to-last line month
-        //   lastLineMonth !== secondLastMonth && temp.splice(tempLength - 1, 1);
-        // }
-        // this.monthDays = temp;
-        // if (weekSwitch && !this.isMonthRange) {
-        //   if (this.positionWeek) {
-        //     let payloadDay = '';
-        //     let searchIndex = true;
-        //     if (Array.isArray(payload)) { //range
-        //       payloadDay = [payload[0], payload[1] + 1, payload[2]].join('-');
-        //     } else if (this.multi || isWatchRenderValue) {
-        //       if (this.thisTimeSelect) {
-        //         payloadDay = this.thisTimeSelect;
-        //       } else {
-        //         payloadDay = this.multi ? this.value[this.value.length - 1].join('-') : this.value.join('-');
-        //       }
-        //     }
-        //     if (payload === 'SETTODAY') {
-        //       payloadDay = todayString;
-        //     } else if (isCustomRender) {
-        //       if (typeof payload === 'string') {
-        //         payloadDay = [y, Number(m) + 1, payload].join('-');
-        //         searchIndex = true;
-        //       } else if (typeof payload === 'number') {
-        //         const setIndex = payload > temp.length ? temp.length - 1 : payload;
-        //         this.startWeekIndex = setIndex;
-        //         this.weekIndex = setIndex;
-        //         this.positionWeek = false;
-        //         searchIndex = false;
-        //       }
-        //     }
-        //     const positionDay = payloadDay || todayString;
-        //     if (searchIndex) {
-        //       temp.some((v, index) => {
-        //         const isWeekNow = v.find(vv => vv.date === positionDay);
-        //         if (isWeekNow) {
-        //           this.startWeekIndex = index;
-        //           this.weekIndex = index;
-        //           return true;
-        //         }
-        //       });
-        //     }
-        //     this.positionWeek = false;
-        //   }
-        //   this.days = [temp[this.startWeekIndex]];
-        //   if (this.initRender) {
-        //     this.setMonthRangeofWeekSwitch();
-        //     this.initRender = false;
-        //   }
-        // } else {
-        //   this.days = temp;
-        // }
-        // const todayText = '今';
-        // if (typeof this.now === 'boolean' && !this.now) {
-        //   this.showToday = {show: false};
-        // } else if (typeof this.now === 'string') {
-        //   this.showToday = {
-        //     show: true,
-        //     text: this.now || todayText
-        //   };
-        // } else {
-        //   this.showToday = {
-        //     show: true,
-        //     text: todayText
-        //   };
-        // }
-        // this.monthRangeDays = [this.days];
-        // isWatchRenderValue && this.updateHeadMonth();
-        // return this.days;
       }
 
       function refreshRender() {
@@ -542,7 +413,6 @@
         refreshRender();
       })
       watch(disabled, () => {
-        console.log(disabled.value,1111111132222)
         disabledDateHandle.update(disabled.value)
         refreshRender();
       })
