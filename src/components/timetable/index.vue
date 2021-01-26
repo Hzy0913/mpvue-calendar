@@ -70,7 +70,7 @@
     computedNextDay
   } from './computed'
   import { rangeSelect, singleSelect, multiSelect, multiRange } from './controller';
-  import { computedNextMonth } from '../utils'
+  import { computedNextMonth, delay } from '../utils'
   import { TimeTableInterface, startType, deltaType } from './declare'
   import './style.less'
 
@@ -138,40 +138,40 @@
       selectDate: {
         type: Object,
       },
+      selectMode: {
+        type: Object,
+      },
+      disabled: {
+        type: Object,
+      },
     },
     emits: ['onSelect', 'monthChange'],
     setup(props: any, { emit } : any) {
       console.log(props, 'aaaaa')
-      const { year, mode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month,day, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs } = toRefs(props);
-      const { selectDate } = props;
-      // const initSelectValue = ({
-      //   select: '',
-      //   multi: [],
-      //   multiRange: [],
-      //   range: { start: '', end: '' },
-      // } as any)[mode]
-      // const selectDate = reactive({select: initSelectValue})
+      const { year, selectMode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month,day, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs, selectDate } = toRefs(props);
+      // const { selectDate } = props;
       const tableMode = ref(propsTableMode)
-      const completion = propsTableMode === 'week' || propsCompletion
+      const completion = ref(propsTableMode.value === 'week' || propsCompletion.value)
       const begin = ref(propsBegin)
       const end = ref(propsEnd)
-      disabledDateHandle.update(disabled)
-      setRemarkHandle.update(remarks)
-      setTileContentHandle.update(tileContent)
+      disabledDateHandle.update(disabled.value || [])
+      setRemarkHandle.update(remarks.value)
+      setTileContentHandle.update(tileContent.value)
 
+      console.log(remarks, 'remarksremarksremarksremarks1123123')
 
 
       function selectComputed(date: string) {
-        console.log(selectDate, date, 'selectDate.select, date')
-        switch (mode) {
+        console.log(selectDate, selectMode.value, date, 'selectDate.select, date')
+        switch (selectMode.value) {
           case 'range':
-            return rangeOption({selectDate: selectDate.select, date} as any);
+            return rangeOption({selectDate: selectDate.value, date} as any);
           case 'multiRange':
-            return multiRangeOption({selectDate: selectDate.select, date} as any);
+            return multiRangeOption({selectDate: selectDate.value, date} as any);
           case 'multi':
-          return multiOption({selectDate: selectDate.select, date} as any);
+            return multiOption({selectDate: selectDate.value, date} as any);
           case 'select':
-            return selectOption({selectDate: selectDate.select, date});
+            return selectOption({selectDate: selectDate.value, date});
         }
       }
 
@@ -182,22 +182,27 @@
           return emit('monthChange', {prevMonthDay, nextMonthDay});
         }
 
-        switch (mode) {
+        console.log(selectDate.value, 'selectModeselectMode')
+
+        let selectValue;
+        switch (selectMode.value) {
           case 'select':
-            singleSelect(selectDate.select, date);
+            singleSelect(selectDate.value, date);
             break;
           case 'multi':
-            multiSelect(selectDate.select, date);
+            multiSelect(selectDate.value, date);
             break;
           case 'range':
-            rangeSelect(selectDate.select, date);
+            selectValue = rangeSelect(selectDate.value, date);
             break;
           case 'multiRange':
-            multiRange(selectDate.select, date);
+            selectValue = multiRange(selectDate.value, date);
             break;
         }
+        console.log(JSON.parse(JSON.stringify(selectValue)), 'aaaaaaaa')
 
-        emit('onSelect', selectDate.select);
+        emit('onSelect', selectValue);
+        delay().then(refreshRender)
       }
 
       function disabledDate({year, month, i, date}: { year: string, month: string, i: string, date: string }) {
@@ -219,6 +224,7 @@
           }
         }
 
+        console.log(date,disabledDateHandle.isDisabled(date),'disabledDateHandledisabledDateHandle' )
         if (disabledDateHandle.isDisabled(date)) {
           disabledOptions.disabled = true;
         }
@@ -239,7 +245,6 @@
         const modeOptions = {
           selectedClassName: selectComputed(date)
         };
-        console.log(date, modeOptions, 111222345)
         const options = {
           day: i,
           almanac: almanacs[`${month}-${i}`],
@@ -250,15 +255,7 @@
           ...getToday(date),
         }
 
-        // switch (mode) {
-        //   case 'range':
-        //     // return rangeOption({date, isCurrentMonthToday} as any);
-        //   case 'multi':
-        //     // return multiOption({date, isCurrentMonthToday} as any);
-        //   case 'select':
-        //     console.log(selectDate.select, 333331)
-        //     modeOptions = selectOption({selectDate: selectDate.select, year, month, i,date, disabledDateHandle, completion, getTileContent: setTileContentHandle.getTileContent, getRemark: setRemarkHandle.getRemark} as any);
-        // }
+        console.log(options,options.date,  111222345)
 
         return Object.assign(options, modeOptions);
       }
@@ -267,6 +264,8 @@
       console.log(monthRender, 111111)
 
       function render({year, month, day, renderer, payload}: any) {
+        completion.value = propsTableMode.value === 'week' || propsCompletion.value;
+
         const isCustomRender = renderer === 'CUSTOMRENDER';
         const isWatchRenderValue = renderer === '_WATCHRENDERVALUE_';
 
@@ -533,24 +532,48 @@
         // return this.days;
       }
 
+      function refreshRender() {
+        monthRender.value = render({year: year.value, month: month.value, day: day.value})
+      }
 
-      watch(remarks, (count, prevCount) => {
-        // setRemarkHandle.update(remarks)
-        console.log(count,prevCount,remarks, 11344411)
 
-        /* ... */
+      watch(remarks, () => {
+        setRemarkHandle.update(remarks.value);
+        refreshRender();
+      })
+      watch(disabled, () => {
+        console.log(disabled.value,1111111132222)
+        disabledDateHandle.update(disabled.value)
+        refreshRender();
+      })
+
+      watch(remarks, () => {
+        setTileContentHandle.update(tileContent.value)
+        refreshRender();
+      })
+
+
+      watch(() => [props.monFirst, props.completion, props.year, props.month, props.day], () => {
+        console.log('onSelectonSelectonSelect333333')
+        refreshRender();
+      })
+
+      watch(selectDate.value, () => {
+
+        console.log(props.selectDate, 'onSelectonSelectonSelect333333666')
+        refreshRender();
       })
 
       watchEffect(() => {
+        // refreshRender();
 
-        console.log(month.value, completion,111111113)
-        monthRender.value = render({year: year.value, month: month.value, day: day.value})
+        console.log(props.selectDate, 'props.selectDateprops.selectDate')
+
       })
       function disabledDateClick() {
         // begin.value = '2021-2-11'
         // completion.value = true
       }
-      console.log(monthRender, 11111333312)
 
       return {
         monthRender,
