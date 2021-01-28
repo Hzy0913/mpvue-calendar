@@ -38,6 +38,8 @@
             :tableMode="tableMode"
             :selectMode="selectMode"
             :selectDate="selectDate"
+            :begin="begin"
+            :end="end"
             @onSelect="onSelect"
             @monthChange="monthChange"
           />
@@ -99,6 +101,12 @@
         type: String,
         default: 'month'
       },
+      begin: {
+        type: String,
+      },
+      end: {
+        type: String,
+      },
       selectMode: {
         type: String,
         default: 'select'
@@ -118,7 +126,7 @@
     },
     emits: ['onSelect'],
     setup(props: any, { emit } : any) {
-      const { almanacs, tileContent, disabled, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks } = toRefs(props)
+      const { almanacs, tileContent, disabled, end, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks, begin } = toRefs(props)
       const timestamp = ref(+new Date()); // listener timestamp change to refresh timetable
       const [currentYear, currentMonth, currentDay] = getToday(true);
       const year = ref(currentYear)
@@ -134,7 +142,6 @@
         multiRange: [],
         range: { start: '', end: '' },
       } as any)[selectMode.value]
-      const isWeekMode = tableMode.value === 'week';
       const timetableList = reactive({list: getTimetableList()})
 
 
@@ -142,6 +149,7 @@
 
 
       function swiperChangeEnd(index: any, b: any) {
+        const isWeekMode = tableMode.value === 'week';
         if (index === 2) {
           const [nextYear, nextMonth, nextDay] = getNextDate(year.value, month.value,  isWeekMode ? day.value : undefined);
           year.value = nextYear;
@@ -174,6 +182,8 @@
       }
 
       function getTimetableList() {
+        const isWeekMode = tableMode.value === 'week';
+
         if (tableMode.value === 'monthRange') {
           return monthRange.value.map((item: string) => {
             const [year, month] = item.split('-');
@@ -181,6 +191,7 @@
           });
         }
 
+        console.log(isWeekMode, 'isWeekModeisWeekMode')
         if (isWeekMode) {
           const [prevYear, prevMonth, prevDay] = getPrevDate(year.value, month.value, day.value);
           const [nextYear, nextMonth, nextDay] = getNextDate(year.value, month.value, day.value);
@@ -190,6 +201,7 @@
             {year: nextYear, month: nextMonth, day: nextDay, id: `${nextYear}-${nextMonth}-${nextDay}`},
           ];
         }
+
         const [prevYear, prevMonth] = getPrevDate(year.value, month.value);
         const [nextYear, nextMonth] = getNextDate(year.value, month.value);
         console.log([
@@ -294,7 +306,8 @@
           year, 'completioncompletion')
       })
 
-      watch(month, (count, prevCount) => {
+      watch([month, day], (count, prevCount) => {
+        console.log(getTimetableList(), 'getTimetableList()getTimetableList()')
         timetableList.list = getTimetableList();
       })
 
@@ -310,17 +323,31 @@
       // watch(propSelectDate, (count, prevCount) => {
       //   timetableList.list = getTimetableList();
       // })
-      watch(day, (count, prevCount) => {
-        timetableList.list = getTimetableList();
-      })
+      // watch(() => [props.begin, props.end, props.disabled], (count, prevCount) => {
+      //   refreshRender();
+      // })
+      // watch(almanacs, (count, prevCount) => {
+      //   refreshRender();
+      // })
 
       watch(tableMode, (count, prevCount) => {
-        console.log('refreshRenderrefreshRender')
+        console.log( getTimetableList(), count, prevCount, tableMode,'refreshRenderrefreshRender')
+        timetableList.list = getTimetableList();
         refreshRender();
       })
 
-      watch(completion, () => {
-          })
+      // watch(props.almanacs, () => {
+      //   refreshRender();
+      // })
+      // watch(props.remarks, () => {
+      //   refreshRender();
+      // })
+      watch([begin, end, disabled, props.disabled, almanacs, props.almanacs, remarks, props.remarks, tileContent, props.tileContent], () => {
+        refreshRender();
+      })
+      // watch(props.tileContent, () => {
+      //   refreshRender();
+      // })
 
       return {
         count,
@@ -352,6 +379,8 @@
         timestamp,
         propSelectDate,
         render,
+        begin,
+        end,
       }
     }
   }
