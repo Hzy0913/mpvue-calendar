@@ -1,6 +1,5 @@
 <template>
   <div class="mpvue-calendar" >
-    {{completion}}
     <Tools
       @next="nextChange"
       @prev="prevChange"
@@ -25,12 +24,15 @@
           v-for="(item, k1) in timetableList.list"
         >
           <Timetable
+            :timestamp="timestamp"
+            ref="timetableRef"
             :month="item.month"
             :year="item.year"
             :day="item.day"
             :remarks="remarks"
             :almanacs="almanacs"
             :tileContent="tileContent"
+            :disabled="disabled"
             :completion="completion"
             :monFirst="monFirst"
             :tableMode="tableMode"
@@ -57,6 +59,7 @@
   import Swipe from './components/swipe/index.vue'
   import Slide from './components/swipe/slide.vue'
   import Timetable from './components/timetable/index.vue'
+  import { delay, getToday } from './components/utils'
   import { computedNextMonth, computedPrevMonth, getDateByCount, date2ymd, getPrevDate, getNextDate,  } from './components/utils'
   import './icon.css'
   import './style.css'
@@ -103,6 +106,9 @@
       selectDate: {
         type: Object,
       },
+      disabled: {
+        type: Object,
+      },
     },
     components: {
       Tools,
@@ -110,26 +116,30 @@
       Slide,
       Timetable,
     },
-    setup(props: any) {
-      const { almanacs, tileContent, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks } = toRefs(props)
-      const month = ref(1)
-      const year = ref(2021)
-      const day = ref(5)
+    emits: ['onSelect'],
+    setup(props: any, { emit } : any) {
+      const { almanacs, tileContent, disabled, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks } = toRefs(props)
+      const timestamp = ref(+new Date()); // listener timestamp change to refresh timetable
+      const [currentYear, currentMonth, currentDay] = getToday(true);
+      const year = ref(currentYear)
+      const month = ref(currentMonth)
+      const day = ref(currentDay)
       const timetableHeight = ref(undefined);
-      const timetableList = reactive({list: getTimetableList()})
       const swipeRef = ref();
+      const timetableRef = ref();
       const count = ref(0);
-      const initSelectValue = propSelectDate.value || ({
+      const initSelectValue = propSelectDate?.value || ({
         select: '',
         multi: [],
         multiRange: [],
         range: { start: '', end: '' },
       } as any)[selectMode.value]
-      console.log(propSelectDate,initSelectValue, selectMode.value, 'initSelectValue')
-
-      const selectDate = reactive({select: initSelectValue})
-
       const isWeekMode = tableMode.value === 'week';
+      const timetableList = reactive({list: getTimetableList()})
+
+
+      const selectDate = ref(initSelectValue)
+
 
       function swiperChangeEnd(index: any, b: any) {
         if (index === 2) {
@@ -171,8 +181,6 @@
           });
         }
 
-
-        console.log(month, 'monthRangemonthRange')
         if (isWeekMode) {
           const [prevYear, prevMonth, prevDay] = getPrevDate(year.value, month.value, day.value);
           const [nextYear, nextMonth, nextDay] = getNextDate(year.value, month.value, day.value);
@@ -196,7 +204,7 @@
         ];
       }
 
-      function nextChange(currentYear: number, currentMonth: number | string) {
+      function nextChange(currentYear: number | string, currentMonth: number | string) {
         if (tableMode.value === 'week') {
           const nextDate = getDateByCount(`${year.value}-${month.value}-${day.value}`, 7);
           const [nextYear, nextMonth, nextDay] = date2ymd(nextDate);
@@ -209,10 +217,10 @@
         month.value = nextMonth;
         console.log(nextMonth, currentMonth,year, 6667777)
 
-        year.value = nextMonth === 1 ? year.value + 1 : year.value;
+        year.value = nextMonth === 1 ? Number(year.value) + 1 : year.value;
       }
 
-      function prevChange(currentYear: number, currentMonth: number | string) {
+      function prevChange(currentYear: number | string, currentMonth: number | string) {
         if (tableMode.value === 'week') {
           const nextDate = getDateByCount(`${year.value}-${month.value}-${day.value}`, -7);
           const [nextYear, nextMonth, nextDay] = date2ymd(nextDate);
@@ -224,7 +232,7 @@
         month.value = prevMonth;
         console.log(prevMonth, currentMonth,year, 6667777)
 
-        year.value = prevMonth === 12 ? year.value - 1 : year.value;
+        year.value = prevMonth === 12 ? Number(year.value) - 1 : year.value;
       }
 
       function selectMonth(selectedYear: number, selectedMonth: number) {
@@ -247,7 +255,16 @@
       }
 
       function onSelect(param: any) {
-        console.log(param, 'parampa222ramparamparam')
+        if (!propSelectDate?.value) {
+          selectDate.value = param;
+        }
+
+        emit('onSelect', param);
+        delay().then(refreshRender);
+      }
+
+      function refreshRender() {
+        timestamp.value = +new Date()
       }
 
       function monthChange(param: any) {
@@ -260,6 +277,17 @@
         }
       }
 
+      function render(y: string | number, m: string | number, d?: string | number) {
+        if (year && month) {
+          year.value = y;
+          month.value = m;
+        }
+
+        if (d) {
+          day.value = d;
+        }
+      }
+
       watchEffect(() => {
 
         console.log(completion,month,
@@ -268,22 +296,27 @@
 
       watch(month, (count, prevCount) => {
         timetableList.list = getTimetableList();
-
       })
 
-      watch(() => props.selectDate, (current, prev) => {
-        selectDate.select = props.selectDate;
+      watch(propSelectDate, (current, prev) => {
+        console.log('onSelectonSelectonSelectwatch(propSelectDate')
+        selectDate.value = propSelectDate.value
       });
 
       // watch(remarks, (current, prev) => {
       //   remarks.value = props.remarks;
       // });
 
-      watch(propSelectDate, (count, prevCount) => {
-        timetableList.list = getTimetableList();
-      })
+      // watch(propSelectDate, (count, prevCount) => {
+      //   timetableList.list = getTimetableList();
+      // })
       watch(day, (count, prevCount) => {
         timetableList.list = getTimetableList();
+      })
+
+      watch(tableMode, (count, prevCount) => {
+        console.log('refreshRenderrefreshRender')
+        refreshRender();
       })
 
       watch(completion, () => {
@@ -313,8 +346,12 @@
         containerChange,
         timetableHeight,
         swipeRef,
+        timetableRef,
         selectDate,
+        disabled,
+        timestamp,
         propSelectDate,
+        render,
       }
     }
   }
