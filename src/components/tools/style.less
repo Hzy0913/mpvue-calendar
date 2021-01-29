@@ -1,7 +1,6 @@
 .vc-calendar-tools {
   margin: auto;
   width: 100%;
-  min-width: 350px;
   background: #fff;
   user-select: none;
   position: relative;
@@ -12,8 +11,23 @@
     color: #5e7a88;
     -webkit-box-shadow: 0 4px 8px rgba(25, 47, 89, .1);
     box-shadow: 0 4px 8px rgba(25, 47, 89, .1);
-    margin-bottom: 20px;
     border-top: 1px solid hsla(0, 0%, 78.4%, .1);
+    z-index: 5;
+    position: relative;
+  }
+  .vc-calendar-week-head{
+    .vc-calendar-week-head-container{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 30px;
+      margin-top: 10px;
+      .vc-calendar-week-item{
+        flex: 1;
+        text-align: center;
+        color: #6B7897;
+      }
+    }
   }
   .vc-calendar-prev, .vc-calendar-next {
     cursor: pointer;
@@ -50,18 +64,27 @@
   .vc-calendar-picker{
     color: #5e7a88;
     opacity: 0;
+    position: absolute;
+    top: 0px;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    display: none;
+    box-sizing: border-box;
     &.vc-picker-show{
       animation-name: mymove;
       animation-duration: .3s;
       animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
       animation-fill-mode: both;
+      display: block;
       @keyframes mymove {
         from {
-          height: 0px;
+          top: -30%;
           opacity: 0;
         }
         to {
-          height: 300px;
+          top: 0;
           opacity: 1;
         }
       }
