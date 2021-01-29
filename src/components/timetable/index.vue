@@ -7,7 +7,15 @@
         <div
           :class="['vc-calendar-body', `mc-range-mode-${tableMode}`]"
         >
-<!--          <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>-->
+          <div class="vc-calendar-rang-head" v-if="tableMode === 'monthRange'">
+            <div class="vc-calendar-rang-year-month-box">
+              <span className="vc-calendar-rang-head-year">{{formatRangeMonth[0]}}</span>
+              <span className="vc-calendar-rang-head-month">{{formatRangeMonth[1]}}</span>
+            </div>
+            <div class="vc-calendar-rang-week-box">
+              <span v-for="(week,k1) in weeks">{{week}}</span>
+            </div>
+          </div>
           <div v-for="(days,k1) in monthRender.value" :key="k1" class="vc-calendar-row" >
             <div
               v-for="(child,k2) in days"
@@ -80,6 +88,12 @@
 
   export default {
     props: {
+      rangeMonthFormat: {
+        type: Function,
+      },
+      weeks: {
+        type: Array,
+      },
       tableMode: {
         type: String,
         default: 'month'
@@ -153,13 +167,16 @@
     },
     emits: ['onSelect', 'monthChange'],
     setup(props: any, { emit } : any) {
-      console.log(props, 'aaaaa')
-      const { year, selectMode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,end: propsEnd, completion: propsCompletion, weeks, month,day, monthRange = [], tileContent, weekMode, value, disabled = [], remarks, almanacs, selectDate, timestamp, useSwipe } = toRefs(props);
+      const { year, month, selectMode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,
+        end: propsEnd, completion: propsCompletion, weeks, day, monthRange = [], tileContent,
+        weekMode, value, disabled = [], remarks, almanacs, selectDate, timestamp, useSwipe, week,
+      } = toRefs(props);
       // const { selectDate } = props;
       const tableMode = ref(propsTableMode)
       const completion = ref(propsTableMode.value === 'week' || propsCompletion.value)
       const begin = ref(propsBegin)
       const end = ref(propsEnd)
+      const formatRangeMonth = ref([year.value, month.value])
       disabledDateHandle.update(disabled.value || [])
       setRemarkHandle.update(remarks.value)
       setTileContentHandle.update(tileContent.value)
@@ -446,6 +463,20 @@
         // completion.value = true
       }
 
+
+      function getRangeMonthFormat() {
+        const { rangeMonthFormat } = props;
+        if (rangeMonthFormat) {
+          formatRangeMonth.value = rangeMonthFormat(year.value, month.value);
+        }
+      }
+
+      getRangeMonthFormat();
+
+      watch(month, () => {
+        getRangeMonthFormat();
+      })
+
       return {
         monthRender,
         select,
@@ -454,8 +485,11 @@
         disabledDateClick,
         begin,
         tableMode,
+        year,
         month,
+        weeks,
         refreshRender,
+        formatRangeMonth,
       }
     }
   }
