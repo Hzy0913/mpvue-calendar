@@ -107,10 +107,13 @@
           .vc-calendar-almanac{
             display: block;
             position: absolute;
-            bottom: 0px;
+            bottom: 8%;
             font-size: 12px;
             width: 100%;
             text-align: center;
+            &.vc-calendar-holiday, &.vc-calendar-isTerm{
+              color: #FF6260;
+            }
           }
           .vc-calendar-slot-element{
             font-size: 12px;
