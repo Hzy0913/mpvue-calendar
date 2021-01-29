@@ -72,13 +72,17 @@
     z-index: 4;
     display: none;
     box-sizing: border-box;
+    overflow: hidden;
+    >div{
+      height: 50%;
+    }
     &.vc-picker-show{
-      animation-name: mymove;
+      animation-name: pickerShow;
       animation-duration: .3s;
       animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
       animation-fill-mode: both;
       display: block;
-      @keyframes mymove {
+      @keyframes pickerShow {
         from {
           top: -30%;
           opacity: 0;
@@ -95,6 +99,14 @@
       padding: 10px 5px;
       position: relative;
       box-sizing: border-box;
+      .piecker-month-active{
+        i{
+          background: #60CDFF;
+          color: #fff;
+          border-radius: 5px;
+          box-shadow: 2px 2px 2px rgba(0, 81, 118, .1);
+        }
+      }
       &:after {
         content: '';
         display: block;
@@ -108,19 +120,48 @@
       span{
         flex-basis: 25%;
         text-align: center;
-        margin-bottom: 10px;
         font-size: 16px;
+        position: relative;
+        i{
+          position: absolute;
+          font-style: normal;
+          text-align: center;
+          word-break: keep-all;
+          left: 50%;
+          top: 50%;
+          transform: translate3d(-50%, -50%, 0);
+          padding: 5% 22%;
+        }
       }
     }
     .vc-calendar-years{
       display: flex;
       flex-wrap: wrap;
       padding: 10px 5px;
+      .piecker-year-active{
+        i{
+          background: #60CDFF;
+          color: #fff;
+          border-radius: 5px;
+          box-shadow: 2px 2px 2px rgba(0, 81, 118, .1);
+        }
+      }
       span{
         flex-basis: 20%;
         text-align: center;
         margin-bottom: 10px;
         font-size: 16px;
+        position: relative;
+        i{
+          position: absolute;
+          font-style: normal;
+          text-align: center;
+          word-break: keep-all;
+          left: 50%;
+          top: 50%;
+          transform: translate3d(-50%, -50%, 0);
+          padding: 5% 22%;
+        }
       }
     }
   }
