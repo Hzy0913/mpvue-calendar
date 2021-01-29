@@ -1,9 +1,5 @@
 import calendar from '../../calendarinit'
-import {computedNextMonth, computedPrevMonth} from '../utils'
-function getToday() {
-  const now = new Date();
-  return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
-}
+import { computedNextMonth, computedPrevMonth, getToday } from '../utils'
 
 function date2ymd(date: string): number[] {
   const [y, m, d] = date.split('-');
@@ -21,6 +17,8 @@ function getLunarInfo(y: string, m: string, d: string) {
   let yearEve = '';
   if (lMonth === 12 && lDay === calendar.monthDays(lYear, 12)) {
     yearEve = '除夕';
+  } else if (lMonth === 1 && lDay === 1) {
+    yearEve = '春节';
   }
   let lunarValue = lunarInfo.IDayCn;
   let isLunarFestival = false;
@@ -81,7 +79,7 @@ function computedPrevDay(year: string, month: string, day: string | number): str
       const prevDay = new Date(prevYear, prevMonth - 2, 0).getDate()
       return `${prevYear}-${prevMonth}-${prevDay}`
     } else { //current year and prev month
-      const prevDay = new Date(Number(year), prevMonth - 1, 0).getDate()
+      const prevDay = new Date(Number(year), prevMonth, 0).getDate()
       return `${year}-${prevMonth}-${prevDay}`
     }
   } else {
