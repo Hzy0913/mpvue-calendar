@@ -16,12 +16,13 @@
               <span v-for="(week,k1) in weeks">{{week}}</span>
             </div>
           </div>
-          <div v-for="(days,k1) in monthRender.value" :key="k1" class="vc-calendar-row" >
-            <div
-              v-for="(child,k2) in days"
-              :key="k2"
-              class="vc-calendar-day"
-              :class="[{
+          <div className="vc-calendar-content">
+            <div v-for="(days,k1) in monthRender.value" :key="k1" class="vc-calendar-row" >
+              <div
+                v-for="(child,k2) in days"
+                :key="k2"
+                class="vc-calendar-day"
+                :class="[{
                 'vc-calendar-today': child.isToday,
                 'vc-calendar-dayoff': k2 === (monFirst ? 5 : 0) || k2 === 6,
                  'vc-calendar-disabled': child.disabled,
@@ -36,20 +37,22 @@
                  child.selectedClassName,
                   // selectComputed(child.date),
                    child.rangeClassName]"
-              @click="select(k1, k2, child, $event, index)"
-            >
-              <div class="vc-calendar-day-container">
-                <span :class="['vc-calendar-date']" >{{child.day}}</span>
-                <div :class="['vc-calendar-slot-element', child.tileContent.className]" v-if="child.tileContent">{{child.tileContent.content}}</div>
-                <div class="vc-calendar-remark-text" v-if="child.remark">{{child.remark}}</div>
-                <div
-                  class="vc-calendar-almanac"
-                  :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival, 'isTerm': child.isTerm}"
-                >
-                  {{child.almanac || child.lunar}}
+                @click="select(k1, k2, child, $event, index)"
+              >
+                <div class="vc-calendar-day-container">
+                  <span :class="['vc-calendar-date']" >{{child.day}}</span>
+                  <div :class="['vc-calendar-slot-element', child.tileContent.className]" v-if="child.tileContent">{{child.tileContent.content}}</div>
+                  <div class="vc-calendar-remark-text" v-if="child.remark">{{child.remark}}</div>
+                  <div
+                    class="vc-calendar-almanac"
+                    :class="{'vc-calendar-holiday': child.holiday, 'vc-calendar-isTerm': child.isTerm, 'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival}"
+                  >
+                    {{child.holiday || child.lunar}}
+                  </div>
                 </div>
               </div>
             </div>
+            <div className="vc-calendar-month-background-text">{{month}}</div>
           </div>
       </div>
     </div>
@@ -88,7 +91,7 @@
 
   export default {
     props: {
-      rangeMonthFormat: {
+      format: {
         type: Function,
       },
       weeks: {
@@ -134,7 +137,7 @@
         type: Boolean,
         default: false
       },
-      almanacs: {
+      holidays: {
         type: Object,
         default() {
           return {};
@@ -169,8 +172,10 @@
     setup(props: any, { emit } : any) {
       const { year, month, selectMode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,
         end: propsEnd, completion: propsCompletion, weeks, day, monthRange = [], tileContent,
-        weekMode, value, disabled = [], remarks, almanacs, selectDate, timestamp, useSwipe, week,
+        weekMode, value, disabled = [], remarks, holidays, selectDate, timestamp, useSwipe, week,
       } = toRefs(props);
+
+      console.log(holidays.value, 'lidays.valuelidays.value')
       // const { selectDate } = props;
       const tableMode = ref(propsTableMode)
       const completion = ref(propsTableMode.value === 'week' || propsCompletion.value)
@@ -202,6 +207,8 @@
         const { date, prevMonthDay, nextMonthDay } = child;
 
         if (prevMonthDay || nextMonthDay) {
+          if (propsTableMode.value === 'monthRange') return;
+
           return emit('monthChange', {prevMonthDay, nextMonthDay});
         }
 
@@ -268,7 +275,7 @@
         };
         const options = {
           day: i,
-          almanac: almanacs.value?.[`${month}-${i}`],
+          holiday: holidays.value?.[`${month}-${i}`],
           ...getLunarInfo(year, month, i),
           ...setRemarkHandle.getRemark(date),
           ...setTileContentHandle.getTileContent(date),
@@ -333,7 +340,7 @@
         const temp: any[] = [];
 
         if (tableMode.value === 'week') {
-          console.log(day, 'daydaydaydaydayday')
+          console.log(month, day, 'daydaydaydaydayday')
           const dayOfCurrentWeek = new Date(year, month - 1, day).getDay() - (monFirst ? 1: 0); // what day is the current week
           temp.push(renderOption({year, month, i: day}));
 
@@ -341,6 +348,8 @@
           for (let i = 0; i < dayOfCurrentWeek; i ++) {
             const [y, m , d] = countDate;
             const prevDate = computedPrevDay(y, m , d);
+            console.log(prevDate, 'daydaydaydaydayday3')
+
             countDate = date2ymd(prevDate);
             temp.unshift(renderOption({year: countDate[0], month: countDate[1], i: countDate[2]}));
           }
@@ -464,17 +473,17 @@
       }
 
 
-      function getRangeMonthFormat() {
-        const { rangeMonthFormat } = props;
-        if (rangeMonthFormat) {
-          formatRangeMonth.value = rangeMonthFormat(year.value, month.value);
+      function formatYearAndMonth() {
+        const { format } = props;
+        if (format) {
+          formatRangeMonth.value = format(year.value, month.value);
         }
       }
 
-      getRangeMonthFormat();
+      formatYearAndMonth();
 
       watch(month, () => {
-        getRangeMonthFormat();
+        formatYearAndMonth();
       })
 
       return {
