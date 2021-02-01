@@ -1,17 +1,19 @@
 <template>
   <div
-    style='max-width:500px; margin:0 auto'
-    class="vc-calendar-swipe"
+    style='margin:0 auto'
+    :class="[useSwipe ? 'vc-calendar-swipe': 'vc-calendar-timetable-container']"
     ref="swipeRef"
   >
-    <div class="swipe-wrap">
+    <div
+      :class="[useSwipe ? 'swipe-wrap': 'vc-calendar-timetable-wrapper']"
+    >
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted } from 'vue'
+  import { defineComponent, ref, reactive, onMounted, toRefs } from 'vue'
   import { noop, offloadFn } from '../utils'
   import { SwipeInterface, startType, deltaType } from './declare'
   import './style.less'
@@ -34,19 +36,25 @@
         type: Boolean,
         default: false
       },
+      useSwipe: {
+        type: Boolean,
+      },
     },
-    emits: ['swiperChange', 'swiperChangeEnd', 'start'],
+    emits: ['swiperChange', 'swiperChangeEnd', 'start', 'containerChange'],
     setup(props: SwipeInterface, { emit } : any) {
-      console.log(props, 'aaaaa')
-      let isTransitionEnd = true
-      const { initialSlide, auto, speed, loop } = props;
+      let isTransitionEnd = true;
+      const { initialSlide, auto, speed, loop, useSwipe } = props
+      console.log(useSwipe, '11122344444')
+
+      if (!useSwipe) return;
+
       const options = {
         initialSlide,
         auto,
         speed,
         loop,
         disableScroll: false,
-        stopPropagation: true,
+        stopPropagation: false,
         callback(index: number, element: HTMLElement) {
           emit('swiperChange', index, element);
         },
@@ -79,6 +87,9 @@
 
       function setup() {
         if (!container) return;
+        setTimeout(() => {
+          emit('containerChange', container);
+        })
 
         element = container.children[0];
         // cache slides
@@ -457,6 +468,7 @@
       return {
         swipeRef,
         slide,
+        useSwipe,
       }
     }
   }
