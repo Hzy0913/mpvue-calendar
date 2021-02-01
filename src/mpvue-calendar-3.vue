@@ -1,5 +1,8 @@
 <template>
-  <div class="mpvue-calendar" >
+  <div
+    class="mpvue-calendar"
+    :class="[`mpvue-calendar-mode-${tableMode}`]"
+  >
     <Tools
       @next="nextChange"
       @prev="prevChange"
@@ -9,28 +12,35 @@
       :year="year"
       :monFirst="monFirst"
       :timetableHeight="timetableHeight"
+      :format="format"
+      :tableMode="tableMode"
+      :weeks="weeks"
     />
     <div
       :style="{height: timetableHeight + 'px'}"
     >
       <Swipe
         :initialSlide="1"
+        :useSwipe="useSwipe"
         @swiperChangeEnd="swiperChangeEnd"
         @containerChange="containerChange"
         ref="swipeRef"
       >
         <Slide
+          :useSwipe="useSwipe"
           class-name="asdasdsd"
           v-for="(item, k1) in timetableList.list"
         >
           <Timetable
             :timestamp="timestamp"
+            :weeks="weeks"
             ref="timetableRef"
+            :useSwipe="useSwipe"
             :month="item.month"
             :year="item.year"
             :day="item.day"
             :remarks="remarks"
-            :almanacs="almanacs"
+            :holidays="holidays"
             :tileContent="tileContent"
             :disabled="disabled"
             :completion="completion"
@@ -40,6 +50,7 @@
             :selectDate="selectDate"
             :begin="begin"
             :end="end"
+            :format="format"
             @onSelect="onSelect"
             @monthChange="monthChange"
           />
@@ -61,14 +72,17 @@
   import Swipe from './components/swipe/index.vue'
   import Slide from './components/swipe/slide.vue'
   import Timetable from './components/timetable/index.vue'
-  import { delay, getToday } from './components/utils'
+  import {delay, enWeeks, getToday, isZh, zhWeeks} from './components/utils'
   import { computedNextMonth, computedPrevMonth, getDateByCount, date2ymd, getPrevDate, getNextDate,  } from './components/utils'
   import './icon.css'
-  import './style.css'
+  import './style.less'
 
   export default {
     props: {
-      almanacs: {
+      format: {
+        type: Function,
+      },
+      holidays: {
         type: Object,
         default() {
           return {};
@@ -93,6 +107,10 @@
         type: Boolean,
         default: false
       },
+      useSwipe: {
+        type: Boolean,
+        default: true
+      },
       monFirst: {
         type: Boolean,
         default: false
@@ -100,6 +118,10 @@
       mode: {
         type: String,
         default: 'month'
+      },
+      weeks: {
+        type: Array,
+        default: undefined
       },
       begin: {
         type: String,
@@ -126,7 +148,7 @@
     },
     emits: ['onSelect'],
     setup(props: any, { emit } : any) {
-      const { almanacs, tileContent, disabled, end, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks, begin } = toRefs(props)
+      const { holidays, tileContent, disabled, end, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks, begin } = toRefs(props)
       const timestamp = ref(+new Date()); // listener timestamp change to refresh timetable
       const [currentYear, currentMonth, currentDay] = getToday(true);
       const year = ref(currentYear)
@@ -136,6 +158,8 @@
       const swipeRef = ref();
       const timetableRef = ref();
       const count = ref(0);
+      const weeks = ref(computedWeek() as string[]);
+      const useSwipe = ref(props.useSwipe);
       const initSelectValue = propSelectDate?.value || ({
         select: '',
         multi: [],
@@ -144,6 +168,9 @@
       } as any)[selectMode.value]
       const timetableList = reactive({list: getTimetableList()})
 
+      if (tableMode.value === 'monthRange') {
+        useSwipe.value = false;
+      }
 
       const selectDate = ref(initSelectValue)
 
@@ -174,6 +201,35 @@
         }
       }
 
+      function computedWeek() {
+        if (Array.isArray(props.weeks)) return props.weeks;
+
+        const language = isZh() ? 'zh': 'en';
+        const weeksArray = {
+          en: enWeeks,
+          zh: zhWeeks,
+        }[language]
+
+        if (monFirst.value) {
+          return weeksArray.reduce((previousValue, currentValue, index) => {
+            if (!index) {
+              previousValue.first = currentValue;
+              return previousValue;
+            }
+
+            previousValue.week.push(currentValue);
+
+            if (index === weeksArray.length - 1) {
+              return [...previousValue.week, previousValue.first];
+            }
+
+            return previousValue;
+          }, {first: undefined, week: []} as any)
+        }
+
+        return weeksArray;
+      }
+
       function start() {
         // console.log(888999992222)
         // const [nextYear, nextMonth] = getNextDate(year.value, monttt);
@@ -183,6 +239,10 @@
 
       function getTimetableList() {
         const isWeekMode = tableMode.value === 'week';
+
+        if (!useSwipe.value) {
+          return [{year: year.value, month: month.value, day: day.value, id: `${year.value}-${month.value}-${day.value}`}];
+        }
 
         if (tableMode.value === 'monthRange') {
           return monthRange.value.map((item: string) => {
@@ -219,6 +279,7 @@
       function nextChange(currentYear: number | string, currentMonth: number | string) {
         if (tableMode.value === 'week') {
           const nextDate = getDateByCount(`${year.value}-${month.value}-${day.value}`, 7);
+          console.log(nextDate, 'nextDatenextDate')
           const [nextYear, nextMonth, nextDay] = date2ymd(nextDate);
           year.value = nextYear;
           month.value = nextMonth;
@@ -331,6 +392,9 @@
       // })
 
       watch(tableMode, (count, prevCount) => {
+        if (tableMode.value === 'monthRange') {
+          useSwipe.value = false;
+        }
         console.log( getTimetableList(), count, prevCount, tableMode,'refreshRenderrefreshRender')
         timetableList.list = getTimetableList();
         refreshRender();
@@ -342,8 +406,18 @@
       // watch(props.remarks, () => {
       //   refreshRender();
       // })
-      watch([begin, end, disabled, props.disabled, almanacs, props.almanacs, remarks, props.remarks, tileContent, props.tileContent], () => {
+      watch([begin, end, disabled, props.disabled, holidays, props.holidays, remarks, props.remarks, tileContent, props.tileContent], () => {
         refreshRender();
+      })
+
+      watch(useSwipe.value, () => {
+
+        // alert(3)
+      })
+      console.log(holidays.value, 'lidays.valuelidays.value111')
+
+      watch([weeks, monFirst], () => {
+        weeks.value = computedWeek();
       })
       // watch(props.tileContent, () => {
       //   refreshRender();
@@ -361,7 +435,7 @@
         selectYear,
         test,
         remarks,
-        almanacs,
+        holidays,
         tileContent,
         completion,
         onSelect,
@@ -381,6 +455,9 @@
         render,
         begin,
         end,
+        useSwipe,
+        weeks,
+        format: props.format,
       }
     }
   }
