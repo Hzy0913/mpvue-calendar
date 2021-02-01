@@ -1,6 +1,12 @@
 <template>
-  <div class="vc-calendar-tools" v-if="!isMonthRange">
-    <div class="vc-calendar-tools-container">
+  <div
+    class="vc-calendar-tools"
+    ref="toolsRef"
+    v-if="tableMode !== 'monthRange'"
+  >
+    <div
+      class="vc-calendar-tools-container"
+    >
       <div class="vc-calendar-prev" @click="prev">
         <img :src="arrowLeft" v-if="arrowLeft" />
         <i class="iconfont icon-arrow-left" v-else />
@@ -10,43 +16,49 @@
         <i class="iconfont icon-arrow-right" v-else />
       </div>
       <div class="vc-calendar-info" @click.stop="switchDate">
-        <div class="vc-calendar-month">{{month}}</div>
-        <div class="vc-calendar-year">{{year}}</div>
+        <div class="vc-calendar-year">{{formatText[0]}}</div>
+        <div class="vc-calendar-month">{{formatText[1]}}</div>
       </div>
     </div>
     <div
       class="vc-calendar-picker"
       :class="{'vc-picker-show': pickerVisible}"
+      :style="{height: toolsStyle.timetableHeight + toolsStyle.weekHeadHeight + toolsStyle.toolsContainerHeight + 'px', paddingTop: toolsStyle.toolsHeight + 'px'}"
     >
       <div :class="['vc-calendar-months', {'vc-calendar-week-switch-months': weekSwitch}]">
         <span
           v-for="(m, i) in months"
           :key="m"
-          @click.stop="selectMonth(i)"
-          :class="{'active': i === month}"
-        >{{m}}</span>
+          @click.stop="selectMonth(i + 1)"
+          :class="{'piecker-month-active': (i + 1) === month}"
+        >
+          <i>{{m}}</i>
+        </span>
       </div>
-      <div class="vc-calendar-years" v-if="!weekSwitch">
+      <div class="vc-calendar-years">
         <span
           v-for="y in years"
           :key="y"
           @click.stop="selectYearHandle(y)"
-          :class="{'active': y === year}"
-        >{{y}}</span>
+          :class="{'piecker-year-active': y === year}"
+        >
+          <i>{{y}}</i>
+        </span>
       </div>
     </div>
-    <div class="mc-head" :class="['mc-head', {'mc-month-range-mode-head': isMonthRange}]">
-      <div class="mc-head-box">
-        <div v-for="(weekItem, index) in week" :key="index" class="mc-week">{{weekItem}}</div>
+    <div class="vc-calendar-week-head">
+      <div class="vc-calendar-week-head-container">
+        <div v-for="(weekItem, index) in weeks" :key="index" class="vc-calendar-week-item">{{weekItem}}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, watchEffect, watch, toRefs } from 'vue'
   import './style.less'
   import { isZh, enWeeks, zhWeeks } from '../utils'
+  import {document} from "../../../../tinymce/modules/boss/src/main/ts/ephox/boss/mutant/Properties";
 
   export default {
     props: {
@@ -55,10 +67,6 @@
         default() {
           return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
         }
-      },
-      isMonthRange: {
-        type: Boolean,
-        default: false
       },
       weeks: {
         type: Array,
@@ -71,6 +79,13 @@
         type: Boolean,
         default: false
       },
+      format: {
+        type: Function,
+      },
+      tableMode: {
+        type: String,
+        default: 'month'
+      },
       arrowLeft: {
         type: String,
         default: ''
@@ -80,95 +95,99 @@
         default: ''
       },
       year: {
-        type: Number,
-        default: 2020
+        type: Object,
       },
       month: {
-        type: String,
-        default: '1'
+        type: Object,
+      },
+      timetableHeight: {
+        type: Object,
       }
     },
-    setup(props) {
-      const { months, year, month, weekSwitch, monFirst, weeks, prev: prevProps,selectYear, next: nextProps, selectMonth: selectMonthProps, } = props;
+    emits: ['next', 'prev', 'selectMonth', 'selectYear'],
+    setup(props: any, { emit } : any) {
+      const { months, year, month, weekSwitch, monFirst, weeks, prev: prevProps,selectYear, next: nextProps, selectMonth: selectMonthProps, timetableHeight, tableMode} = toRefs(props);
+      // const month = ref(propMonth);
       const pickerVisible = ref(false);
-
+      const toolsStyle = reactive({
+        toolsContainerHeight: 0,
+        toolsHeight: 0,
+        timetableHeight: 0,
+        weekHeadHeight: 0,
+      });
+      const toolsRef = ref();
+      const formatText = ref([] as string[]);
+      const years = ref(createYears(year.value));
       const height = 42
-
-      const unit = true ? 'px' : 'rpx';
-
-      const current = ref(1)
-      const translate = ref(current.value * height)
-      const stopTransition = ref(false)
-
-      const monthTransition = [];
-
-      const monthItem = (i, height) => {
-        return {
-          text: months[i],
-          height: height + unit,
-        }
-      }
-      for (let i = 0; i < 12; i++) {
-        monthTransition.push(monthItem(i, height));
-        if (i===11) {
-          monthTransition.unshift(monthItem(11, height))
-          monthTransition.push(monthItem(0, height))
-        }
-      }
-
-      function computedWeek() {
-        if (Array.isArray(weeks)) return weeks;
-
-        const language = isZh() ? 'zh': 'en';
-        const weeksArray = {
-          en: enWeeks,
-          zh: zhWeeks,
-        }[language]
-
-        if (monFirst) {
-          return weeksArray.reduce((previousValue, currentValue, index) => {
-            if (!index) {
-              previousValue.first = currentValue;
-              return previousValue;
-            }
-
-            previousValue.week.push(currentValue);
-
-            if (index === weeksArray.length - 1) {
-              return [...previousValue.week, previousValue.first];
-            }
-
-            return previousValue;
-          }, {first: undefined, week: []} as any)
-        }
-
-        return weeksArray;
-      }
-
 
       function selectMonth(month: number) {
         pickerVisible.value = false;
-        selectMonthProps && selectMonthProps(month)
+        console.log(year.value, month, 99983333)
+        emit('selectMonth', year.value, month);
       }
 
       function selectYearHandle(year: number) {
         pickerVisible.value = false;
-        selectYear && selectYear(month)
+        years.value = createYears(year);
+        emit('selectYear', year, month.value);
       }
 
       function next() {
-        nextProps && nextProps(month)
+        console.log(month.value, 999833)
+        emit("next", year.value, month.value);
       }
 
       function prev() {
-        prevProps && prevProps(month)
+        emit("prev", year.value, month.value);
       }
 
-      const switchDate = () => {
+      function switchDate() {
+        if (tableMode.value === 'week') return;
+
+        toolsStyle.toolsContainerHeight = toolsRef.value.clientHeight;
+        // toolsRef.value.par
+
+        // let a = document.querySelector('.vc-calendar-tools-container').parentNode
+        // vc-calendar-timetable
+
+        toolsStyle.toolsHeight = toolsRef.value.querySelector('.vc-calendar-tools-container').clientHeight;
+        toolsStyle.weekHeadHeight = toolsRef.value.querySelector('.vc-calendar-week-head').clientHeight;
+        toolsStyle.timetableHeight = toolsRef.value.parentNode.querySelector('.vc-calendar-timetable').clientHeight;
+        console.log(toolsStyle, 'toolsReftoolsReftoolsRef')
         pickerVisible.value = !pickerVisible.value;
       }
 
-      const years = () => {
+      function formatYearAndMonth() {
+        const { format } = props;
+        if (format) {
+          return formatText.value = format(year.value, month.value);
+        }
+        formatText.value = [`${year.value}年`, `${month.value}月`];
+      }
+
+      formatYearAndMonth()
+
+      watch(year.value, (count, prevCount) => {
+        console.log(count,prevCount, 1177366611)
+        /* ... */
+      })
+
+      watch(month, (count, prevCount) => {
+        formatYearAndMonth()
+      })
+      watch(monFirst, (count, prevCount) => {
+        // week.value = computedWeek()
+
+        console.log(count,prevCount, 111188933124)
+
+        /* ... */
+      })
+
+      watchEffect(() => {
+        console.log(month, 11111111)
+      })
+
+      function createYears(year: number) {
         const yearRange = [];
         for (let i = year - 7; i < year + 8; i++) {
           yearRange.push(i);
@@ -176,21 +195,23 @@
         return yearRange;
       }
 
-      console.log(year, month, 112312312)
       return {
         year,
         month,
-        unit,
         next,
-        week: computedWeek(),
-        years: years(),
+        prev,
+        weeks,
+        years,
         weekSwitch,
         selectMonth,
         selectYearHandle,
-        translate,
-        stopTransition,
         pickerVisible,
         switchDate,
+        timetableHeight,
+        toolsStyle,
+        toolsRef,
+        tableMode,
+        formatText,
       }
     }
   }
