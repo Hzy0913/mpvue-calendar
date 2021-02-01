@@ -1,41 +1,58 @@
 import { date2timeStamp } from './computed';
 
 function singleSelect(selectDate: string, date: string) {
-  selectDate = date;
+  return date;
 }
 
 function multiSelect(selectDate: string[] = [], date: string) {
-  if (selectDate.includes(date)) {
-    return selectDate = selectDate.filter((dateItem: string) => dateItem !== date);
+  const index = selectDate.indexOf(date)
+  if (~index) {
+    selectDate.splice(index, 1);
+    return selectDate;
   }
 
-  return selectDate.push(date);
+  selectDate.push(date);
+  return selectDate;
 }
 
-function rangeSelect(selectDate: { start: string; end: string }, date: string) {
+function rangeSelect(selectDate: { start: string, end: string } , date: string) {
   const { start, end } = selectDate;
 
   if (start && end) {
-    selectDate.start = date;
-    return selectDate.end = '';
+    return {
+      start: date,
+      end: ''
+    };
   }
 
   if (start) {
     if (date2timeStamp(start) > date2timeStamp(date)) {
-      selectDate.start = date;
-      return selectDate.end = start;
+      return {
+        start: date,
+        end: start
+      }
     }
-    return selectDate.end = date;
+
+    return {
+      start,
+      end: date,
+    }
   }
-  return selectDate.start = date;
+
+  return {
+    start: date,
+    end,
+  }
 }
 
 function multiRange(selectDates: { start: string; end?: string }[], date: string) {
-  const selects = selectDates;
+  const selects = [...selectDates];
+  console.log(selects, 'selectsselects')
   let deleteIndex;
 
   if (!selects.length) {
-    return selects.push({start: date});
+    selects.push({start: date});
+    return selects;
   }
 
   const searchResult = selects.some((selectItem: any, index: number) => {
@@ -91,6 +108,7 @@ function multiRange(selectDates: { start: string; end?: string }[], date: string
   } else if (!searchResult) {
     selects.push({start: date});
   }
+  return selects;
 }
 
 export {
