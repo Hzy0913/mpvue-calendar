@@ -1,5 +1,7 @@
 <template>
-  <div class="swipe-slide" :class="{[className]: !!className}">
+  <div
+    :class="[{[className]: !!className}, useSwipe ? 'swipe-slide': 'vc-calendar-timetable-item']"
+  >
     <slot></slot>
   </div>
 </template>
@@ -15,12 +17,16 @@
         type: String,
         default: ''
       },
+      useSwipe: {
+        type: Boolean,
+      },
     },
     setup(props: SlideInterface) {
-      const { className } = props;
+      const { className, useSwipe } = props;
 
       return {
         className,
+        useSwipe,
       }
     }
   }
