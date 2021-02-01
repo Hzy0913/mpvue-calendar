@@ -23,7 +23,7 @@
     <div
       class="vc-calendar-picker"
       :class="{'vc-picker-show': pickerVisible}"
-      :style="{height: toolsStyle.timetableHeight + toolsStyle.weekHeadHeight + toolsStyle.toolsContainerHeight + 'px', paddingTop: toolsStyle.toolsHeight + 'px'}"
+      :style="{height: toolsStyle.timetableHeight + toolsStyle.weekHeadHeight + toolsStyle.toolsHeight + 'px', paddingTop: toolsStyle.toolsHeight + 'px'}"
     >
       <div :class="['vc-calendar-months', {'vc-calendar-week-switch-months': weekSwitch}]">
         <span
@@ -152,7 +152,7 @@
 
         toolsStyle.toolsHeight = toolsRef.value.querySelector('.vc-calendar-tools-container').clientHeight;
         toolsStyle.weekHeadHeight = toolsRef.value.querySelector('.vc-calendar-week-head').clientHeight;
-        toolsStyle.timetableHeight = toolsRef.value.parentNode.querySelector('.vc-calendar-timetable').clientHeight;
+        toolsStyle.timetableHeight = toolsRef.value.parentNode.querySelector('.vc-calendar-timetable-current').clientHeight;
         console.log(toolsStyle, 'toolsReftoolsReftoolsRef')
         pickerVisible.value = !pickerVisible.value;
       }
@@ -173,7 +173,12 @@
       })
 
       watch(month, (count, prevCount) => {
-        formatYearAndMonth()
+        formatYearAndMonth();
+        if (pickerVisible.value) {
+          setTimeout(() => {
+            toolsStyle.timetableHeight = toolsRef.value.parentNode.querySelector('.vc-calendar-timetable-current').clientHeight;
+          });
+        }
       })
       watch(monFirst, (count, prevCount) => {
         // week.value = computedWeek()
