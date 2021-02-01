@@ -1,4 +1,3 @@
-import calendar from '../../calendarinit'
 import { computedNextMonth, computedPrevMonth, getToday } from '../utils'
 
 function date2ymd(date: string): number[] {
@@ -11,38 +10,25 @@ function date2timeStamp(date: string): number {
   return +new Date(y, m - 1, d);
 }
 
-function getLunarInfo(y: string, m: string, d: string) {
-  const lunarInfo = calendar.solar2lunar(y, m, d) as any;
-  const {Term, lMonth, lDay, lYear} = lunarInfo || {};
-  let yearEve = '';
-  if (lMonth === 12 && lDay === calendar.monthDays(lYear, 12)) {
-    yearEve = '除夕';
-  } else if (lMonth === 1 && lDay === 1) {
-    yearEve = '春节';
+function getLunarInfo(y: string, m: string, d: string, lunar: any) {
+  const date = `${y}-${m}-${d}`;
+  if (!lunar) {
+    return  { date };
   }
+
+  const lunarInfo = lunar.solar2lunar(y, m, d) as any;
+  const { Term, lMonth, lDay, lYear } = lunarInfo || {};
+  const { lunarHoliday, gregorianHoliday } = lunar || {};
   let lunarValue = lunarInfo.IDayCn;
-  let isLunarFestival = false;
-  let isGregorianFestival = false;
-  // if (this.festival.lunar[`${lunarInfo.lMonth}-${lunarInfo.lDay}`]) {
-  //   lunarValue = this.festival.lunar[`${lunarInfo.lMonth}-${lunarInfo.lDay}`];
-  //   isLunarFestival = true;
-  // } else if (this.festival.gregorian[`${m}-${d}`]) {
-  //   lunarValue = this.festival.gregorian[`${m}-${d}`];
-  //   isGregorianFestival = true;
-  // }
+  const yearEve = lMonth === 12 && lDay === lunar.monthDays(lYear, 12) ? '除夕' : undefined;
+
   const lunarInfoObj = {
-    date: `${y}-${m}-${d}`,
-    lunar: yearEve || Term || lunarValue,
-    isLunarFestival,
-    isGregorianFestival,
+    date,
+    lunar: Term || lunarValue,
+    gregorianHoliday: gregorianHoliday?.[`${m}-${d}`],
+    lunarHoliday: lunarHoliday?.[`${lMonth}-${lDay}`] || yearEve,
     isTerm: !!yearEve || lunarInfo.isTerm
   };
-  // if (Object.keys(this.almanacs).length) {
-  //   Object.assign(lunarInfoObj, {
-  //     almanac: this.almanacs[`${m}-${d}`] || '',
-  //     isAlmanac: !!this.almanacs[`${m}-${d}`]
-  //   });
-  // }
   return lunarInfoObj;
 }
 
