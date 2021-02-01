@@ -29,9 +29,10 @@
         <Slide
           :useSwipe="useSwipe"
           class-name="asdasdsd"
-          v-for="(item, k1) in timetableList.list"
+          v-for="(item, index) in timetableList.list"
         >
           <Timetable
+            :tableIndex="index"
             :timestamp="timestamp"
             :weeks="weeks"
             ref="timetableRef"

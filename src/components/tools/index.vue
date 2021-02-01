@@ -179,6 +179,10 @@
             toolsStyle.timetableHeight = toolsRef.value.parentNode.querySelector('.vc-calendar-timetable-current').clientHeight;
           });
         }
+
+        if (!years.value.includes(year.value)) {
+          years.value = createYears(year.value);
+        }
       })
       watch(monFirst, (count, prevCount) => {
         // week.value = computedWeek()
