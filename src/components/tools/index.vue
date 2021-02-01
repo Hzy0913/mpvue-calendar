@@ -167,7 +167,8 @@
 
       formatYearAndMonth()
 
-      watch(year.value, (count, prevCount) => {
+      watch(year, (count, prevCount) => {
+        formatYearAndMonth();
         console.log(count,prevCount, 1177366611)
         /* ... */
       })
