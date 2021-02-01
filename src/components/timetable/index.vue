@@ -2,6 +2,11 @@
   <div
     style='margin:0 auto'
     class="vc-calendar-timetable"
+    :class="{
+      'vc-calendar-timetable-prev': tableIndex === 0,
+      'vc-calendar-timetable-current': tableIndex === 1,
+      'vc-calendar-timetable-next': tableIndex === 2,
+    }"
   >
     <div class="vc-calendar-timetable-wrap">
         <div
@@ -115,6 +120,10 @@
         type: Number,
         default: 300
       },
+      tableIndex: {
+        type: Number,
+        default: 300
+      },
       month: {
         type: Object,
       },
@@ -171,7 +180,7 @@
     emits: ['onSelect', 'monthChange'],
     setup(props: any, { emit } : any) {
       const { year, month, selectMode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,
-        end: propsEnd, completion: propsCompletion, weeks, day, monthRange = [], tileContent,
+        end: propsEnd, completion: propsCompletion, weeks, day, monthRange = [], tileContent, tableIndex,
         weekMode, value, disabled = [], remarks, holidays, selectDate, timestamp, useSwipe, week,
       } = toRefs(props);
 
@@ -487,6 +496,7 @@
       })
 
       return {
+        tableIndex,
         monthRender,
         select,
         selectDate,
