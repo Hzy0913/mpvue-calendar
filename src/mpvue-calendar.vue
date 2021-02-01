@@ -52,17 +52,13 @@
             :begin="begin"
             :end="end"
             :format="format"
+            :lunar="lunar"
             @onSelect="onSelect"
             @monthChange="monthChange"
           />
         </Slide>
       </Swipe>
     </div>
-    <button
-      @click="test()"
-    >test</button>
-
-
   </div>
 </template>
 
@@ -88,6 +84,9 @@
         default() {
           return {};
         }
+      },
+      lunar: {
+        type: Object,
       },
       remarks: {
         type: Object,
@@ -149,7 +148,7 @@
     },
     emits: ['onSelect'],
     setup(props: any, { emit } : any) {
-      const { holidays, tileContent, disabled, end, completion, monFirst, monthRange, mode: tableMode, selectMode, selectDate: propSelectDate, remarks, begin } = toRefs(props)
+      const { holidays, tileContent, disabled, end, completion, monFirst, monthRange, mode: tableMode, selectMode, lunar, selectDate: propSelectDate, remarks, begin } = toRefs(props)
       const timestamp = ref(+new Date()); // listener timestamp change to refresh timetable
       const [currentYear, currentMonth, currentDay] = getToday(true);
       const year = ref(currentYear)
@@ -458,6 +457,7 @@
         end,
         useSwipe,
         weeks,
+        lunar,
         format: props.format,
       }
     }
