@@ -18,7 +18,7 @@
               <span className="vc-calendar-rang-head-month">{{formatRangeMonth[1]}}</span>
             </div>
             <div class="vc-calendar-rang-week-box">
-              <span v-for="(week,k1) in weeks">{{week}}</span>
+              <span v-for="(week, index) in weeks" :key="index">{{week}}</span>
             </div>
           </div>
           <div className="vc-calendar-content">
@@ -67,29 +67,14 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted, watchEffect, watch, toRefs } from 'vue'
-  import {
-    disabledDate,
-    computedPrevDay,
-    date2ymd,
-    selectOption,
-    multiOption,
-    rangeOption,
-    multiRangeOption,
-    getLunarInfo,
-    isCurrentMonthToday,
-    getToday,
-    setTileContent,
-    setRemark,
-    computedPrevYear,
-    computedPrevMonth,
-    computedNextYear,
-    date2timeStamp,
-    computedNextDay
-  } from './computed'
+  import { ref, reactive, watch, toRefs } from 'vue';
+  import { disabledDate, computedPrevDay, date2ymd, selectOption, multiOption, rangeOption,
+    multiRangeOption, getLunarInfo, isCurrentMonthToday, getToday, setTileContent, setRemark,
+    computedPrevYear, computedPrevMonth, computedNextYear, date2timeStamp, computedNextDay
+  } from './computed';
   import { rangeSelect, singleSelect, multiSelect, multiRange } from './controller';
-  import { computedNextMonth, delay } from '../utils'
-  import { TimeTableInterface, startType, deltaType } from './declare'
+  import { computedNextMonth, delay } from '../utils';
+  import { TimeTableInterface, startType, deltaType } from './declare';
   import './style.less'
 
   const disabledDateHandle = disabledDate();
@@ -120,14 +105,10 @@
       },
       useSwipe: {
         type: Boolean,
-      },
-      speed: {
-        type: Number,
-        default: 300
+        default: true
       },
       tableIndex: {
         type: Number,
-        default: 300
       },
       month: {
         type: String,
@@ -135,17 +116,11 @@
       year: {
         type: String,
       },
-      loop: {
-        type: Boolean,
-        default: true
-      },
       begin: {
         type: String,
-        // default: '2021-2-11'
       },
       end: {
         type: String,
-        // default: '2021-2-21'
       },
       completion: {
         type: Boolean,
@@ -173,17 +148,17 @@
         type: Object,
       },
       timestamp: {
-        type: Object,
+        type: Number,
       },
       selectMode: {
-        type: Object,
+        type: String,
       },
       disabled: {
-        type: Object,
+        type: [String, Array],
       },
     },
     emits: ['onSelect', 'monthChange'],
-    setup(props: any, { emit } : any) {
+    setup(props: any, { emit }: any) {
       const { year, month, selectMode = 'multiRange', tableMode: propsTableMode, monFirst,begin: propsBegin,
         end: propsEnd, completion: propsCompletion, weeks, day, monthRange = [], tileContent, tableIndex,
         weekMode, value, disabled = [], remarks, holidays, selectDate, timestamp, useSwipe, week, lunar,
