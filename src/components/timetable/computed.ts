@@ -37,7 +37,7 @@ const setRemark = (function() {
 
   return function() {
     return {
-      update(remarks: any) {
+      update(remarks: any = {}) {
         remarksInfo = remarks;
       },
       getRemark(date: string) {
@@ -132,7 +132,7 @@ const rangeOption = function({selectDate, date}: any) {
   }
 }
 
-const multiRangeOption = function({selectDate, date}: any) {
+const multiRangeOption = function({selectDate = [], date}: any) {
   let className;
   selectDate.some((selectItem: any) => {
     const { start, end } = selectItem;
@@ -205,8 +205,8 @@ const setTileContent = (function() {
 
   return function() {
     return {
-      update(tileContent: any[]) {
-        tileContentInfo = tileContent
+      update(tileContent: any) {
+        tileContentInfo = tileContent || [];
       },
       getTileContent(date: string) {
         return {
