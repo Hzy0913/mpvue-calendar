@@ -340,7 +340,7 @@
         timetableList.list = getTimetableList();
       });
 
-      watch(selectDate, () => {
+      watch(() => props.selectDate, () => {
         selectDateInner.value = selectDate.value;
       });
 
