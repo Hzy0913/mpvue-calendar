@@ -73,7 +73,7 @@
   import { delay, enWeeks, getToday, isZh, zhWeeks, computedNextMonth, computedPrevMonth,
     getDateByCount, date2ymd, getPrevDate, getNextDate,
   } from './components/utils';
-  import './icon.css';
+  import './components/icon/icon.css';
   import './style.less';
 
   export default {
