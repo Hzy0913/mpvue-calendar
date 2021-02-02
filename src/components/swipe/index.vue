@@ -464,6 +464,8 @@
         swipeRef,
         slide,
         useSwipe,
+        prev,
+        next,
       }
     }
   }
