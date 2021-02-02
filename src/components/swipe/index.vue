@@ -457,7 +457,6 @@
           // set resize event on window
           window.addEventListener('resize', events, false);
         }
-        console.dir(swipeRef);
       });
 
       return {
