@@ -13,10 +13,11 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted, toRefs } from 'vue'
-  import { noop, offloadFn } from '../utils'
-  import { SwipeInterface, startType, deltaType } from './declare'
-  import './style.less'
+  import { ref, onMounted } from 'vue';
+  import { offloadFn } from '../utils';
+  import { hasTransitions } from './utils';
+  import { SwipeInterface, startType, deltaType } from './declare';
+  import './style.less';
 
   export default {
     props: {
@@ -41,10 +42,9 @@
       },
     },
     emits: ['swiperChange', 'swiperChangeEnd', 'start', 'containerChange'],
-    setup(props: SwipeInterface, { emit } : any) {
+    setup(props: SwipeInterface, { emit }: any) {
       let isTransitionEnd = true;
-      const { initialSlide, auto, speed, loop, useSwipe } = props
-      console.log(useSwipe, '11122344444')
+      const { initialSlide, auto, speed, loop, useSwipe } = props;  // eslint-disable-line
 
       if (!useSwipe) return;
 
@@ -69,32 +69,25 @@
       const swipeRef = ref(null);
       const browser = {
         addEventListener: !!window.addEventListener,
-        touch: ('ontouchstart' in window) || (<any>window).DocumentTouch && document instanceof (<any>window).DocumentTouch,
-        transitions: (function(temp: HTMLElement) {
-          const property = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
-
-          for (let value of property) {
-            if ((<any>temp.style)[value] !== undefined) return true;
-          }
-
-          return false;
-        })(document.createElement('swipe'))
+        touch: ('ontouchstart' in window) || (window as any).DocumentTouch && document instanceof (window as any).DocumentTouch,
+        transitions: hasTransitions(),
       };
 
       let index: number = options.initialSlide || 0;
-      let container: HTMLElement, element: any, slides: any, slidePos: any, width: number, length;
+      let container: HTMLElement;
+      let element: any;
+      let slides: any;
+      let slidePos: any;
+      let width: number;
       options.loop = options.loop ?? true;
 
       function setup() {
         if (!container) return;
-        setTimeout(() => {
-          emit('containerChange', container);
-        })
+        setTimeout(() => emit('containerChange', container));
 
         element = container.children[0];
         // cache slides
         slides = element.children;
-        length = slides.length;
 
         // set loop to false if only one slide
         if (slides.length < 2) options.loop = false;
@@ -112,30 +105,31 @@
         // determine width of each slide
         width = container.getBoundingClientRect().width || container.offsetWidth;
 
-        element.style.width = (slides.length * width) + 'px';
+        element.style.width = `${slides.length * width}px`;
 
         // stack elements
-        let pos = slides.length;
-        while(pos--) {
-          const slide = slides[pos];
 
-          slide.style.width = width + 'px';
-          slide.setAttribute('data-index', pos);
+        let pos = slides.length;
+        while (pos--) {
+          const slideDom = slides[pos];
+
+          slideDom.style.width = `${width}px`;
+          slideDom.setAttribute('data-index', pos);
 
           if (browser.transitions) {
-            slide.style.left = (pos * -width) + 'px';
-            move(pos, index > pos ? -width : (index < pos ? width : 0), 0);
+            slideDom.style.left = `${pos * -width}px`;
+            move(pos, index > pos ? -width : (index < pos ? width : 0), 0); // eslint-disable-line
           }
         }
 
         // reposition elements before and after index
         if (options.loop && browser.transitions) {
-          move(circle(index-1), -width, 0);
-          move(circle(index+1), width, 0);
+          move(circle(index - 1), -width, 0);
+          move(circle(index + 1), width, 0);
         }
 
         if (!browser.transitions) {
-          element.style.left = (index * -width) + 'px';
+          element.style.left = `${index * -width}px`;
         }
 
         container.style.visibility = 'visible';
@@ -166,12 +160,12 @@
 
           // get the actual position of the slide
           if (options.loop) {
-            const natural_direction = direction;
+            const naturalDirection = direction;
             direction = -slidePos[circle(to)] / width;
 
             // if going forward but to < index, use to = slides.length + to
             // if going backward but to > index, use to = -slides.length + to
-            if (direction !== natural_direction) {
+            if (direction !== naturalDirection) {
               to = -direction * slides.length + to;
             }
           }
@@ -201,53 +195,52 @@
         offloadFn(options.callback && options.callback(index, slides[index]));
       }
 
-      function circle(index: number) {
+      function circle(circleIndex: number) {
         // a simple positive modulo using slides.length
-        return (slides.length + (index % slides.length)) % slides.length;
+        return (slides.length + (circleIndex % slides.length)) % slides.length;
       }
 
-      function move(index: number, dist: any, speed: number) {
-        translate(index, dist, speed);
-        slidePos[index] = dist;
+      function move(moveIndex: number, dist: any, moveSpeed: number) {
+        translate(moveIndex, dist, moveSpeed);
+        slidePos[moveIndex] = dist;
       }
 
-      function translate(index: number, dist: any, speed: number) {
-        const slide = slides[index];
-        const style = slide && slide.style;
+      function translate(translateIndex: number, dist: any, translateSpeed: number) {
+        const slideDom = slides[translateIndex];
+        const style = slideDom && slideDom.style;
 
         if (!style) return;
 
-        style.webkitTransitionDuration =
-          style.MozTransitionDuration =
-            style.msTransitionDuration =
-              style.OTransitionDuration =
-                style.transitionDuration = speed + 'ms';
+        const duration = `${translateSpeed}ms`;
+        style.webkitTransitionDuration = duration;
+        style.MozTransitionDuration = duration;
+        style.msTransitionDuration = duration;
+        style.OTransitionDuration = duration;
+        style.transitionDuration = duration;
 
-        style.webkitTransform = 'translate(' + dist + 'px,0)' + 'translateZ(0)';
-        style.msTransform =
-          style.MozTransform =
-            style.OTransform = 'translateX(' + dist + 'px)';
+        style.webkitTransform = `translate(${dist}px, 0)translateZ(0)`;
+        style.msTransform = style.MozTransform = style.OTransform = `translateX(${dist}px)`; // eslint-disable-line
       }
 
-      function animate(from: any, to: any, speed: number) {
+      function animate(from: any, to: any, animateSpeed: number) {
         // if not an animation, just reposition
-        if (!speed) {
-          element.style.left = to + 'px';
+        if (!animateSpeed) {
+          element.style.left = `${to}px`;
           return;
         }
 
-        const start = +new Date;
-        const timer = setInterval(function() {
-          const timeElap = +new Date - start;
+        const start = +new Date();
+        const timer = setInterval(() => {
+          const timeElap = +new Date() - start;
 
-          if (timeElap > speed) {
-            element.style.left = to + 'px';
+          if (timeElap > animateSpeed) {
+            element.style.left = `${to}px`;
             options.transitionEnd && options.transitionEnd.call(event, index, slides[index]);
             clearInterval(timer);
             return;
           }
 
-          element.style.left = (( (to - from) * (Math.floor((timeElap / speed) * 100) / 100) ) + from) + 'px';
+          element.style.left = (( (to - from) * (Math.floor((timeElap / animateSpeed) * 100) / 100) ) + from) + 'px'; // eslint-disable-line
         }, 4);
       }
 
@@ -293,7 +286,7 @@
             return setTimeout(() => {
               isTransitionEnd = true;
             });
-          };
+          }
 
           const touches = event.touches[0];
           // measure start values
@@ -301,7 +294,7 @@
             // get initial touch coords
             x: touches.pageX,
             y: touches.pageY,
-            time: +new Date // store time to determine touch duration
+            time: +new Date() // store time to determine touch duration
           };
 
           // used for testing first move event
@@ -319,7 +312,7 @@
         },
         move(event: any) {
           // ensure swiping with one touch and not pinching
-          if (event.touches.length > 1 || event.scale && event.scale !== 1) return
+          if (event.touches.length > 1 || event.scale && event.scale !== 1) return;
 
           if (options.disableScroll) event.preventDefault();
 
@@ -329,11 +322,11 @@
           delta = {
             x: touches.pageX - start.x,
             y: touches.pageY - start.y
-          }
+          };
 
           // determine if scrolling test has run - one time test
-          if (typeof isScrolling == 'undefined') {
-            isScrolling = !!( isScrolling || Math.abs(delta.x) < Math.abs(delta.y) );
+          if (typeof isScrolling === 'undefined') {
+            isScrolling = !!(isScrolling || Math.abs(delta.x) < Math.abs(delta.y));
           }
 
           // if user is not trying to scroll vertically
@@ -350,6 +343,7 @@
               translate(index, delta.x + slidePos[index], 0);
               translate(circle(index + 1), delta.x + slidePos[circle(index + 1)], 0);
             } else {
+              /* eslint-disable */
               delta.x =
                 delta.x /
                 ( (!index && delta.x > 0               // if first slide and sliding left
@@ -358,6 +352,7 @@
                 ) ?
                   ( Math.abs(delta.x) / width + 1 )      // determine resistance level
                   : 1 );                                 // no resistance if false
+              /* eslint-disable */
 
               // translate 1:1
               translate(index - 1, delta.x + slidePos[index - 1], 0);
@@ -442,7 +437,7 @@
       }
 
       onMounted(() => {
-        container = <any>swipeRef.value;
+        container = swipeRef.value as any;
         setup();
 
         if (browser.addEventListener) {
