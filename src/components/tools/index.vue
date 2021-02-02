@@ -93,13 +93,13 @@
         default: ''
       },
       year: {
-        type: Object,
+        type: [String, Number],
       },
       month: {
-        type: Object,
+        type: [String, Number],
       },
       timetableHeight: {
-        type: Object,
+        type: Number,
       }
     },
     emits: ['next', 'prev', 'selectMonth', 'selectYear'],
