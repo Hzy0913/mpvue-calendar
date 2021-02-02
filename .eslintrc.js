@@ -26,8 +26,13 @@ module.exports = {
     'object-curly-spacing': 0,
     /* 暂时关闭 */
     'arrow-parens': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-use-before-define': 0,
     'array-callback-return': 0,
     'class-methods-use-this': 0,
+    'default-case': 0,
+    'no-continue': 0,
+    'prefer-template': 0,
     'consistent-return': 0,
     'global-require': 0,
     'import/extensions': 0,
