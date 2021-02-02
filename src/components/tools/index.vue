@@ -55,10 +55,8 @@
 </template>
 
 <script lang="ts">
-  import { ref, reactive, watchEffect, watch, toRefs } from 'vue'
-  import './style.less'
-  import { isZh, enWeeks, zhWeeks } from '../utils'
-  import {document} from "../../../../tinymce/modules/boss/src/main/ts/ephox/boss/mutant/Properties";
+  import { ref, reactive, watch, toRefs } from 'vue';
+  import './style.less';
 
   export default {
     props: {
@@ -105,9 +103,8 @@
       }
     },
     emits: ['next', 'prev', 'selectMonth', 'selectYear'],
-    setup(props: any, { emit } : any) {
-      const { months, year, month, weekSwitch, monFirst, weeks, prev: prevProps,selectYear, next: nextProps, selectMonth: selectMonthProps, timetableHeight, tableMode} = toRefs(props);
-      // const month = ref(propMonth);
+    setup(props: any, { emit }: any) {
+      const { year, month, tableMode } = toRefs(props);
       const pickerVisible = ref(false);
       const toolsStyle = reactive({
         toolsContainerHeight: 0,
@@ -118,42 +115,33 @@
       const toolsRef = ref();
       const formatText = ref([] as string[]);
       const years = ref(createYears(year.value));
-      const height = 42
 
-      function selectMonth(month: number) {
+      function selectMonth(selectedMonth: number) {
         pickerVisible.value = false;
-        console.log(year.value, month, 99983333)
-        emit('selectMonth', year.value, month);
+        emit('selectMonth', year.value, selectedMonth);
       }
 
-      function selectYearHandle(year: number) {
+      function selectYearHandle(selectedYear: number) {
         pickerVisible.value = false;
-        years.value = createYears(year);
-        emit('selectYear', year, month.value);
+        years.value = createYears(selectedYear);
+        emit('selectYear', selectedYear, month.value);
       }
 
       function next() {
-        console.log(month.value, 999833)
-        emit("next", year.value, month.value);
+        emit('next', year.value, month.value);
       }
 
       function prev() {
-        emit("prev", year.value, month.value);
+        emit('prev', year.value, month.value);
       }
 
       function switchDate() {
         if (tableMode.value === 'week') return;
 
         toolsStyle.toolsContainerHeight = toolsRef.value.clientHeight;
-        // toolsRef.value.par
-
-        // let a = document.querySelector('.vc-calendar-tools-container').parentNode
-        // vc-calendar-timetable
-
         toolsStyle.toolsHeight = toolsRef.value.querySelector('.vc-calendar-tools-container').clientHeight;
         toolsStyle.weekHeadHeight = toolsRef.value.querySelector('.vc-calendar-week-head').clientHeight;
         toolsStyle.timetableHeight = toolsRef.value.parentNode.querySelector('.vc-calendar-timetable-current').clientHeight;
-        console.log(toolsStyle, 'toolsReftoolsReftoolsRef')
         pickerVisible.value = !pickerVisible.value;
       }
 
@@ -165,15 +153,13 @@
         formatText.value = [`${year.value}年`, `${month.value}月`];
       }
 
-      formatYearAndMonth()
+      formatYearAndMonth();
 
-      watch(year, (count, prevCount) => {
+      watch(year, () => {
         formatYearAndMonth();
-        console.log(count,prevCount, 1177366611)
-        /* ... */
-      })
+      });
 
-      watch(month, (count, prevCount) => {
+      watch(month, () => {
         formatYearAndMonth();
         if (pickerVisible.value) {
           setTimeout(() => {
@@ -184,45 +170,28 @@
         if (!years.value.includes(year.value)) {
           years.value = createYears(year.value);
         }
-      })
-      watch(monFirst, (count, prevCount) => {
-        // week.value = computedWeek()
+      });
 
-        console.log(count,prevCount, 111188933124)
-
-        /* ... */
-      })
-
-      watchEffect(() => {
-        console.log(month, 11111111)
-      })
-
-      function createYears(year: number) {
+      function createYears(creatorYear: number) {
         const yearRange = [];
-        for (let i = year - 7; i < year + 8; i++) {
+        for (let i = creatorYear - 7; i < creatorYear + 8; i++) {
           yearRange.push(i);
         }
         return yearRange;
       }
 
       return {
-        year,
-        month,
         next,
         prev,
-        weeks,
         years,
-        weekSwitch,
         selectMonth,
         selectYearHandle,
         pickerVisible,
         switchDate,
-        timetableHeight,
         toolsStyle,
         toolsRef,
-        tableMode,
         formatText,
-      }
+      };
     }
-  }
+  };
 </script>
