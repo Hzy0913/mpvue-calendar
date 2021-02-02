@@ -70,10 +70,10 @@
   import { ref, reactive, watch, toRefs } from 'vue';
   import { disabledDate, computedPrevDay, date2ymd, selectOption, multiOption, rangeOption,
     multiRangeOption, getLunarInfo, isCurrentMonthToday, setTileContent, setRemark,
-    computedPrevYear, computedPrevMonth, computedNextYear, computedNextDay
+    computedPrevMonth, computedNextYear, computedNextDay
   } from './computed';
   import { rangeSelect, singleSelect, multiSelect, multiRange } from './controller';
-  import { computedNextMonth } from '../utils';
+  import { computedNextMonth, computedPrevYear } from '../utils';
   import { TimeTableInterface } from './declare';
   import './style.less';
 

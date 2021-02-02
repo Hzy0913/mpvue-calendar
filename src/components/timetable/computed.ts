@@ -1,4 +1,4 @@
-import { computedNextMonth, computedPrevMonth, getToday } from '../utils'
+import { computedNextMonth, computedPrevMonth, getToday, computedNextYear } from '../utils';
 
 function date2ymd(date: string): number[] {
   const [y, m, d] = date.split('-');
@@ -13,13 +13,13 @@ function date2timeStamp(date: string): number {
 function getLunarInfo(y: string, m: string, d: string, lunar: any) {
   const date = `${y}-${m}-${d}`;
   if (!lunar) {
-    return  { date };
+    return { date };
   }
 
   const lunarInfo = lunar.solar2lunar(y, m, d) as any;
   const { Term, lMonth, lDay, lYear } = lunarInfo || {};
   const { lunarHoliday, gregorianHoliday } = lunar || {};
-  let lunarValue = lunarInfo.IDayCn;
+  const lunarValue = lunarInfo.IDayCn;
   const yearEve = lMonth === 12 && lDay === lunar.monthDays(lYear, 12) ? '除夕' : undefined;
 
   const lunarInfoObj = {
@@ -32,41 +32,35 @@ function getLunarInfo(y: string, m: string, d: string, lunar: any) {
   return lunarInfoObj;
 }
 
-const setRemark = (function() {
+const setRemark = (function () {
   let remarksInfo: any = {};
 
-  return function() {
+  return function () {
     return {
       update(remarks: any = {}) {
         remarksInfo = remarks;
       },
       getRemark(date: string) {
-        if (remarksInfo) return {
-          remark: remarksInfo[date]
-        };
+        if (remarksInfo) {
+          return {
+            remark: remarksInfo[date]
+          };
+        }
       }
-    }
-  }
-})()
-
-function computedPrevYear(year: string | number, month: string | number): number {
-  if ((Number(month) - 1 - 1) < 0) {
-    return Number(year) - 1;
-  }
-
-  return +year;
-}
+    };
+  };
+}());
 
 function computedPrevDay(year: string, month: string, day: string | number): string {
   if ((Number(day) - 1) === 0) {
     const prevMonth = computedPrevMonth(month);
     if (prevMonth === 12) { //prev year
       const prevYear = Number(year) - 1;
-      const prevDay = new Date(prevYear, prevMonth - 2, 0).getDate()
-      return `${prevYear}-${prevMonth}-${prevDay}`
+      const prevDay = new Date(prevYear, prevMonth - 2, 0).getDate();
+      return `${prevYear}-${prevMonth}-${prevDay}`;
     } else { //current year and prev month
-      const prevDay = new Date(Number(year), prevMonth, 0).getDate()
-      return `${year}-${prevMonth}-${prevDay}`
+      const prevDay = new Date(Number(year), prevMonth, 0).getDate();
+      return `${year}-${prevMonth}-${prevDay}`;
     }
   } else {
     return `${year}-${month}-${Number(day) - 1}`;
@@ -80,22 +74,15 @@ function computedNextDay(year: string, month: string, day: string): string {
     const nextMonth = computedNextMonth(month);
     if (nextMonth === 1) { //next year
       const nextYear = computedNextYear(year, month);
-      const nextDay = new Date(nextYear, 0, 1).getDate()
+      const nextDay = new Date(nextYear, 0, 1).getDate();
       return `${nextYear}-1-${nextDay}`;
     } else { //current year and next month
-      const nextDay = new Date(Number(year), nextMonth - 1, 1).getDate()
-      return `${year}-${nextMonth}-${nextDay}`
+      const nextDay = new Date(Number(year), nextMonth - 1, 1).getDate();
+      return `${year}-${nextMonth}-${nextDay}`;
     }
   } else {
     return `${year}-${month}-${Number(day) + 1}`;
   }
-}
-
-function computedNextYear(year: string | number, month: string | number): number {
-  if ((Number(month) + 1) > 12) {
-    return Number(year) + 1;
-  }
-  return Number(year);
 }
 
 type rangeOptionType = {
@@ -111,14 +98,14 @@ function isCurrentMonthToday(date: string) {
   return todayString === date;
 }
 
-const rangeOption = function({selectDate, date}: any) {
+function rangeOption({selectDate, date}: any) {
   const { start, end } = selectDate;
   if (start === date) {
     const notCompleteClassName = end ? '' : ' selected-range-not-complete';
     return 'vc-day-selected selected-range-start' + notCompleteClassName;
   }
   if (end === date) {
-    return 'vc-day-selected selected-range-end'
+    return 'vc-day-selected selected-range-end';
   }
 
   if (start && end && date) {
@@ -127,12 +114,12 @@ const rangeOption = function({selectDate, date}: any) {
     const currentTimeStamp: number = date2timeStamp(date);
 
     if (startTimeStamp < currentTimeStamp && currentTimeStamp < endTimeStamp) {
-      return 'vc-day-selected selected-range-includes'
+      return 'vc-day-selected selected-range-includes';
     }
   }
 }
 
-const multiRangeOption = function({selectDate = [], date}: any) {
+function multiRangeOption({selectDate = [], date}: any) {
   let className;
   selectDate.some((selectItem: any) => {
     const { start, end } = selectItem;
@@ -142,7 +129,7 @@ const multiRangeOption = function({selectDate = [], date}: any) {
       return true;
     }
     if (end === date) {
-      className = 'vc-day-selected selected-range-end'
+      className = 'vc-day-selected selected-range-end';
       return true;
     }
 
@@ -160,13 +147,14 @@ const multiRangeOption = function({selectDate = [], date}: any) {
   return className;
 }
 
-const multiOption = function({selectDate, date, begin, end, isWeekMode, rangeDate, playload, weekSwitch, getEvents, getLunarInfo, disabledDateHandle}: any) {
-  console.log(selectDate.includes(date), 'selectDateselectDate11222')
+function multiOption({selectDate, date}: any) {
   return selectDate.includes(date) ? 'vc-day-selected' : undefined;
 }
+
 function selectOption({date, selectDate}: any) {
   return selectDate === date ? 'vc-day-selected' : undefined;
 }
+
 type selectOptionType = {
   date: string;
   playload: any;
@@ -177,13 +165,12 @@ type selectOptionType = {
   getEvents: (year: number, month: number, day: number) => any;
 }
 
-
-const disabledDate = (function() {
-  let disabledDate: any = {};
-  return function() {
+const disabledDate = (function () {
+  let disabledDates: any = {};
+  return function () {
     return {
       update(disabled: any[]) {
-        disabledDate = disabled.reduce((previousValue, currentValue) => {
+        disabledDates = disabled.reduce((previousValue, currentValue) => {
           previousValue[currentValue] = true;
           return previousValue;
         }, {});
@@ -192,18 +179,16 @@ const disabledDate = (function() {
         return disabledDate;
       },
       isDisabled(date: string) {
-        console.log(disabledDate, date,'disabledDatedisabledDate')
-
-        return !!disabledDate[date];
+        return !!disabledDates[date];
       }
-    }
-  }
-})();
+    };
+  };
+}());
 
-const setTileContent = (function() {
+const setTileContent = (function () {
   let tileContentInfo: any = {};
 
-  return function() {
+  return function () {
     return {
       update(tileContent: any) {
         tileContentInfo = tileContent || [];
@@ -213,9 +198,9 @@ const setTileContent = (function() {
           tileContent: (tileContentInfo || {})[date]
         };
       }
-    }
-  }
-})();
+    };
+  };
+}());
 
 export {
   getToday,
@@ -227,7 +212,6 @@ export {
   setRemark,
   setTileContent,
   getLunarInfo,
-  computedPrevYear,
   computedPrevMonth,
   computedNextYear,
   isCurrentMonthToday,
@@ -235,4 +219,4 @@ export {
   computedNextDay,
   computedPrevDay,
   date2ymd,
-}
+};

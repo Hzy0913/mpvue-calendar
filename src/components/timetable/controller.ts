@@ -15,7 +15,7 @@ function multiSelect(selectDate: string[] = [], date: string) {
   return selectDate;
 }
 
-function rangeSelect(selectDate: { start: string, end: string } , date: string) {
+function rangeSelect(selectDate: { start?: string, end?: string } , date: string) {
   const { start, end } = selectDate;
 
   if (start && end) {
@@ -45,7 +45,7 @@ function rangeSelect(selectDate: { start: string, end: string } , date: string) 
   }
 }
 
-function multiRange(selectDates: { start: string; end?: string }[], date: string) {
+function multiRange(selectDates: { start?: string; end?: string }[], date: string) {
   const selects = [...selectDates];
   console.log(selects, 'selectsselects')
   let deleteIndex;
