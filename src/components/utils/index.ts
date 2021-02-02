@@ -1,33 +1,45 @@
-import {computedPrevYear, computedNextYear} from "../timetable/computed";
+function noop() {} // eslint-disable-line
 
-const noop = function() {};
+function computedNextYear(year: string | number, month: string | number): number {
+  if ((Number(month) + 1) > 12) {
+    return Number(year) + 1;
+  }
+  return Number(year);
+}
+
+function computedPrevYear(year: string | number, month: string | number): number {
+  if ((Number(month) - 1 - 1) < 0) {
+    return Number(year) - 1;
+  }
+
+  return +year;
+}
 
 function date2ymd(date: string): number[] {
   const [y, m, d] = date.split('-');
   return [Number(y), Number(m), Number(d)];
 }
 
-const offloadFn = function(fn: any) {
+function offloadFn(fn: any) {
   setTimeout(fn || noop, 0);
-};
+}
 
-const language = function(): string {
-  return (navigator.language || (<any>navigator).browserLanguage).toLowerCase();
-};
+function language(): string {
+  return (navigator.language || (navigator as any).browserLanguage).toLowerCase();
+}
 
-const isZh = function() {
+function isZh() {
   return language() === 'zh-cn';
-};
+}
 
-const enWeeks = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
-const zhWeeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+const enWeeks = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+const zhWeeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
 function getWeeks() {
   return isZh() ? zhWeeks : enWeeks;
 }
 
 function computedNextMonth(month: string | number) {
-  let value = month;
   if ((Number(month) + 1) > 12) {
     return 1;
   } else {
@@ -57,25 +69,26 @@ function getPrevDate(year: string | number, month: string | number, day?: string
   if (day) {
     return date2ymd(getDateByCount(`${year}-${month}-${day}`, -7));
   }
-  return [computedPrevYear(year, month), computedPrevMonth(month)]
+  return [computedPrevYear(year, month), computedPrevMonth(month)];
 }
 
 function getNextDate(year: string | number, month: string | number, day?: string | number): any[] {
   if (day) {
     return date2ymd(getDateByCount(`${year}-${month}-${day}`, 7));
   }
-  return [computedNextYear(year, month), computedNextMonth(month)]
+  return [computedNextYear(year, month), computedNextMonth(month)];
 }
 
 function delay(time?: number) {
-  return new Promise(resolve => setTimeout(() => resolve(), time || 0))
+  return new Promise(resolve => setTimeout(() => resolve(), time || 0));
 }
 
 function getToday(needArray?: boolean) {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
-  const day = now.getDate()
+  const day = now.getDate();
+
   if (needArray) {
     return [year, month, day];
   }
@@ -97,4 +110,7 @@ export {
   getPrevDate,
   getNextDate,
   getToday,
-}
+  getWeeks,
+  computedPrevYear,
+  computedNextYear,
+};
