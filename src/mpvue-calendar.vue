@@ -1,7 +1,7 @@
 <template>
   <div
     class="mpvue-calendar"
-    :class="[`mpvue-calendar-mode-${tableMode}`]"
+    :class="[`mpvue-calendar-mode-${tableMode}`, className]"
   >
     <Tools
       @next="nextChange"
@@ -21,13 +21,13 @@
     >
       <Swipe
         :initialSlide="1"
-        :useSwipe="useSwipe"
+        :useSwipe="useSwipeInner"
         @swiperChangeEnd="swiperChangeEnd"
         @containerChange="containerChange"
         ref="swipeRef"
       >
         <Slide
-          :useSwipe="useSwipe"
+          :useSwipe="useSwipeInner"
           class-name="asdasdsd"
           v-for="(item, index) in timetableList.list"
           :key="index"
@@ -35,9 +35,9 @@
           <Timetable
             :tableIndex="index"
             :timestamp="timestamp"
-            :weeks="weeks"
+            :weeks="weeksInner"
             ref="timetableRef"
-            :useSwipe="useSwipe"
+            :useSwipe="useSwipeInner"
             :month="item.month"
             :year="item.year"
             :day="item.day"
@@ -71,7 +71,7 @@
   import Slide from './components/swipe/slide.vue';
   import Timetable from './components/timetable/index.vue';
   import { delay, enWeeks, getToday, isZh, zhWeeks, computedNextMonth, computedPrevMonth,
-    getDateByCount, date2ymd, getPrevDate, getNextDate,
+    getDateByCount, date2ymd, getPrevDate, getNextDate, getSomeNextMonths,
   } from './components/utils';
   import './components/icon/icon.css';
   import './style.less';
@@ -97,7 +97,7 @@
         }
       },
       monthRange: {
-        type: Object,
+        type: Array,
       },
       tileContent: {
         type: Object,
@@ -116,6 +116,9 @@
       monFirst: {
         type: Boolean,
         default: false
+      },
+      className: {
+        type: String,
       },
       mode: {
         type: String,
@@ -162,7 +165,7 @@
       const swipeRef = ref();
       const timetableRef = ref();
       const weeksInner = ref(computedWeek());
-      const useSwipe = ref(props.useSwipe);
+      const useSwipeInner = ref(tableMode.value === 'monthRange' ? false : props.useSwipe);
       const initSelectValue = selectDate?.value || {
         select: '',
         multi: [],
@@ -171,10 +174,6 @@
       }[selectMode.value];
       const timetableList = reactive({list: getTimetableList()});
       const selectDateInner = ref(initSelectValue);
-
-      if (tableMode.value === 'monthRange') {
-        useSwipe.value = false;
-      }
 
       function swiperChangeEnd(index: number) {
         const isWeekMode = tableMode.value === 'week';
@@ -234,12 +233,10 @@
       function getTimetableList() {
         const isWeekMode = tableMode.value === 'week';
 
-        if (!useSwipe.value) {
-          return [{year: year.value, month: month.value, day: day.value, id: `${year.value}-${month.value}-${day.value}`}];
-        }
-
         if (tableMode.value === 'monthRange') {
-          return monthRange.value.map((item: string) => {
+          const monthRangeData = monthRange?.value || getSomeNextMonths(year?.value, month?.value, 3);
+
+          return monthRangeData.map((item: string) => {
             const [rangeYear, rangeMonth] = item.split('-');
             return { year: rangeYear, month: rangeMonth };
           });
@@ -253,6 +250,10 @@
             {year: year.value, month: month.value, day: day.value, id: `${year.value}-${month.value}-${day.value}`},
             {year: nextYear, month: nextMonth, day: nextDay, id: `${nextYear}-${nextMonth}-${nextDay}`},
           ];
+        }
+
+        if (!useSwipeInner.value) {
+          return [{year: year.value, month: month.value, day: day.value, id: `${year.value}-${month.value}-${day.value}`}];
         }
 
         const [prevYear, prevMonth] = getPrevDate(year.value, month.value);
@@ -346,7 +347,7 @@
 
       watch(tableMode, () => {
         if (tableMode.value === 'monthRange') {
-          useSwipe.value = false;
+          useSwipeInner.value = false;
         }
         timetableList.list = getTimetableList();
         refreshRender();
@@ -382,6 +383,7 @@
         render,
         selectDateInner,
         weeksInner,
+        useSwipeInner,
       };
     }
   };
