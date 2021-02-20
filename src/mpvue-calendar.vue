@@ -362,10 +362,19 @@
         refreshRender();
       });
 
-      watch([begin, end, disabled, props.disabled, holidays, props.holidays, remarks, props.remarks,
-        tileContent, props.tileContent], () => {
-          refreshRender();
+      watch(() => [props.begin, props.end, props.disabled, props.holidays, remarks, props.remarks], () => {
+        refreshRender();
       });
+
+      watch(tileContent, () => {
+        refreshRender();
+      });
+
+      if (Object.keys(props.tileContent).length) {
+        watch(props.tileContent, () => {
+          refreshRender();
+        });
+      }
 
       watch([weeks, monFirst], () => {
         weeksInner.value = computedWeek();

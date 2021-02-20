@@ -3,6 +3,7 @@ interface CalendarInterface {
   completion?: boolean;
   useSwipe?: boolean;
   weeks?: string[];
+  className?: string;
   holidays: {[key: string]: string};
   tileContent: {[key: string]: any };
   remarks: {[key: string]: any };
