@@ -34,9 +34,15 @@ function isZh() {
 
 const enWeeks = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 const zhWeeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const enMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+const zhMonths = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
 
 function getWeeks() {
   return isZh() ? zhWeeks : enWeeks;
+}
+
+function getMonths() {
+  return isZh() ? zhMonths : enMonths;
 }
 
 function computedNextMonth(month: string | number) {
@@ -125,6 +131,7 @@ export {
   getNextDate,
   getToday,
   getWeeks,
+  getMonths,
   computedPrevYear,
   computedNextYear,
   getSomeNextMonths,

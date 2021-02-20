@@ -15,6 +15,7 @@
       :format="format"
       :tableMode="tableMode"
       :weeks="weeksInner"
+      :months="months"
     />
     <div
       :style="{height: timetableHeight + 'px'}"
@@ -71,7 +72,7 @@
   import Slide from './components/swipe/slide.vue';
   import Timetable from './components/timetable/index.vue';
   import { delay, enWeeks, getToday, isZh, zhWeeks, computedNextMonth, computedPrevMonth,
-    getDateByCount, date2ymd, getPrevDate, getNextDate, getSomeNextMonths,
+    getDateByCount, date2ymd, getPrevDate, getNextDate, getSomeNextMonths, getMonths,
   } from './components/utils';
   import './components/icon/icon.css';
   import './style.less';
@@ -162,6 +163,7 @@
       const month = ref(todayMonth);
       const day = ref(todaytDay);
       const timetableHeight = ref(undefined);
+      const months = ref(getMonths());
       const swipeRef = ref();
       const timetableRef = ref();
       const weeksInner = ref(computedWeek());
@@ -392,6 +394,7 @@
         weeksInner,
         setToday,
         useSwipeInner,
+        months,
       };
     }
   };
