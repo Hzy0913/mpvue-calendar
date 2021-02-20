@@ -95,6 +95,20 @@ function getToday(needArray?: boolean) {
   return [year, month, day].join('-');
 }
 
+function getSomeNextMonths(year: string | number, month: string | number, count: number) {
+  let currentYear = year;
+  let currentMonth = month;
+  return Array.from({length: count}).map((v, index) => {
+    if (!index) {
+      return `${currentYear}-${currentMonth}`;
+    }
+    const [y, m] = getNextDate(currentYear, currentMonth);
+    currentYear = y;
+    currentMonth = m;
+    return `${currentYear}-${currentMonth}`;
+  });
+}
+
 export {
   noop,
   isZh,
@@ -113,4 +127,5 @@ export {
   getWeeks,
   computedPrevYear,
   computedNextYear,
+  getSomeNextMonths,
 };

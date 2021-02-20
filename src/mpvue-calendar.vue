@@ -338,6 +338,8 @@
       }
 
       function setToday() {
+        if (tableMode.value === 'monthRange') return;
+
         const [todayY, todayM, todaytD] = getToday(true);
         render(todayY, todayM, todaytD);
       }
