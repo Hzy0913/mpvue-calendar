@@ -169,12 +169,11 @@ const disabledDate = (function () {
   let disabledDates: any = {};
   return function () {
     return {
-      update(disabled: any[]) {
+      update(disabled: any[] = []) {
         disabledDates = disabled.reduce((previousValue, currentValue) => {
           previousValue[currentValue] = true;
           return previousValue;
         }, {});
-
 
         return disabledDate;
       },

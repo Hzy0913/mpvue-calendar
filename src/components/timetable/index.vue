@@ -154,13 +154,14 @@
         type: Array,
       },
       selectDate: {
-        type: [String, Array],
+        type: [String, Array, Object],
       },
     },
     emits: ['onSelect', 'monthChange'],
     setup(props: TimeTableInterface, { emit }: any) {
       const { year, month, selectMode, tableMode: propsTableMode, monFirst, begin: propsBegin,
-        end: propsEnd, completion: propsCompletion, day, tileContent, disabled, remarks, holidays, selectDate,
+        end: propsEnd, completion: propsCompletion, day, tileContent, disabled, remarks, holidays,
+        selectDate,
       } = toRefs(props);
 
       const tableMode = ref(propsTableMode);
@@ -379,7 +380,7 @@
       watch(() => props.timestamp, () => {
         disabledDateHandle.update(disabled.value);
         setRemarkHandle.update(remarks.value);
-        setTileContentHandle.update(tileContent);
+        setTileContentHandle.update(tileContent.value);
         refreshRender();
       });
 
