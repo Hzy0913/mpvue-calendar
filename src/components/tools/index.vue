@@ -62,9 +62,6 @@
     props: {
       months: {
         type: Array,
-        default() {
-          return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
-        }
       },
       weeks: {
         type: Array,
@@ -150,7 +147,7 @@
         if (format) {
           return formatText.value = format(year.value, month.value);
         }
-        formatText.value = [`${year.value}年`, `${month.value}月`];
+        formatText.value = [`${year.value}-`, `${month.value}`];
       }
 
       formatYearAndMonth();
