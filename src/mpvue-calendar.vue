@@ -337,6 +337,11 @@
         }
       }
 
+      function setToday() {
+        const [todayY, todayM, todaytD] = getToday(true);
+        render(todayY, todayM, todaytD);
+      }
+
       watch([month, day], () => {
         timetableList.list = getTimetableList();
       });
@@ -383,6 +388,7 @@
         render,
         selectDateInner,
         weeksInner,
+        setToday,
         useSwipeInner,
       };
     }
