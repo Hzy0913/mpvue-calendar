@@ -369,6 +369,8 @@
         const { format } = props;
         if (format) {
           formatRangeMonth.value = format(year?.value as any, month?.value as any);
+        } else {
+          formatRangeMonth.value = [`${year?.value}-`, month?.value];
         }
       }
 
