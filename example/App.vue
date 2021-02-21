@@ -4,14 +4,15 @@
       <Calendar
         backgroundText
         class-name="select-mode"
-        :begin="selectbegin"
-        :tile-content="selectend"
         :format="formatOfSelecteMode"
         :holidays="holidays"
+        language="en"
       />
       <Calendar
         selectMode="multi"
         class-name="multi-mode"
+        language="en"
+        :tile-content="multiTileContent"
       />
       <Calendar
         monFirst
@@ -20,6 +21,7 @@
         :lunar="lunar"
         class-name="range-mode"
         :format="formatOfRangeMode"
+        language="cn"
       />
       <Calendar
         monFirst
@@ -100,10 +102,24 @@
           content: '自咚咚咚'
         }
       })
+
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentDay = currentDate.getDate();
+
+      const multiTileContent = ref({
+        [`${currentYear}-${currentMonth}-${currentDay}`]: {
+          className: 'content-item-classname',
+          content: 'some things'
+        }
+      })
+
       function onSelect(e) {
         // selectDate.value = e
         console.log(e, 'onSelectonSelectonSelect')
       }
+
       function click1() {
         // selectbegin.value = '2021-2-5';
         // selectend.value['2021-2-24'] = '的基督教的'
@@ -214,6 +230,7 @@
         selectend,
         click1,
         selectModeRef,
+        multiTileContent,
         formatOfmultiMode,
         formatOfRangeMode,
         formatOfSelecteMode,
@@ -282,6 +299,15 @@
       color: #38778a;
       font-weight: bold;
       margin-bottom: 5px;
+    }
+    .content-item-classname{
+      color: #fff;
+      background: #0b6cbc;
+      display: inline-block;
+      white-space: nowrap;
+      padding: 0 3px;
+      border-radius: 3px;
+      transform: scale(.8);
     }
   }
 
