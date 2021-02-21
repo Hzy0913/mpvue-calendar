@@ -7,6 +7,7 @@
         :begin="selectbegin"
         :tile-content="selectend"
         :format="formatOfSelecteMode"
+        :holidays="holidays"
       />
       <Calendar
         selectMode="multi"
@@ -54,8 +55,7 @@
   import Calendar from '../src/mpvue-calendar';
   import lunar from '../src/calendarinit';
   import { defineComponent, ref, reactive, onMounted, watchEffect, watch } from 'vue';
-  // 'select', 'multi', 'range', 'multiRange'
-  // monthRange week month
+
   export default {
     name: 'app',
     components: {
@@ -63,7 +63,18 @@
     },
     setup() {
       const holidays = ref({
-        '1-15': '节日111'
+        '1-1': 'New Year',
+        '2-2': 'Wetlands',
+        '2-14': 'Valentine',
+        '3-8': 'Women',
+        '4-1': 'April Fools',
+        '4-22': 'World Earth',
+        '5-1': 'Labour',
+        '6-1': 'Children',
+        '8-1': 'Youth',
+        '10-5': 'World Teachers',
+        '10-31': 'Halloween',
+        '12-25': 'Christmas',
       })
       const completion = ref(false)
       const selectbegin = ref('2021-2-12')
@@ -82,8 +93,6 @@
       const remarks = ref({'2021-1-13': '啦啦啦'})
       const monthRange = ref(['2021-1', '2021-6', '2021-12'])
       const disabled = ref(['2021-1-2', '2021-1-4', '2021-1-23'])
-
-      // const selectDate = ref('2021-1-25')
       const selectDate = ref([{start: "2021-1-25", end: "2021-1-30"}])
       const tileContent = ref({
         '2021-1-5': {
@@ -259,6 +268,9 @@
       color: #38778a;
       font-weight: bold;
       margin-bottom: 5px;
+    }
+    .vc-calendar-holiday{
+      white-space: nowrap;
     }
   }
 
