@@ -26,6 +26,10 @@ function rangeSelect(selectDate: { start?: string; end?: string }, date: string)
   }
 
   if (start) {
+    if (start === date) {
+      return {};
+    }
+
     if (date2timeStamp(start) > date2timeStamp(date)) {
       return {
         start: date,

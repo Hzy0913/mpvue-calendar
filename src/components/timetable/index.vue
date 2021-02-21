@@ -288,6 +288,7 @@
           if (dayOfCurrentWeek === -1) { // when current day is sunday and use monFirst mode
             dayOfCurrentWeek = 6;
           }
+
           temp.push(renderOption({year, month, i: day}));
 
           let countDate = [year, month, day];
