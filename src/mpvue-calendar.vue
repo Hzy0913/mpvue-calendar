@@ -55,6 +55,7 @@
             :end="end"
             :format="format"
             :lunar="lunar"
+            :backgroundText="backgroundText"
             @onSelect="onSelect"
             @monthChange="monthChange"
           />
@@ -113,6 +114,9 @@
       useSwipe: {
         type: Boolean,
         default: true
+      },
+      backgroundText: {
+        type: Boolean,
       },
       monFirst: {
         type: Boolean,

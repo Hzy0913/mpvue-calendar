@@ -59,7 +59,7 @@
                 </div>
               </div>
             </div>
-            <div className="vc-calendar-month-background-text">{{month}}</div>
+            <div v-if="backgroundText" className="vc-calendar-month-background-text">{{month}}</div>
           </div>
       </div>
     </div>
@@ -110,6 +110,10 @@
         default: true
       },
       useSwipe: {
+        type: Boolean,
+        default: true
+      },
+      backgroundText: {
         type: Boolean,
         default: true
       },
