@@ -16,6 +16,7 @@
       :tableMode="tableMode"
       :weeks="weeksInner"
       :months="months"
+      :language="language"
     />
     <div
       :style="{height: timetableHeight + 'px'}"
@@ -35,6 +36,7 @@
         >
           <Timetable
             :tableIndex="index"
+            :language="language"
             :timestamp="timestamp"
             :weeks="weeksInner"
             ref="timetableRef"
@@ -143,6 +145,9 @@
         type: String,
         default: 'select'
       },
+      language: {
+        type: String,
+      },
       selectDate: {
         type: Object,
       },
@@ -159,7 +164,7 @@
     emits: ['onSelect'],
     setup(props: CalendarInterface, { emit }: any) {
       const { holidays, tileContent, disabled, end, monFirst, monthRange,
-        mode: tableMode, selectMode, selectDate, remarks, begin, weeks,
+        mode: tableMode, selectMode, selectDate, remarks, begin, weeks, language: propLanguage,
       } = toRefs(props);
       const timestamp = ref(+new Date()); // listener timestamp change to refresh timetable
       const [todayYear, todayMonth, todaytDay] = getToday(true);
@@ -167,7 +172,7 @@
       const month = ref(todayMonth);
       const day = ref(todaytDay);
       const timetableHeight = ref(undefined);
-      const months = ref(getMonths());
+      const months = ref(getMonths(propLanguage?.value));
       const swipeRef = ref();
       const timetableRef = ref();
       const weeksInner = ref(computedWeek());
@@ -210,7 +215,7 @@
       function computedWeek() {
         if (Array.isArray(props.weeks)) return props.weeks;
 
-        const language = isZh() ? 'zh': 'en';
+        const language = isZh(propLanguage?.value) ? 'zh': 'en';
         const weeksArray = {
           en: enWeeks,
           zh: zhWeeks,

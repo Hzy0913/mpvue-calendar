@@ -93,6 +93,9 @@
         type: String,
         default: 'month'
       },
+      language: {
+        type: String,
+      },
       year: {
         type: [String, Number],
       },
