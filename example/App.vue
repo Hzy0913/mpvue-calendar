@@ -25,10 +25,12 @@
       />
       <Calendar
         monFirst
+        completion
         backgroundText
         selectMode="multiRange"
         class-name="multiRange-mode"
         :format="formatOfmultiMode"
+        :weeks="weeks"
       />
     </div>
     <div class="container-view-modes">
@@ -38,8 +40,9 @@
         selectMode="range"
         class-name="week-mode"
         mode="week"
-        ref="selectModeRef"
+        ref="weekModeRef"
       />
+      <button @click="backToToday" class="back-to-today">Back to Today</button>
       <Calendar
         backgroundText
         selectMode="range"
@@ -48,8 +51,6 @@
         :monthRange="['2021-2', '2021-3', '2021-4']"
       />
     </div>
-
-    <button @click="click1">点击</button>
   </div>
 </template>
 
@@ -80,15 +81,10 @@
       })
       const completion = ref(false)
       const selectbegin = ref('2021-2-12')
-      const selectend = ref({
-        '2021-2-5': {
-          className: 'tip-1dd',
-          content: '自咚咚咚'
-        }
-      })
       const mode = ref('week')
       const calendarRef = ref()
       const selectModeRef = ref()
+      const weekModeRef = ref()
       const monFirst = ref(false)
       const begin = ref('2021-1-13')
       const end = ref('2025-2-13')
@@ -120,46 +116,9 @@
         console.log(e, 'onSelectonSelectonSelect')
       }
 
-      function click1() {
-        // selectbegin.value = '2021-2-5';
-        // selectend.value['2021-2-24'] = '的基督教的'
-        selectend.value['2021-2-15'] = {
-          className: 'tip-1dd',
-          content: '自咚咚咚'
-        }
-
-        // selectend.value['2021-2-15'] = {
-        //   '2021-2-15': {
-        //     className: 'tip-1dd',
-        //     content: '自咚咚咚'
-        //   }
-        // }
-        console.log(selectend, 'calendarRef.value')
-
-        // selectModeRef.value.setToday()
-        // end.value = '2021-1-19'
-        // almanacs.value['1-5'] = '就发你分'
-        // almanacs.value = {
-        //   '1-5': 'aaas'
-        // }
-        // mode.value = 'month'
-        // completion.value = false
-        // calendarRef.value.render(2021, 3)
-        // selectDate.value = {start: "2021-1-2", end: "2021-1-30"}
-        // completion.value = false;
-        // monFirst.value = true;
-        // remarks.value = {
-        //   '2021-1-13': 'zxxccccccc'
-        // }
-        // remarks.value['2021-1-13'] = 'zxczxczxczx'
-        // disabled.value = ['2021-1-12', '2021-1-14', '2021-1-13']
-        // disabled.value.push('2021-1-22')
-        // tileContent.value['2021-1-24'] = {
-        //   className: 'tip-1dd',
-        //   content: '的基督教的'
-        // }
+      function backToToday() {
+        weekModeRef.value.setToday();
       }
-
 
       function format(year, month) {
         return [year, '----' + month]
@@ -224,11 +183,11 @@
         calendarRef,
         format,
         begin,
-        weeks: undefined,
+        weeks: ['一', '二', '三', '四', '五', '六', '日'],
         end,
         selectbegin,
-        selectend,
-        click1,
+        weekModeRef,
+        backToToday,
         selectModeRef,
         multiTileContent,
         formatOfmultiMode,
@@ -267,6 +226,7 @@
     .container-view-modes{
       display: flex;
       flex-wrap: wrap;
+      position: relative;
       .week-mode, .multi-mode, .range-mode, .multiRange-mode, .monthRange-mode{
         &.mpvue-calendar{
           width: 400px;
@@ -353,6 +313,19 @@
       font-weight: bold;
       margin-bottom: 5px;
     }
+  }
+
+  .back-to-today{
+    position: absolute;
+    left: 50px;
+    top: 220px;
+    box-shadow: 2px 0px 2px rgb(68, 146, 123, .2);
+    position: absolute;
+    left: 50px;
+    top: 220px;
+    height: 22px;
+    border: none;
+    cursor: pointer;
   }
 
   @media screen and (max-width: 600px) {
