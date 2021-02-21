@@ -284,7 +284,10 @@
         const temp: any[] = [];
 
         if (tableMode.value === 'week') {
-          const dayOfCurrentWeek = new Date(year, month - 1, day).getDay() - (monFirst ? 1: 0); // what day is the current week
+          let dayOfCurrentWeek = new Date(year, month - 1, day).getDay() - (monFirst?.value ? 1: 0); // what day is the current week
+          if (dayOfCurrentWeek === -1) { // when current day is sunday and use monFirst mode
+            dayOfCurrentWeek = 6;
+          }
           temp.push(renderOption({year, month, i: day}));
 
           let countDate = [year, month, day];
