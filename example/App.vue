@@ -1,31 +1,59 @@
 <template>
-  <div id="app">
-    <Calendar
-      :holidays="holidays"
-      :tileContent="tileContent"
-      :completion="completion"
-      :monFirst="monFirst"
-      :remarks="remarks"
-      :weeks="weeks"
-      :disabled="disabled"
-      :monthRange="monthRange"
-      @onSelect="onSelect"
-      selectMode="multiRange"
-      :mode="mode"
-      :begin="begin"
-      :end="end"
-      :useSwipe="true"
-      :format="format"
-      ref="calendarRef"
-    />
+  <div class="container">
+    <div class="container-select-modes">
+      <Calendar
+        backgroundText
+        class-name="select-mode"
+        :begin="selectbegin"
+        :tile-content="selectend"
+        :format="formatOfSelecteMode"
+      />
+      <Calendar
+        selectMode="multi"
+        class-name="multi-mode"
+      />
+      <Calendar
+        monFirst
+        backgroundText
+        selectMode="range"
+        :lunar="lunar"
+        class-name="range-mode"
+        :format="formatOfRangeMode"
+      />
+      <Calendar
+        monFirst
+        backgroundText
+        selectMode="multiRange"
+        class-name="multiRange-mode"
+        :format="formatOfmultiMode"
+      />
+    </div>
+    <div class="container-view-modes">
+      <Calendar
+        backgroundText
+        :lunar="lunar"
+        selectMode="range"
+        class-name="week-mode"
+        mode="week"
+        ref="selectModeRef"
+      />
+      <Calendar
+        backgroundText
+        selectMode="range"
+        class-name="monthRange-mode"
+        mode="monthRange"
+        :monthRange="['2021-2', '2021-3', '2021-4']"
+      />
+    </div>
+
     <button @click="click1">点击</button>
   </div>
 </template>
-<!--:selectDate="selectDate"-->
 
 <script>
   import Calendar from '../src/mpvue-calendar';
-  import { defineComponent, ref, reactive, onMounted, watchEffect, watch } from 'vue'
+  import lunar from '../src/calendarinit';
+  import { defineComponent, ref, reactive, onMounted, watchEffect, watch } from 'vue';
   // 'select', 'multi', 'range', 'multiRange'
   // monthRange week month
   export default {
@@ -38,11 +66,19 @@
         '1-15': '节日111'
       })
       const completion = ref(false)
+      const selectbegin = ref('2021-2-12')
+      const selectend = ref({
+        '2021-2-5': {
+          className: 'tip-1dd',
+          content: '自咚咚咚'
+        }
+      })
       const mode = ref('week')
       const calendarRef = ref()
+      const selectModeRef = ref()
       const monFirst = ref(false)
       const begin = ref('2021-1-13')
-      const end = ref('2021-2-13')
+      const end = ref('2025-2-13')
       const remarks = ref({'2021-1-13': '啦啦啦'})
       const monthRange = ref(['2021-1', '2021-6', '2021-12'])
       const disabled = ref(['2021-1-2', '2021-1-4', '2021-1-23'])
@@ -60,14 +96,29 @@
         console.log(e, 'onSelectonSelectonSelect')
       }
       function click1() {
-        end.value = '2021-1-19'
+        // selectbegin.value = '2021-2-5';
+        // selectend.value['2021-2-24'] = '的基督教的'
+        selectend.value['2021-2-15'] = {
+          className: 'tip-1dd',
+          content: '自咚咚咚'
+        }
+
+        // selectend.value['2021-2-15'] = {
+        //   '2021-2-15': {
+        //     className: 'tip-1dd',
+        //     content: '自咚咚咚'
+        //   }
+        // }
+        console.log(selectend, 'calendarRef.value')
+
+        // selectModeRef.value.setToday()
+        // end.value = '2021-1-19'
         // almanacs.value['1-5'] = '就发你分'
         // almanacs.value = {
         //   '1-5': 'aaas'
         // }
-        mode.value = 'month'
+        // mode.value = 'month'
         // completion.value = false
-        console.log(calendarRef, 'calendarRef.value')
         // calendarRef.value.render(2021, 3)
         // selectDate.value = {start: "2021-1-2", end: "2021-1-30"}
         // completion.value = false;
@@ -93,7 +144,48 @@
         return [year, month + '月']
       }
 
+      function formatOfSelecteMode(year, month) {
+        const transform = {
+          1: 'Jan',
+          2: 'Feb',
+          3: 'Mar',
+          4: 'Apr',
+          5: 'May',
+          6: 'Jun',
+          7: 'Jul',
+          8: 'Aug',
+          9: 'Sept',
+          10: 'Oct',
+          11: 'Nov',
+          12: 'Dec',
+        }
+        return [`${year}`, `${transform[month]}`];
+      }
+
+      function formatOfRangeMode(year, month) {
+        const transform = {
+          1: '一',
+          2: '二',
+          3: '三',
+          4: '四',
+          5: '五',
+          6: '六',
+          7: '七',
+          8: '八',
+          9: '九',
+          10: '十',
+          11: '十一',
+          12: '十二',
+        }
+        return [`${year}年`, `${transform[month]}月`];
+      }
+
+      function formatOfmultiMode(year, month) {
+        return [`${year}年`, `${month}月`];
+      }
+
       return {
+        lunar,
         holidays,
         onSelect,
         tileContent,
@@ -109,18 +201,125 @@
         begin,
         weeks: undefined,
         end,
-        click1
+        selectbegin,
+        selectend,
+        click1,
+        selectModeRef,
+        formatOfmultiMode,
+        formatOfRangeMode,
+        formatOfSelecteMode,
       }
     }
   };
 </script>
 
-<style>
-  body {
+<style lang="less">
+  body, html {
     background-color: #fbf9fe;
+    margin: 0;
+    padding: 0;
   }
-  .mpvue-calendar{
-    width: 500px;
+  .container{
+    width: 1000px;
     margin: 0 auto;
+    .select-mode{
+      .vc-calendar-year{
+        margin-right: 10px;
+      }
+    }
+    .container-select-modes{
+      display: flex;
+      flex-wrap: wrap;
+      .select-mode, .multi-mode, .range-mode, .multiRange-mode{
+        &.mpvue-calendar{
+          width: 400px;
+          margin: 0 auto;
+          flex: none;
+        }
+      }
+    }
+    .container-view-modes{
+      display: flex;
+      flex-wrap: wrap;
+      .week-mode, .multi-mode, .range-mode, .multiRange-mode, .monthRange-mode{
+        &.mpvue-calendar{
+          width: 400px;
+          margin: 0 auto;
+          flex: none;
+        }
+      }
+    }
+  }
+
+  .select-mode{
+    &:before{
+      content: 'select mode';
+      text-align: center;
+      display: block;
+      color: #38778a;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+
+  .multi-mode{
+    &:before{
+      content: 'multi select mode';
+      text-align: center;
+      display: block;
+      color: #38778a;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+
+  .range-mode{
+    &:before{
+      content: 'range select mode';
+      text-align: center;
+      display: block;
+      color: #38778a;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+
+  .multiRange-mode{
+    &:before{
+      content: 'multi range select mode';
+      text-align: center;
+      display: block;
+      color: #38778a;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+
+  .week-mode{
+    &:before{
+      content: 'week mode';
+      text-align: center;
+      display: block;
+      color: #38778a;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+
+  .monthRange-mode{
+    &:before{
+      content: 'month range mode';
+      text-align: center;
+      display: block;
+      color: #38778a;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .container{
+      width: 100%;
+    }
   }
 </style>
