@@ -5,8 +5,12 @@ module.exports = {
   configureWebpack: {
     context: path.resolve(__dirname, './'),
     entry: {
-      app: './example/main.js'
+      app: process.env.NODE_ENV === 'production' ? './src/mpvue-calendar.vue' : './example/main.js'
     },
   },
+  css: {
+    extract: false
+  },
+  productionSourceMap: false,
   lintOnSave: process.env.NODE_ENV !== 'production'
 }
