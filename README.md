@@ -17,4 +17,36 @@
 
 <h1 align="center">mpvue-calendar</h1>
 
-> A feature-rich calendar component, support multiple modes and gesture sliding. 
+> A feature-rich calendar component, support multiple modes and gesture sliding.
+
+## 💻 Install
+mpvue-calendar only support **vue@3.0+**
+
+```
+npm i mpvue-calendar -S
+```
+## 🔨 Usage
+
+```javascript
+<Calendar
+  backgroundText
+  class-name="select-mode"
+  :remarks="remarks"
+/>
+
+import { ref } from 'vue'
+import Calendar from 'mpvue-calendar'
+
+export default {
+  components: {
+    Calendar,
+  },
+  setup() {
+    const remarks = ref({'2021-1-13': 'some tings'})
+
+    return {
+      remarks,
+    }
+  }
+}
+```
