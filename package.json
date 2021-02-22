@@ -2,10 +2,14 @@
   "name": "mpvue-calendar",
   "version": "3.0.0-beta",
   "description": "vue calendar mpvue-calendar vue-calendar",
-  "main": "src/mpvue-calendar.vue",
+  "main": "dist/mpvue-calendar.umd.min.js",
   "scripts": {
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "npm run build:calendar && npm run build:lunar && npm run remove",
+    "build:calendar": "vue-cli-service build --target lib --name mpvue-calendar './src/mpvue-calendar.vue'",
+    "build:lunar": "vue-cli-service build --target lib --name lunar --dest lib './src/lunar.ts'",
+    "remove": "cp ./lib/lunar.umd.min.js ./dist/lunar.js",
+    "demo": "vue-cli-service build --dest demo './example/main.js'",
     "lint": "vue-cli-service lint",
     "publish": "npm publish --registry https://registry.npmjs.org"
   },
@@ -14,10 +18,10 @@
     "url": "git+https://github.com/Hzy0913/mpvue-calendar.git"
   },
   "keywords": [
-    "mpvue",
     "vue",
     "calendar",
-    "小程序",
+    "mpvue-calendar",
+    "calendar component",
     "日历组件"
   ],
   "author": "hzy",
