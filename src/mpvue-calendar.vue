@@ -376,7 +376,7 @@
         render(todayY, todayM, todaytD);
       }
 
-      watch([month, day], () => {
+      watch([year, month, day], () => {
         timetableList.list = getTimetableList();
       });
 
