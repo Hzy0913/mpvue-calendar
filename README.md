@@ -16,3 +16,4 @@
 </p>
 
 <h1 align="center">mpvue-calendar</h1>
+A feature-rich calendar component, support multiple modes and gesture sliding. 
