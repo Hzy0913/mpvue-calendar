@@ -94,5 +94,6 @@ export default {
 | ------------ | ------------ | ------------ |
 | onSelect  |  (selectDate) => void |   This function is triggered when the date is selected  |
 | monthChange | ({prevMonthDay, nextMonthDay}) => void  |   The callback is triggered when the month is switched  |
+| setToday | ref method |   Back today, you need to pass the ref parameter to call the internal method |
 
 
