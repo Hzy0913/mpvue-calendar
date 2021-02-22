@@ -2,6 +2,7 @@ node_modules
 build
 config
 example
+demo
 dist/demo.html
 dist/mpvue-calendar.umd.js
 static
