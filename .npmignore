@@ -6,6 +6,7 @@ demo
 dist/demo.html
 dist/mpvue-calendar.umd.js
 static
+public
 src
 lib
 .babelrc
@@ -21,3 +22,4 @@ yarn.lock
 .gitignore
 index.html
 package-lock.json
+mpvue-calendar.common.js
