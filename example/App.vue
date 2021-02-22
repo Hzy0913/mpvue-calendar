@@ -14,6 +14,7 @@
         @next="next"
         @prev="prev"
         @onMonthChange="onMonthChange"
+        @onSelect="onSelect"
       />
       <Calendar
         selectMode="multi"
@@ -21,6 +22,9 @@
         language="en"
         :tile-content="multiTileContent"
         :select-date="multiModeDate"
+        :begin="begin"
+        :end="end"
+        @onSelect="onSelect"
       />
       <Calendar
         monFirst
@@ -31,6 +35,7 @@
         :format="formatOfRangeMode"
         :select-date="rangeModeDate"
         language="cn"
+        @onSelect="onSelect"
       />
       <Calendar
         monFirst
@@ -41,6 +46,7 @@
         :select-date="multiRangeModeDate"
         :format="formatOfmultiMode"
         :weeks="weeks"
+        @onSelect="onSelect"
       />
     </div>
     <div class="container-view-modes">
@@ -102,10 +108,7 @@
       const rangeModeDate = ref({start: `${currentYear}-${currentMonth}-10`, end: `${currentYear}-${currentMonth}-14`})
       const multiRangeModeDate = ref([{start: `${currentYear}-${currentMonth}-8`, end: `${currentYear}-${currentMonth}-12`}, {start: `${currentYear}-${currentMonth}-20`, end: `${currentYear}-${currentMonth}-23`}])
 
-      const selectbegin = ref('2021-2-12')
-      const mode = ref('week')
       const calendarRef = ref()
-      const selectModeRef = ref()
       const weekModeRef = ref()
       const monFirst = ref(false)
       const begin = ref('2021-1-13')
@@ -113,14 +116,6 @@
       const remarks = ref({'2021-1-13': '啦啦啦'})
       const monthRange = ref(['2021-1', '2021-6', '2021-12'])
       const disabled = ref(['2021-1-2', '2021-1-4', '2021-1-23'])
-      const selectDate = ref([{start: "2021-1-25", end: "2021-1-30"}])
-      const tileContent = ref({
-        '2021-1-5': {
-          className: 'tip-1dd',
-          content: '自咚咚咚'
-        }
-      })
-
       const multiTileContent = ref({
         [`${currentYear}-${currentMonth}-${currentDay}`]: {
           className: 'content-item-classname',
@@ -128,17 +123,12 @@
         }
       })
 
-      function onSelect(e) {
-        // selectDate.value = e
-        console.log(e, 'onSelectonSelectonSelect')
+      function onSelect(selectDate) {
+        console.log(selectDate, 'selectDate')
       }
 
       function backToToday() {
         weekModeRef.value.setToday();
-      }
-
-      function format(year, month) {
-        return [year, '----' + month]
       }
 
       function rangeMonthFormat(year, month) {
@@ -209,21 +199,16 @@
         lunar,
         holidays,
         onSelect,
-        tileContent,
         monFirst,
         monthRange,
-        selectDate,
         remarks,
         disabled,
         completion,
-        mode,
         calendarRef,
-        format,
         begin,
         weeks: ['一', '二', '三', '四', '五', '六', '日'],
         end,
         selectModeDate,
-        selectbegin,
         onMonthChange,
         next,
         prev,
@@ -234,7 +219,6 @@
         multiRangeModeDate,
         rangeModeDate,
         backToToday,
-        selectModeRef,
         multiTileContent,
         formatOfmultiMode,
         formatOfRangeMode,
