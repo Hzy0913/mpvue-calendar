@@ -19,6 +19,13 @@
 
 > A feature-rich calendar component, support multiple modes and gesture sliding.
 
+<p align="center">
+<img width="940" src="http://img.binlive.cn/upload/1613974387283calendar-preview.png" alt="mpvue-calendar preview">
+</p>
+
+#### [Preview](http://preview.binlive.cn/mpvue-calendar#/ "Preview")
+#### [Demo](https://github.com/Hzy0913/mpvue-calendar/blob/master/example/App.vue "Demo")
+
 ## 💻 Install
 mpvue-calendar only support **vue@3.0+**
 
