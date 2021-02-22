@@ -3,16 +3,24 @@
     <div class="container-select-modes">
       <Calendar
         backgroundText
+        completion
         class-name="select-mode"
         :format="formatOfSelecteMode"
         :holidays="holidays"
+        :select-date="selectModeDate"
         language="en"
+        @selectYear="selectYear"
+        @selectMonth="selectMonth"
+        @next="next"
+        @prev="prev"
+        @onMonthChange="onMonthChange"
       />
       <Calendar
         selectMode="multi"
         class-name="multi-mode"
         language="en"
         :tile-content="multiTileContent"
+        :select-date="multiModeDate"
       />
       <Calendar
         monFirst
@@ -21,6 +29,7 @@
         :lunar="lunar"
         class-name="range-mode"
         :format="formatOfRangeMode"
+        :select-date="rangeModeDate"
         language="cn"
       />
       <Calendar
@@ -29,6 +38,7 @@
         backgroundText
         selectMode="multiRange"
         class-name="multiRange-mode"
+        :select-date="multiRangeModeDate"
         :format="formatOfmultiMode"
         :weeks="weeks"
       />
@@ -56,7 +66,7 @@
 
 <script>
   import Calendar from '../src/mpvue-calendar';
-  import lunar from '../src/calendarinit';
+  import lunar from '../src/lunar';
   import { defineComponent, ref, reactive, onMounted, watchEffect, watch } from 'vue';
 
   export default {
@@ -65,6 +75,11 @@
       Calendar
     },
     setup() {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentDay = currentDate.getDate();
+
       const holidays = ref({
         '1-1': 'New Year',
         '2-2': 'Wetlands',
@@ -80,6 +95,13 @@
         '12-25': 'Christmas',
       })
       const completion = ref(false)
+      const getRandom = () => Math.floor(Math.random() * (28 - 1 + 1)) + 1
+
+      const selectModeDate = ref(`${currentYear}-${currentMonth}-${getRandom()}`)
+      const multiModeDate = ref([`${currentYear}-${currentMonth}-${getRandom()}`, `${currentYear}-${currentMonth}-${getRandom()}`, `${currentYear}-${currentMonth}-${getRandom()}`])
+      const rangeModeDate = ref({start: `${currentYear}-${currentMonth}-10`, end: `${currentYear}-${currentMonth}-14`})
+      const multiRangeModeDate = ref([{start: `${currentYear}-${currentMonth}-8`, end: `${currentYear}-${currentMonth}-12`}, {start: `${currentYear}-${currentMonth}-20`, end: `${currentYear}-${currentMonth}-23`}])
+
       const selectbegin = ref('2021-2-12')
       const mode = ref('week')
       const calendarRef = ref()
@@ -98,11 +120,6 @@
           content: '自咚咚咚'
         }
       })
-
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth() + 1;
-      const currentDay = currentDate.getDate();
 
       const multiTileContent = ref({
         [`${currentYear}-${currentMonth}-${currentDay}`]: {
@@ -168,6 +185,26 @@
         return [`${year}年`, `${month}月`];
       }
 
+      function selectYear(y, m) {
+        console.log(y, m, 'selectYear')
+      }
+
+      function onMonthChange(y, m) {
+        console.log(y, m, 'onMonthChange')
+      }
+
+      function selectMonth(y, m) {
+        console.log(y, m, 'selectMonth')
+      }
+
+      function next(y, m, d) {
+        console.log(y, m, d, 'nextnext')
+      }
+
+      function prev(y, m, d) {
+        console.log(y, m, d, 'prevprev')
+      }
+
       return {
         lunar,
         holidays,
@@ -185,8 +222,17 @@
         begin,
         weeks: ['一', '二', '三', '四', '五', '六', '日'],
         end,
+        selectModeDate,
         selectbegin,
+        onMonthChange,
+        next,
+        prev,
+        selectMonth,
+        selectYear,
         weekModeRef,
+        multiModeDate,
+        multiRangeModeDate,
+        rangeModeDate,
         backToToday,
         selectModeRef,
         multiTileContent,
