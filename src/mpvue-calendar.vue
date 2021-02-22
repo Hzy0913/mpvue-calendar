@@ -4,6 +4,7 @@
     :class="[`mpvue-calendar-mode-${tableMode}`, className]"
   >
     <Tools
+      @onMonthChange="onToolsMonthChange"
       @next="nextChange"
       @prev="prevChange"
       @selectMonth="selectMonth"
@@ -59,7 +60,7 @@
             :lunar="lunar"
             :backgroundText="backgroundText"
             @onSelect="onSelect"
-            @monthChange="monthChange"
+            @onMonthChange="monthChange"
           />
         </Slide>
       </Swipe>
@@ -161,7 +162,7 @@
       Slide,
       Timetable,
     },
-    emits: ['onSelect'],
+    emits: ['onSelect', 'next', 'prev', 'selectMonth', 'selectYear', 'onMonthChange'],
     setup(props: CalendarInterface, { emit }: any) {
       const { holidays, tileContent, disabled, end, monFirst, monthRange,
         mode: tableMode, selectMode, selectDate, remarks, begin, weeks, language: propLanguage,
@@ -282,34 +283,48 @@
           const [nextYear, nextMonth, nextDay] = date2ymd(nextDate);
           year.value = nextYear;
           month.value = nextMonth;
-          return day.value = nextDay;
+          day.value = nextDay;
+
+          emit('next', nextYear, nextMonth, nextDay);
+          return emit('onMonthChange', nextYear, nextMonth, nextDay);
         }
         const nextMonth = computedNextMonth(currentMonth);
         month.value = nextMonth;
         year.value = nextMonth === 1 ? Number(year.value) + 1 : year.value;
+
+        emit('next', year.value, month.value);
+        emit('onMonthChange', year.value, month.value);
       }
 
       function prevChange(currentYear: number | string, currentMonth: number | string) {
         if (tableMode.value === 'week') {
           const nextDate = getDateByCount(`${year.value}-${month.value}-${day.value}`, -7);
-          const [nextYear, nextMonth, nextDay] = date2ymd(nextDate);
-          year.value = nextYear;
-          month.value = nextMonth;
-          return day.value = nextDay;
+          const [prevYear, prevMonth, prevDay] = date2ymd(nextDate);
+          year.value = prevYear;
+          month.value = prevMonth;
+          day.value = prevDay;
+
+          emit('prev', prevYear, prevMonth, prevDay);
+          return emit('onMonthChange', prevYear, prevMonth, prevDay);
         }
         const prevMonth = computedPrevMonth(currentMonth);
         month.value = prevMonth;
         year.value = prevMonth === 12 ? Number(year.value) - 1 : year.value;
+
+        emit('prev', year.value, month.value);
+        emit('onMonthChange', year.value, month.value);
       }
 
       function selectMonth(selectedYear: number, selectedMonth: number) {
         year.value = selectedYear;
         month.value = selectedMonth;
+        emit('selectMonth', selectedYear, selectedMonth);
       }
 
       function selectYear(selectedYear: number, selectedMonth: number) {
         year.value = selectedYear;
         month.value = selectedMonth;
+        emit('selectYear', selectedYear, selectedMonth);
       }
 
       function containerChange(element: any) {
@@ -327,13 +342,19 @@
         timestamp.value = +new Date();
       }
 
+      function onToolsMonthChange(...param: any) {
+        emit('onMonthChange', ...param);
+      }
+
       function monthChange(param: any) {
         const { prevMonthDay, nextMonthDay } = param || {};
         if (nextMonthDay) {
-          return nextChange(year.value, month.value);
+          nextChange(year.value, month.value);
+          return emit('next', year.value, month.value);
         }
         if (prevMonthDay) {
           prevChange(year.value, month.value);
+          emit('prev', year.value, month.value);
         }
       }
 
@@ -404,6 +425,7 @@
         swiperChangeEnd,
         containerChange,
         timetableHeight,
+        onToolsMonthChange,
         swipeRef,
         timetableRef,
         timestamp,

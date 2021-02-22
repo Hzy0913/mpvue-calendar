@@ -99,7 +99,7 @@
         type: Number,
       }
     },
-    emits: ['next', 'prev', 'selectMonth', 'selectYear'],
+    emits: ['next', 'prev', 'selectMonth', 'selectYear', 'onMonthChange'],
     setup(props: any, { emit }: any) {
       const { year, month, tableMode } = toRefs(props);
       const pickerVisible = ref(false);
@@ -116,12 +116,14 @@
       function selectMonth(selectedMonth: number) {
         pickerVisible.value = false;
         emit('selectMonth', year.value, selectedMonth);
+        emit('onMonthChange', year.value, selectedMonth);
       }
 
       function selectYearHandle(selectedYear: number) {
         pickerVisible.value = false;
         years.value = createYears(selectedYear);
         emit('selectYear', selectedYear, month.value);
+        emit('onMonthChange', selectedYear, month.value);
       }
 
       function next() {

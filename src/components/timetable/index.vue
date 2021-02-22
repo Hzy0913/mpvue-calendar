@@ -164,7 +164,7 @@
         type: [String, Array, Object],
       },
     },
-    emits: ['onSelect', 'monthChange'],
+    emits: ['onSelect', 'onMonthChange'],
     setup(props: TimeTableInterface, { emit }: any) {
       const { year, month, selectMode, tableMode: propsTableMode, monFirst, begin: propsBegin,
         end: propsEnd, completion: propsCompletion, day, tileContent, disabled, remarks, holidays,
@@ -199,7 +199,7 @@
         if (prevMonthDay || nextMonthDay) {
           if (propsTableMode.value === 'monthRange') return;
 
-          return emit('monthChange', {prevMonthDay, nextMonthDay});
+          return emit('onMonthChange', {prevMonthDay, nextMonthDay});
         }
 
         let selectValue;
