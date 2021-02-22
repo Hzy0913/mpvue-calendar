@@ -25,6 +25,7 @@
 
 - #### [Preview](http://preview.binlive.cn/mpvue-calendar#/ "Preview")
 - #### [Demo](https://github.com/Hzy0913/mpvue-calendar/blob/master/example/App.vue "Demo")
+- #### [中文文档](https://github.com/Hzy0913/mpvue-calendar/blob/master/README.zh.md "Docs")
 
 ## 💻 Install
 mpvue-calendar only support **vue@3.0+**
