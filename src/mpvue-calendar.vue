@@ -150,7 +150,7 @@
         type: String,
       },
       selectDate: {
-        type: Object,
+        type: [String, Array, Object],
       },
       disabled: {
         type: Object,
