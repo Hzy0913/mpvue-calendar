@@ -164,8 +164,8 @@
     },
     emits: ['onSelect', 'next', 'prev', 'selectMonth', 'selectYear', 'onMonthChange'],
     setup(props: CalendarInterface, { emit }: any) {
-      const { holidays, tileContent, disabled, end, monFirst, monthRange,
-        mode: tableMode, selectMode, selectDate, remarks, begin, weeks, language: propLanguage,
+      const { tileContent, monFirst, monthRange, mode: tableMode, selectMode, selectDate, remarks,
+        weeks, language: propLanguage,
       } = toRefs(props);
       const timestamp = ref(+new Date()); // listener timestamp change to refresh timetable
       const [todayYear, todayMonth, todaytDay] = getToday(true);
