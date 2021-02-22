@@ -7,9 +7,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted } from 'vue'
-  import { SlideInterface } from './declare'
-  import './style.less'
+  import './style.less';
 
   export default {
     props: {
@@ -21,13 +19,5 @@
         type: Boolean,
       },
     },
-    setup(props: SlideInterface) {
-      const { className, useSwipe } = props;
-
-      return {
-        className,
-        useSwipe,
-      }
-    }
-  }
+  };
 </script>

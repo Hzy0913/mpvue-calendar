@@ -20,6 +20,7 @@ module.exports = {
     'func-names': ['off'],
 //    'indent': ['error', 2, {'SwitchCase': 1}], //暂时关闭
     'indent': 0, //暂时关闭
+    'import/prefer-default-export': 0, //暂时关闭
     'no-unused-expressions': ['off'],
 //    'max-len': ['warn', 100, 2, {'ignoreComments': true}], //暂时关闭
     'max-len': 0,

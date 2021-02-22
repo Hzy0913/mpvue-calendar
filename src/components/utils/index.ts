@@ -30,7 +30,7 @@ function language(): string {
 
 function isZh(languageValue?: string) {
   if (languageValue) {
-    return languageValue === 'cn'
+    return languageValue === 'cn';
   }
   return language() === 'zh-cn';
 }
@@ -40,12 +40,12 @@ const zhWeeks = ['周日', '周一', '周二', '周三', '周四', '周五', '�
 const enMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 const zhMonths = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
 
-function getWeeks(language: string) {
-  return isZh(language) ? zhWeeks : enWeeks;
+function getWeeks(languageParam: string) {
+  return isZh(languageParam) ? zhWeeks : enWeeks;
 }
 
-function getMonths(language: string | undefined) {
-  return isZh(language) ? zhMonths : enMonths;
+function getMonths(languageParam: string | undefined) {
+  return isZh(languageParam) ? zhMonths : enMonths;
 }
 
 function computedNextMonth(month: string | number) {
