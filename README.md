@@ -17,14 +17,14 @@
 
 <h1 align="center">mpvue-calendar</h1>
 
-> A feature-rich calendar component, support multiple modes and gesture sliding.
+> A feature-rich calendar component, support multiple modes and gesture sliding. For vue 3.0+
 
 <p align="center">
 <img width="940" src="http://img.binlive.cn/upload/1613974387283calendar-preview.png" alt="mpvue-calendar preview">
 </p>
 
-#### [Preview](http://preview.binlive.cn/mpvue-calendar#/ "Preview")
-#### [Demo](https://github.com/Hzy0913/mpvue-calendar/blob/master/example/App.vue "Demo")
+- #### [Preview](http://preview.binlive.cn/mpvue-calendar#/ "Preview")
+- #### [Demo](https://github.com/Hzy0913/mpvue-calendar/blob/master/example/App.vue "Demo")
 
 ## 💻 Install
 mpvue-calendar only support **vue@3.0+**
@@ -100,7 +100,9 @@ export default {
 |  name | type  |  description |
 | ------------ | ------------ | ------------ |
 | onSelect  |  (selectDate) => void |   This function is triggered when the date is selected  |
-| monthChange | ({prevMonthDay, nextMonthDay}) => void  |   The callback is triggered when the month is switched  |
+| monthChange | (year, month, day) => void  |   The callback is triggered when the month is change  |
+| next | (year, month) => void  |    Callback this method when triggered next month.   |
+| prev | (year, month) => void  |    Callback this method when triggered prev month.   |
 | setToday | ref method |   Back today, you need to pass the ref parameter to call the internal method |
 
 
