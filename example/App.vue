@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="container-select-modes">
+      <!--select mode-->
       <Calendar
         backgroundText
         completion
@@ -16,6 +17,7 @@
         @onMonthChange="onMonthChange"
         @onSelect="onSelect"
       />
+      <!--multi mode-->
       <Calendar
         selectMode="multi"
         class-name="multi-mode"
@@ -26,6 +28,7 @@
         :end="end"
         @onSelect="onSelect"
       />
+      <!--range mode-->
       <Calendar
         monFirst
         backgroundText
@@ -37,6 +40,7 @@
         language="cn"
         @onSelect="onSelect"
       />
+      <!--multiRange mode-->
       <Calendar
         monFirst
         completion
@@ -50,6 +54,7 @@
       />
     </div>
     <div class="container-view-modes">
+      <!--week mode-->
       <Calendar
         backgroundText
         :lunar="lunar"
@@ -59,6 +64,7 @@
         ref="weekModeRef"
       />
       <button @click="backToToday" class="back-to-today">Back to Today</button>
+      <!--monthRange mode-->
       <Calendar
         backgroundText
         selectMode="range"
@@ -101,8 +107,8 @@
         '12-25': 'Christmas',
       })
       const completion = ref(false)
-      const getRandom = () => Math.floor(Math.random() * (28 - 1 + 1)) + 1
 
+      const getRandom = () => Math.floor(Math.random() * (28 - 1 + 1)) + 1
       const selectModeDate = ref(`${currentYear}-${currentMonth}-${getRandom()}`)
       const multiModeDate = ref([`${currentYear}-${currentMonth}-${getRandom()}`, `${currentYear}-${currentMonth}-${getRandom()}`, `${currentYear}-${currentMonth}-${getRandom()}`])
       const rangeModeDate = ref({start: `${currentYear}-${currentMonth}-10`, end: `${currentYear}-${currentMonth}-14`})
@@ -110,10 +116,8 @@
 
       const calendarRef = ref()
       const weekModeRef = ref()
-      const monFirst = ref(false)
       const begin = ref('2021-1-13')
       const end = ref('2025-2-13')
-      const remarks = ref({'2021-1-13': '啦啦啦'})
       const monthRange = ref(['2021-1', '2021-6', '2021-12'])
       const disabled = ref(['2021-1-2', '2021-1-4', '2021-1-23'])
       const multiTileContent = ref({
@@ -199,9 +203,7 @@
         lunar,
         holidays,
         onSelect,
-        monFirst,
         monthRange,
-        remarks,
         disabled,
         completion,
         calendarRef,
