@@ -57,6 +57,7 @@
 <script lang="ts">
   import { ref, reactive, watch, toRefs } from 'vue';
   import './style.less';
+  import '../icon/icon.css';
 
   export default {
     props: {
