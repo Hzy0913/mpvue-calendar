@@ -1,6 +1,6 @@
 {
   "name": "mpvue-calendar",
-  "version": "3.0.0-beta",
+  "version": "3.0.0",
   "description": "vue calendar mpvue-calendar vue-calendar",
   "main": "dist/mpvue-calendar.umd.min.js",
   "scripts": {
