@@ -65,7 +65,7 @@ export default {
 | selectDate  | String / String[] / {start: String; end: String} / {start: String; end: String} [] |   |在不同的选择模式下，需要对应不同的数据类型。  `String` 类型对应在 'select' 模式下，`String[]` 数组类型对应在 'multi' 模式下，`{start: String; end: String}` 类型对应在 'range' 模式下，`{start: String; end: String}[]` 数组类型对应在 'multiRange' 模式下 |
 |  monthRange  |  String[]  |    |如果使用monthRange模式，则需要设置要显示的月份的内容。 例如[2021-1、2021-2、2021-3]   |
 | remarks  | Object  |   |  创建某一天的备注，key是日期字符串，value是备注内容。 例如{'2021-1-13'：'一些备注'} |
-| tileContent  |  Object |   | 创建某一天的贴片内容，key是日期字符串，value是object类型，object有className和content字段。例如{2021-1-5'：{className:'tip class'，content:'some tip'}  |
+| tileContent  |  Object |   | 创建某一天的贴片内容，key是日期字符串，value是object类型，`object`有**className**和**content**字段。例如{2021-1-5'：{className:'tip class'，content:'some tip'}  |
 |  holidays  |  Object  |    |  自定义节假日信息，例如{'2021-1 ':'New Year'} |
 |  completion | Boolean  | false  | 用6行补全日历表格 |
 | useSwipe  | Boolean  |  true |  启用移动端支持手势滑动切换日历   |
