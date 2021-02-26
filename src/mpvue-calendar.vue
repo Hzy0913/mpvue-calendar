@@ -18,6 +18,8 @@
       :weeks="weeksInner"
       :months="months"
       :language="language"
+      :arrowLeft="arrowLeft"
+      :arrowRight="arrowRight"
     />
     <div
       :style="{height: timetableHeight + 'px'}"
@@ -116,6 +118,14 @@
       useSwipe: {
         type: Boolean,
         default: true
+      },
+      arrowLeft: {
+        type: String,
+        default: ''
+      },
+      arrowRight: {
+        type: String,
+        default: ''
       },
       backgroundText: {
         type: Boolean,
