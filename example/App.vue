@@ -114,7 +114,6 @@
       const rangeModeDate = ref({start: `${currentYear}-${currentMonth}-10`, end: `${currentYear}-${currentMonth}-14`})
       const multiRangeModeDate = ref([{start: `${currentYear}-${currentMonth}-8`, end: `${currentYear}-${currentMonth}-12`}, {start: `${currentYear}-${currentMonth}-20`, end: `${currentYear}-${currentMonth}-23`}])
 
-      const calendarRef = ref()
       const weekModeRef = ref()
       const begin = ref('2021-1-13')
       const end = ref('2025-2-13')
@@ -206,7 +205,6 @@
         monthRange,
         disabled,
         completion,
-        calendarRef,
         begin,
         weeks: ['一', '二', '三', '四', '五', '六', '日'],
         end,
