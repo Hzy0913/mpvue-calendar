@@ -63,7 +63,7 @@ export default {
 | ------------ | ------------ | ------------ | ------------ |
 | selectMode  | String  | 'select'  |  For the selection mode of calendar component, can be used by **'select'**, **'multi'**,**'range'**, **'multiRange'** mode.   |
 |  mode | String  |  'month'|  Configure calendar display mode, the modes has **'month'**, **'week'**,**'monthRange'** |
-| selectDate  | String / String[] / {start: String; end: String} / {start: String; end: String} [] |   |   In different selection modes, there are use different types.  `String` type for **select** mode, `String[]` type for **multi** mode, `{start: String; end: String}` type for **range** mode, and `{start: String; end: String} []` type for **multiRange**mode.  |
+| selectDate  | String / String[] / {start: String; end: String} / {start: String; end: String} [] |   |   In different selection modes, there are use different types.  `String` type for **select** mode, `String[]` type for **multi** mode, `{start: String; end: String}` type for **range** mode, and `{start: String; end: String} []` type for **multiRange** mode.  |
 |  monthRange  |  String[]  |    | If you use **monthRange mode**,  you need to set the content of the month to be displayed. for example `[2021-1, 2021-2, , 2021-3]`   |
 | remarks  | Object  |   |  Create remark for a day, key is date string, and value is remark content. for example `{ '2021-1-13': 'some things' }`  |
 | tileContent  |  Object |   | Create tile content  for a day, key is date string, and value is `object`, object have **className** and **content**. for example `{ '2021-1-5': { className: 'tip-class', content: 'some tip' } } `   |
