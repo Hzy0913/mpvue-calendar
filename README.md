@@ -61,7 +61,7 @@ export default {
 ## ⚙️ API
 |  name  |  type  |  default  | description   |
 | ------------ | ------------ | ------------ | ------------ |
-| selectMode  | String  | 'select'  |  For the selection mode of calendar component, can be used by **'select'**, **'multi'**,**'range'**, **'multiRange'** mode.   |
+| selectMode  | String  | 'select'  |  For the selection mode of calendar component, can be used by **'select'**, **'multi'**,**'range'**, **'multiRange'** mode  |
 |  mode | String  |  'month'|  Configure calendar display mode, the modes has **'month'**, **'week'**,**'monthRange'** |
 | selectDate  | String / String[] / {start: String; end: String} / {start: String; end: String} [] |   |   In different selection modes, there are use different types.  `String` type for **select** mode, `String[]` type for **multi** mode, `{start: String; end: String}` type for **range** mode, and `{start: String; end: String} []` type for **multiRange** mode.  |
 |  monthRange  |  String[]  |    | If you use **monthRange mode**,  you need to set the content of the month to be displayed. for example `[2021-1, 2021-2, 2021-6, 2021-9]`   |
@@ -102,8 +102,8 @@ export default {
 | ------------ | ------------ | ------------ |
 | onSelect  |  (selectDate) => void |   This function is triggered when the date is selected  |
 | monthChange | (year, month, day) => void  |   The callback is triggered when the month is change  |
-| next | (year, month) => void  |    Callback this method when triggered next month.   |
-| prev | (year, month) => void  |    Callback this method when triggered prev month.   |
+| next | (year, month) => void  |    Callback this method when triggered next month   |
+| prev | (year, month) => void  |    Callback this method when triggered prev month   |
 | setToday | ref method |   Back today, you need to pass the ref parameter to call the internal method |
 
 
