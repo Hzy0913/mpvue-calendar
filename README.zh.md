@@ -69,6 +69,8 @@ export default {
 |  holidays  |  Object  |    |  自定义节假日信息，例如{'2021-1 ':'New Year'} |
 |  completion | Boolean  | false  | 用6行补全日历表格 |
 | useSwipe  | Boolean  |  true |  启用移动端支持手势滑动切换日历   |
+| arrowLeft  | String  |   |  工具栏左侧箭头图片   |
+| arrowRight  | String  |   |  工具栏右侧箭头图片   |
 | monFirst  | Boolean  |  false |  一周的第一天从星期一开始 |
 | backgroundText  | Boolean  |  false | 显示当前月份的背景文本 |
 |  language  |  String  |    | 使用 **'en'** 或 **'cn'** 语言   |
