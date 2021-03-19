@@ -70,6 +70,8 @@ export default {
 |  holidays  |  Object  |    |   Custom holiday information,  for example `{'2021-1-1': 'New Year'}`  |
 |  completion | Boolean  | false  |  Complete the calendar table with 6 lines   |
 | useSwipe  | Boolean  |  true |  The mobile terminal supports gesture sliding to switch calendar   |
+| arrowLeft  | String  |   |  Left arrow image of toolbar    |
+| arrowRight  | String  |   |  Right arrow image of toolbar   |
 | monFirst  | Boolean  |  false |   The first day of the week begins on Monday  |
 | backgroundText  | Boolean  |  false |  Displays the background text of the current month calendar  |
 |  language  |  String  |    | use **'en'** or **'cn'** language   |
