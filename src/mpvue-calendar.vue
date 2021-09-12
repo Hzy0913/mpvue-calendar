@@ -207,6 +207,7 @@
             day.value = nextDay;
           }
 
+          emit('onMonthChange', year.value, month.value);
           return swipeRef.value.slide(1, 0);
         }
 
@@ -218,6 +219,8 @@
           if (isWeekMode) {
             day.value = prevDay;
           }
+
+          emit('onMonthChange', year.value, month.value);
           return swipeRef.value.slide(1, 0);
         }
       }
