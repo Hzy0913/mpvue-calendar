@@ -103,7 +103,7 @@ export default {
 |  name | type  |  description |
 | ------------ | ------------ | ------------ |
 | onSelect  |  (selectDate) => void |   This function is triggered when the date is selected  |
-| monthChange | (year, month, day) => void  |   The callback is triggered when the month is change  |
+| onMonthChange | (year, month, day) => void  |   The callback is triggered when the month is change  |
 | next | (year, month) => void  |    Callback this method when triggered next month   |
 | prev | (year, month) => void  |    Callback this method when triggered prev month   |
 | setToday | ref method |   Back today, you need to pass the ref parameter to call the internal method |
