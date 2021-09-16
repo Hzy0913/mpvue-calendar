@@ -102,7 +102,7 @@ export default {
 |  name | type  |  description |
 | ------------ | ------------ | ------------ |
 | onSelect  |  (selectDate) => void |   选择日期时触发此函数 |
-| monthChange | (year, month, day) => void  |   当月份发生变化时会触发该回调  |
+| onMonthChange | (year, month, day) => void  |   当月份发生变化时会触发该回调  |
 | next | (year, month) => void  |  进入下月时触发该回调方法|
 | prev | (year, month) => void  |    进入上月时触发该回调方法 |
 | setToday | ref method | 回到今天，您需要传递ref参数来调用组件内部方法 |
