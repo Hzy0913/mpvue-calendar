@@ -60,7 +60,7 @@ export default {
 ## ⚙️ API
 |  name  |  type  |  default  | description   |
 | ------------ | ------------ | ------------ | ------------ |
-| selectMode  | String  | 'select'  | 对于日历组件的选择模式，可以通过传入**'select'**, **'multi'**,**'range'**, **'multiRange'** 参数使用  |
+| selectMode  | String  | 'select'  | 对于日历组件的选择模式，可以通过传入 **'select'**, **'multi'**, **'range'**, **'multiRange'** 参数使用  |
 |  mode | String  |  'month'|  配置日历显示模式，可以通过传入 **'month'**, **'week'**,**'monthRange'**  使用该功能 |
 | selectDate  | String / String[] / {start: String; end: String} / {start: String; end: String} [] |   |在不同的选择模式下，需要对应不同的数据类型。  `String` 类型对应在 'select' 模式下，`String[]` 数组类型对应在 'multi' 模式下，`{start: String; end: String}` 类型对应在 'range' 模式下，`{start: String; end: String}[]` 数组类型对应在 'multiRange' 模式下 |
 |  monthRange  |  String[]  |    |如果使用monthRange模式，则需要设置要显示的月份的内容。 例如[2021-1、2021-2、2021-3]   |
